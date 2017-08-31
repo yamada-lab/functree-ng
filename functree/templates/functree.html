@@ -1,0 +1,146 @@
+{% extends 'viewer.html' %}
+
+{% block sidebar %}
+<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-functree" data-toggle="collapse">#</a></h5>
+{# Disable Jinja's syntax for Vue.js #}
+{% raw %}
+<form id="form-functree" class="collapse in" v-on:submit.prevent="submit" v-on:reset="reset">
+    <div class="form-group">
+        <label class="control-label">Data series</label>
+        <select class="form-control input-sm" v-on:change="clickOptionSeries" v-model="series">
+            <option disabled value="">- Select data series -</option>
+            <option v-for="(option, index) in options[0]" v-bind:value="index">{{option}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Data mapping: Single</label>
+        <select class="form-control input-sm" v-model="columnsSingle">
+            <option value="">- Select a column -</option>
+            <option v-for="(option, index) in options[1]" v-bind:value="index">{{option}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Data mapping: Multiple</label>
+        <select class="form-control input-sm" multiple v-model="columnsMultiple">
+            <option value="">- Select columns -</option>
+            <option v-for="(option, index) in options[1]" v-bind:value="index">{{option}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" checked="checked" v-model="normalize">
+                Enable normalization
+            </label>
+        </div>
+    </div>
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> Update</button>
+        <button type="reset" class="btn btn-default btn-sm"> Reset</button>
+    </div>
+</form>
+{% endraw %}
+<hr>
+<h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse">#</a></h5>
+<form id="form-save-image" class="collapse in">
+    <div class="form-group">
+        <label class="control-label">Format</label>
+        <select name="format" class="form-control">
+            <option value="pdf">PDF</option>
+            <option value="png">PNG</option>
+            <option value="ps">PostScript</option>
+            <option value="svg">SVG</option>
+            <option value="raw-svg">SVG (Raw)</option>
+        </select>
+    </div>
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block mainpane %}
+<div id="functree">
+</div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script src="{{ url_for('static', filename='bower_components/d3/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/vue/dist/vue.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/functree.js') }}"></script>
+<script>
+    d3.json('{{ url_for('route_tree', source=profile.target) }}', function(error, tree_data) {
+    d3.json('{{ url_for('route_profile', profile_id=profile.profile_id) }}', function(error, profile_data) {
+        var profile = profile_data[0];
+        var funcTree = new FuncTree(tree_data[0]['tree']);
+        funcTree
+            .create()
+            .update();
+
+        new Vue({
+            'el': '#form-functree',
+            'data': {
+                'series': '',
+                'columnsSingle': '',
+                'columnsMultiple': '',
+                'normalize': true,
+                'options': [
+                    profile.series,
+                    []
+                ]
+            },
+            'methods': {
+                'clickOptionSeries': function() {
+                    this.$set(this.options, 1, profile.columns[this.series]);
+                },
+                'submit': function() {
+                    var self = this;
+                    var profile_dict = {};
+                    for (var i = 0; i < profile.profile.length; i++) {
+                        var node = profile.profile[i];
+                        var p = {
+                            'value': node.values[self.series][self.columnsSingle],
+                            'values': node.values[self.series]
+                                .filter(function(value, index) {
+                                    return self.columnsMultiple.includes(index);
+                                })
+                        }
+                        profile_dict[node.entry] = p;
+                    }
+                    for (var i = 0; i < funcTree.nodes.length; i++) {
+                        var node = funcTree.nodes[i];
+                        if (profile_dict[node.entry]) {
+                            node.value = profile_dict[node.entry].value;
+                            node.values = profile_dict[node.entry].values;
+                        }
+                    }
+                    funcTree
+                        .configure({
+                            'normalize': self.normalize
+                        })
+                        .update();
+                },
+                'reset': function() {
+                    funcTree
+                        .initTree()
+                        .update();
+                }
+            }
+        });
+        $('#loading').remove();
+    })});
+
+    $('#form-save-image').on('submit', function(event) {
+        event.preventDefault();
+        $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
+            .hide()
+            .append($('<input/>', {'type': 'hidden', 'name': 'format', 'value': $(this).find('[name=format]').val()}))
+            .append($('<input/>', {'type': 'hidden', 'name': 'svg', 'value': (new XMLSerializer).serializeToString($('#functree > svg')[0])}))
+            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': '{{csrf_token()}}'}))
+            .appendTo(document.body)
+            .submit()
+            .remove();
+    });
+</script>
+{% endblock %}

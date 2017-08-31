@@ -1,0 +1,91 @@
+{% extends 'viewer.html' %}
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block sidebar %}
+<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-tables" data-toggle="collapse">#</a></h5>
+<form id="form-tables" class="collapse in">
+    <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
+    <input type="hidden" name="mode" value="tables">
+    <div class="form-group">
+        <label class="control-label">Data series</label>
+        <select name="series" class="form-control input-sm">
+            {% for series_ in profile.series %}
+            <option value="{{loop.index0}}"{% if loop.index0 == series %} selected{% endif %}>{{series_}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary btn-sm">Go</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block mainpane %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Data series: <span class="badge">{{profile.series[series]}}</span>
+    </div>
+    <div class="panel-body">
+        <table id="table-function" class="table table-hover table-striped" width="100%">
+            <thead>
+                <tr>
+                    <th>Entry</th>
+                    {% for col in profile.columns[series] %}
+                    <th>{{col}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script src="{{ url_for('static', filename='bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+<script>
+    $(function() {
+        $('#table-function').DataTable({
+            'dom': '<"row"<"col-sm-6"l><"col-sm-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-5"iB><"col-sm-7"p>>',
+            'processing': true,
+            'ajax': {
+                'url': '{{ url_for('route_profile', profile_id=profile.profile_id) }}',
+                'dataSrc': '0.profile',
+            },
+            'columns': [
+                {
+                    'data': 'entry',
+                    'render': function(data, type, full, meta) {
+                        return '<a href="https://www.google.co.jp/search?q=' + data + '" target="_blank">' + data + '</a>';
+                    }
+                },
+                {% for col in profile.columns[series] %}
+                {'data': 'values.{{series}}.{{loop.index0}}'},
+                {% endfor %}
+            ],
+            'order': [
+                [0, 'asc']
+            ],
+            'scrollX': true,
+            'stateSave': true,
+            'buttons': [
+                {
+                    'text': '<i class="fa fa-download" aria-hidden="true"></i> Download TSV',
+                    'extend': 'csv',
+                    'fieldSeparator': '\t',
+                    'fieldBoundary': '',
+                    'filename': '{{profile.profile_id + '_' +profile.series[series]}}',
+                    'extension': '.tsv'
+                }
+            ]
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% set title = 'Data' %}
+{% extends 'layout.html' %}
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>{{title}}</h2>
+    </div>
+    <div class="page-header">
+        <h3>Functional Trees</h3>
+    </div>
+    <table id="table-tree" class="table table-hover table-striped" width="100%">
+        <thead>
+            <tr>
+                <th>Source</th>
+                <th>Description</th>
+                <th>Added at</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        {% for tree in trees %}
+        <tr>
+            <td>{{tree.source}}</td>
+            <td>{{tree.description|truncate(50, True)}}</td>
+            <td>{{tree.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+            <td><a href="{{ url_for('route_tree', source = tree.source) }}" target="_blank">JSON</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="page-header">
+        <h3>Module Definitions</h3>
+    </div>
+    <table id="table-definition" class="table table-hover table-striped" width="100%">
+        <thead>
+            <tr>
+                <th>Source</th>
+                <th>Description</th>
+                <th>Added at</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        {% for definition in definitions %}
+        <tr>
+            <td>{{definition.source}}</td>
+            <td>{{definition.description|truncate(50, True)}}</td>
+            <td>{{definition.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+            <td><a href="{{ url_for('route_definition', source = definition.source) }}" target="_blank">JSON</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script src="{{ url_for('static', filename='bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+<script>
+$(function() {
+    $('#table-tree').DataTable({
+        'dom': '<"row"<"col-sm-6"l><"col-sm-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-5"iB><"col-sm-7"p>>',
+        'columns': [
+            {'data': 'Source', 'width': 100},
+            {'data': 'Description'},
+            {'data': 'Added at', 'width': 180},
+            {'data': 'Download', 'width': 100}
+        ],
+        'order': [
+            [2, 'desc']
+        ],
+        'scrollX': true,
+        'stateSave': true,
+        'buttons': [
+            {
+                'text': '<i class="fa fa-download" aria-hidden="true"></i> Download TSV',
+                'extend': 'csv',
+                'fieldSeparator': '\t',
+                'fieldBoundary': '',
+                'filename': 'list_trees',
+                'extension': '.tsv',
+                'exportOptions': {
+                    'columns': [0, 1, 2]
+                }
+            }
+        ]
+    });
+    $('#table-definition').DataTable({
+        'dom': '<"row"<"col-sm-6"l><"col-sm-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-5"iB><"col-sm-7"p>>',
+        'columns': [
+            {'data': 'Source', 'width': 100},
+            {'data': 'Description'},
+            {'data': 'Added at', 'width': 180},
+            {'data': 'Download', 'width': 100}
+        ],
+        'order': [
+            [2, 'desc']
+        ],
+        'scrollX': true,
+        'stateSave': true,
+        'buttons': [
+            {
+                'text': '<i class="fa fa-download" aria-hidden="true"></i> Download TSV',
+                'extend': 'csv',
+                'fieldSeparator': '\t',
+                'fieldBoundary': '',
+                'filename': 'list_definitions',
+                'extension': '.tsv',
+                'exportOptions': {
+                    'columns': [0, 1, 2]
+                }
+            }
+        ]
+    });
+});
+</script>
+{% endblock %}

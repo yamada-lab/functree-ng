@@ -1,0 +1,16 @@
+{% set title = '{0} {1}'.format(error.code, error.name) %}
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>{{title}}</h2>
+    </div>
+    <div class="alert alert-danger" role="alert"><strong><i class="fa fa-exclamation-circle" aria-hidden="true"></i> Oops! </strong>An error occurred - {{error.code}} {{error.name}}</div>
+    {% if error.code == 401 %}
+    <pre style="line-height: 14pt; font-family: Mona, Monapo, IPAMonaPGothic, 'IPA モナー Pゴシック', 'MS Pgothic', 'MS Pゴシック'; font-size: 14pt;">
+        {{'ICAgICAgICAgICAg44CA44CA44CA44CA44CALCAo4oyS44CA44CA44CA44CA44CA44CA4oySKQogICAg44CA44CA44CAKOKMkuOAgOOAgCjjgIDjgIDjgIDjgIDjgIDjgIAp44CA44CA4oySKQogICAg44CA44CA77yI44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CA44CAKeOAgOOAgCkKICAgIOOAgOOAgOOAgOOAgO+8iO+8v+ODve+8v+++iuS7juS6uu+8v+++ie+8v+ODjgogICAg44CA44CA44CA44CA44CA44CA44CA44CA44CAIHwgfHwgfCB8CiAgICDjgIDjgIDjgIDjgIDjgIDjgIDjgIDvvokg77ysLGwgLHx8IHzvvaRs44CBCiAgICDjgIDjgIDjgIDjgIDjgIDjgIDjgIDijJI6OjrvvLw6Ojo6Ou+8jzo677y8CiAgICDjgIDjgIDjgIDjgIDjgIDjgIDvvI/jgIA84pePPjo6Ojo84pePPu+8vAogICAg44CA44CA44CA44CAIO+8j+OAgOOAgOOAgCDvvIhfX+S6ul9f77yJ44CA44CAIO+8vOOAgOOAgERPTidUIE1FU1MgVVAhISEKICAgIOOAgOOAgOOAgCDjgIB844CAIOOAgCDjgIDjgIDjgIB8Ojo6Ojo6fOOAgOOAgOOAgOOAgOOAgHwKICAgIOOAgOOAgOOAgOOAgCDvvLwg44CAIOOAgCDjgIAgbDs7Ozs7O2zjgIDjgIAg44CA77yPbCF8CiAgICDjgIDjgIDjgIAg44CA77yP44CA44CA44CA44CA44CAYO+9sCfjgIAg44CA44CA77y8IHxpCiAgICDjgIDjgIDjgIDvvI/jgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjg70gIWzjgIDjg71pCiAgICDjgIDjgIAg77yI44CA44CAIOS4ti0g44CB44CA44CA44CA44CA44CA44CAIOOBl++8peOAgHzjgIDjgIDjgIDjgIDjg4njg7Pjg4PvvIEKICAgIOOAgOOAgOOAgOOAgGDjg7zvvaTvvL/vvokg44CAIOOAgCDjgIAg4oiR44CAbO+9pO+8pSDvvonjgIA+CiAgICDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDjgIDvvppZXu+8tl7jg70='|b64decode|safe}}
+    </pre>
+    {% endif %}
+</div>
+{% endblock %}

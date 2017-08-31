@@ -1,0 +1,18 @@
+version: "2"
+services:
+  app:
+    build: .
+    links:
+      - db
+    ports:
+      - "8000:8000"
+    command: gunicorn functree:app --config gunicorn.conf.py
+  db:
+    image: mongo:3.4
+    volumes_from:
+      - db_data
+    command: mongod --storageEngine wiredTiger
+  db_data:
+    image: busybox:latest
+    volumes:
+      - /data/db

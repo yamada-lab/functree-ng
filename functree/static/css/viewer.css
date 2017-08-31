@@ -1,0 +1,98 @@
+body {
+    margin-bottom: 40px;
+}
+#page-wrapper {
+    min-height: 600px;
+}
+#content-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 50px 15px 40px 15px;    /* the height of #navbar, .footer */
+}
+#content-wrapper > h3 {
+    white-space: nowrap;
+}
+#content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+}
+#sidebar {
+    width: 250px;
+    min-width: 250px;
+    height: auto;
+    margin-bottom: 15px;
+    padding-right: 15px;
+    border-right: solid thin #ddd;
+    overflow-y: scroll;
+}
+#maincontent {
+    width: 100%;
+    min-width: 600px;
+    height: auto;
+    margin-bottom: 15px;
+}
+#mainpane-wrapper {
+    position: relative;
+    height: 100%;
+    margin-left: 15px;
+}
+#mainpane {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin-top: 55px;
+}
+#functree {
+    width: 100%;
+    max-width: 1800px;
+    height: 100%;           /* FIXME: Does not work on Safari  */
+    max-height: 1800px;
+    position: absolute;
+    border: 1px solid transparent;
+    border-color: #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    background-color: #fff;
+    overflow: hidden;
+}
+#functree > svg {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-top: -900px;     /* Half of the height of svg */
+    margin-left: -900px;    /* Half of the width of svg */
+}
+#loading {
+    background-color: #000;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin-top: 50px;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#loading > div {
+    text-align: center;
+    color: #fff;
+}
+.footer {
+    height: 40px;
+    min-width: 880px;
+}
+.footer > .container > .text-muted {
+    margin: 10px 0;
+}

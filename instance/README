@@ -1,0 +1,1 @@
+This directory is for the environment-specific configuration file. To configure the behavior of the application, create "config.py" in this directory with the same format as "functree/config.py".

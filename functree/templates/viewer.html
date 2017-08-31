@@ -1,0 +1,41 @@
+{% set title = 'Viewer' %}
+{% extends 'layout.html' %}
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/viewer.css') }}">
+{% endblock %}
+
+{% block content %}
+<div id="page-wrapper" class="container-fluid">
+    <div id="content-wrapper">
+        <h3>Profile ID: <b><a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}">{{profile.profile_id}}</a></b>&nbsp;&nbsp;<small><i class="fa fa-database" aria-hidden="true"></i> {{profile.target}}&nbsp;&nbsp;<i class="fa fa-clock-o" aria-hidden="true"></i> {{profile.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}{% if profile.private %}&nbsp;&nbsp;<span class="badge">Private</span>{% endif %}</small></h3>
+        <div id="content">
+            <div id="sidebar">
+                {% block sidebar %}{% endblock %}
+            </div>
+            <div id="maincontent">
+                <div id="mainpane-wrapper">
+                    <ul class="nav nav-tabs">
+                        <li role="presentation"{% if mode == 'functree' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={}&mode=functree'.format(profile.profile_id) }}"><i class="fa fa-tree" aria-hidden="true"></i> FuncTree</a></li>
+                        <li role="presentation"{% if mode == 'charts' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=charts'.format(profile.profile_id) }}"><i class="fa fa-bar-chart" aria-hidden="true"></i> Charts</a></li>
+                        <li role="presentation"{% if mode == 'tables' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=tables'.format(profile.profile_id) }}"><i class="fa fa-table" aria-hidden="true"></i> Tables</a></li>
+                        <li role="presentation"{% if mode == 'summary' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=summary'.format(profile.profile_id) }}"><i class="fa fa-file-text-o" aria-hidden="true"></i> Summary</a></li>
+                    </ul>
+                    <div id="mainpane">
+                        {% block mainpane %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if mode == 'functree' %}
+    <div id="loading">
+        <div>
+            <p><i class="fa fa-spinner fa-pulse fa-4x fa-fw"></i></p>
+            <p>Loading...</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

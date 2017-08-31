@@ -1,0 +1,29 @@
+{% set title = 'Admin Console' %}
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>{{title}}</h2>
+    </div>
+    <div class="page-header">
+        <h3>Statistics</h3>
+    </div>
+    <ul>
+        <li><a href="{{ url_for('route_list') }}">Registered profiles</a> (including private profiles): <span class="badge">{{profiles.count()}}</span></li>
+        <li><a href="{{ url_for('route_data') + '#table-tree' }}">Functional Trees</a>: <span class="badge">{{trees.count()}}</span></li>
+        <li><a href="{{ url_for('route_data') + '#table-definition' }}">Module definitions</a>: <span class="badge">{{definitions.count()}}</span></li>
+    </ul>
+    <div class="page-header">
+        <h3>Operations</h3>
+    </div>
+    <div class="alert alert-warning" role="alert">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <strong>Attention!</strong> Do not forget restart the application after <em>"Update Functional Trees" or "Update module definitions"</em> to reflect the change.
+    </div>
+    <ul>
+        <li><a href="{{ url_for('route_admin_init_profiles') }}" onclick="return confirm('Are you sure that you want to initialize profile collection?');">Initialize profile collection</a></li>
+        <li><a href="{{ url_for('route_admin_update_trees') }}" onclick="return confirm('Are you sure that you want to update Functional Trees?');">Update Functional Trees</a></li>
+        <li><a href="{{ url_for('route_admin_update_definitions') }}" onclick="return confirm('Are you sure that you want to update module definitions?');">Update module definitions</a></li>
+    </ul>
+</div>
+{% endblock %}

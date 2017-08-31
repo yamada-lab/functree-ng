@@ -1,0 +1,49 @@
+{% extends 'viewer.html' %}
+
+{% block mainpane %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Data summary
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <th width="150">Profile ID</th>
+                    <td><a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}">{{profile.profile_id}}</a></td>
+                </tr>
+                <tr>
+                    <th>Added at</th>
+                    <td>{{profile.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+                </tr>
+                <tr>
+                    <th>Database</th>
+                    <td><a href="{{ url_for('route_data') + '#table-tree' }}">{{profile.target}}</a></td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{profile.description}}</td>
+                </tr>
+                <tr>
+                    <th>Private</th>
+                    <td>{{profile.private}}</td>
+                </tr>
+                <tr>
+                    <th>Download</th>
+                    <td><a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank">JSON</a></td>
+                </tr>
+                <tr>
+                    <th>Delete</th>
+                    <td>
+                        <form method="post" action="{{ url_for('route_profile', profile_id=profile.profile_id )}}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                            <button type="submit" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-submit" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
