@@ -12,4 +12,4 @@ RUN pip3 install -r requirements.txt
 RUN npm install --global yarn && \
   yarn install && \
   yarn run bower install && \
-  yarn run babel
+  yarn run build

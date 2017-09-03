@@ -15,15 +15,22 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "babel-cli": "^6.24.1",
+    "babel-core": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
-    "bower": "^1.8.0"
+    "bower": "^1.8.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-sass": "^3.1.0"
   },
   "scripts": {
     "bower": "bower",
-    "babel": "npm run babel:build",
-    "babel:build": "babel functree/static/js/src --out-dir functree/static/js --presets=es2015 --compact=true --source-maps",
-    "babel:watch": "babel functree/static/js/src --out-dir functree/static/js --presets=es2015 --compact=true --source-maps --watch "
+    "babel": "gulp babel",
+    "babel:watch": "gulp babel:watch",
+    "sass": "gulp sass",
+    "sass:watch": "gulp sass:watch",
+    "build": "gulp build"
   },
-  "private": true
+  "private": true,
+  "dependencies": {}
 }
