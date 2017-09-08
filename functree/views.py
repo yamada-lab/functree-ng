@@ -1,5 +1,5 @@
 import datetime, json, os, uuid
-import flask, werkzeug.exceptions, cairosvg, subprocess
+import flask, werkzeug.exceptions, cairosvg
 from functree import app, auth, filters, forms, models, analysis, tree
 from .crckm.src import download as crckm
 
@@ -74,7 +74,7 @@ def route_analysis(mode):
 
 @app.route('/list/')
 def route_list():
-    profiles = models.Profile.objects().all().filter(private=False)
+    profiles = models.Profile.objects().filter(private=False)
     return flask.render_template('list.html', **locals())
 
 
@@ -92,10 +92,7 @@ def route_help():
 
 @app.route('/about/')
 def route_about():
-    try:
-        version = subprocess.check_output(['git', 'describe', '--long']).decode('utf-8')
-    except subprocess.CalledProcessError:
-        version = 'v(N/A)'
+    version = flask.current_app.version
     return flask.render_template('about.html', **locals())
 
 
