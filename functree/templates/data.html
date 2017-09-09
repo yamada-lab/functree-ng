@@ -27,7 +27,7 @@
         <tr>
             <td>{{tree.source}}</td>
             <td>{{tree.description|truncate(50, True)}}</td>
-            <td>{{tree.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+            <td>{{tree.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
             <td><a href="{{ url_for('route_tree', source = tree.source) }}" target="_blank">JSON</a></td>
         </tr>
         {% endfor %}
@@ -48,7 +48,7 @@
         <tr>
             <td>{{definition.source}}</td>
             <td>{{definition.description|truncate(50, True)}}</td>
-            <td>{{definition.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+            <td>{{definition.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
             <td><a href="{{ url_for('route_definition', source = definition.source) }}" target="_blank">JSON</a></td>
         </tr>
         {% endfor %}

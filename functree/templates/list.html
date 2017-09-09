@@ -28,14 +28,14 @@
             <td>{{profile.profile_id}}</td>
             <td><a href="{{ url_for('route_data') + '#table-tree' }}">{{profile.target}}</a></td>
             <td>{{profile.description|truncate(50, True)}}</td>
-            <td>{{profile.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+            <td>{{profile.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
             <td><a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}">Go to viewer</a></td>
             <td><a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank">JSON</a></td>
             <td>
                 <form action="{{ url_for('route_profile', profile_id=profile.profile_id )}}" method="post">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-                    <button type="submit" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-submit" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                    <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
                 </form>
             </td>
         </tr>
