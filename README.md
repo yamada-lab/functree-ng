@@ -31,7 +31,7 @@ Then open http://localhost:5000/ in your web browser.
 ### Using Docker and Docker Compose
 Add the following variable to `instance/config.py`:
 ```python
-MONGODB_HOST = 'mongodb://db:27017/functree'
+MONGODB_HOST = 'mongodb://db:27017/functree?tz_aware=true'
 ```
 Execute the command below. `docker-compose` will automatically set up Docker containers.
 ```bash

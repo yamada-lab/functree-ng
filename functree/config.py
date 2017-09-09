@@ -5,7 +5,7 @@
 #
 DEBUG = False
 SECRET_KEY = 'Replace me with long random characters!'
-MONGODB_HOST = 'mongodb://127.0.0.1:27017/functree'
+MONGODB_HOST = 'mongodb://127.0.0.1:27017/functree?tz_aware=true'
 JSONIFY_PRETTYPRINT_REGULAR = False
 FUNCTREE_ADMIN_USERNAME = 'admin'
 FUNCTREE_ADMIN_PASSWORD = 'password'
