@@ -1,6 +1,6 @@
 import datetime, json, os, uuid
 import flask, werkzeug.exceptions, cairosvg
-from functree import app, auth, filters, forms, models, analysis, tree
+from functree import __version__, app, auth, filters, forms, models, analysis, tree
 from .crckm.src import download as crckm
 
 
@@ -92,7 +92,7 @@ def route_help():
 
 @app.route('/about/')
 def route_about():
-    version = flask.current_app.version
+    version = __version__
     return flask.render_template('about.html', **locals())
 
 
