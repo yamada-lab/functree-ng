@@ -1,5 +1,5 @@
 # FuncTree
-[![MIT License](https://img.shields.io/npm/l/functree-cli.svg)](LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 FuncTree is a web based application, which allows user to visualize, customize, and compute statistical test to understand the biological functionality of their omics data. FuncTree allows user to map their omics data on to a pre-defined treemap, which is based on the [KEGG brite functional hierarchy](http://www.genome.jp/kegg-bin/get_htext?br08902.keg). This allows user to quickly and comprehensively understand the functional potential of their data, and to develop further hypothesis and scientific insights.
 
@@ -11,7 +11,7 @@ FuncTree is a web based application, which allows user to visualize, customize, 
 ## Installation
 Clone this repository and change directory to `functree`:
 ```bash
-$ git clone --recursive https://github.com/yyuuta88/functree.git
+$ git clone --recursive https://github.com/yyuuta88/functree-ng.git
 $ cd functree
 ```
 Install dependencies and build the application:

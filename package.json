@@ -1,5 +1,5 @@
 {
-  "name": "functree",
+  "name": "functree-ng",
   "description": "Visualization and analysis tool for omics data based on biological functional tree",
   "author": {
     "name": "Yuta Yamate",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yyuuta88/functree.git"
+    "url": "https://github.com/yyuuta88/functree-ng.git"
   },
   "bugs": {
-    "url": "https://github.com/yyuuta88/functree/issues"
+    "url": "https://github.com/yyuuta88/functree-ng/issues"
   },
   "license": "MIT",
   "devDependencies": {
