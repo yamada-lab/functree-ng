@@ -1,5 +1,5 @@
 # FuncTree
-[![MIT License](https://img.shields.io/npm/l/functree-cli.svg)](LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 FuncTree is a web based application, which allows user to visualize, customize, and compute statistical test to understand the biological functionality of their omics data. FuncTree allows user to map their omics data on to a pre-defined treemap, which is based on the [KEGG brite functional hierarchy](http://www.genome.jp/kegg-bin/get_htext?br08902.keg). This allows user to quickly and comprehensively understand the functional potential of their data, and to develop further hypothesis and scientific insights.
 
@@ -11,14 +11,16 @@ FuncTree is a web based application, which allows user to visualize, customize, 
 ## Installation
 Clone this repository and change directory to `functree`:
 ```bash
-$ git clone --recursive https://github.com/yyuuta88/functree.git
+$ git clone --recursive https://github.com/yyuuta88/functree-ng.git
 $ cd functree
 ```
-Install dependencies:
+Install dependencies and build the application:
 ```bash
 $ pip3 install -r requirements.txt
 $ npm install yarn --global
+$ yarn run install
 $ yarn run bower install
+$ yarn run build
 ```
 Start up the application:
 ```bash
@@ -29,12 +31,13 @@ Then open http://localhost:5000/ in your web browser.
 ### Using Docker and Docker Compose
 Add the following variable to `instance/config.py`:
 ```python
-MONGODB_HOST = 'mongodb://db:27017/functree'
+MONGODB_HOST = 'mongodb://db:27017/functree?tz_aware=true'
 ```
 Execute the command below. `docker-compose` will automatically set up Docker containers.
 ```bash
 $ docker-compose up
 ```
+Then open http://localhost:8000/ in your web browser.
 
 ## Configuration
 To configure the behavior of the application, create `instance/config.py` with the same format as `functree/config.py`.

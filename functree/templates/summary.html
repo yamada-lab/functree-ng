@@ -14,7 +14,7 @@
                 </tr>
                 <tr>
                     <th>Added at</th>
-                    <td>{{profile.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+                    <td>{{profile.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
                 </tr>
                 <tr>
                     <th>Database</th>

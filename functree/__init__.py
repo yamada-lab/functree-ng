@@ -1,4 +1,6 @@
-import flask, flask_mongoengine, flask_wtf.csrf, flask_httpauth, flask_debugtoolbar
+import setuptools_scm, flask, flask_mongoengine, flask_wtf.csrf, flask_httpauth, flask_debugtoolbar
+
+__version__ = setuptools_scm.get_version(root='..', relative_to=__file__)
 
 app = flask.Flask(__name__, instance_relative_config=True)
 app.config.from_object('functree.config')

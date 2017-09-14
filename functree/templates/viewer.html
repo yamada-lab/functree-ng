@@ -3,13 +3,13 @@
 
 {% block head %}
 {{super()}}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/viewer.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/viewer.css') }}">
 {% endblock %}
 
 {% block content %}
 <div id="page-wrapper" class="container-fluid">
     <div id="content-wrapper">
-        <h3>Profile ID: <b><a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}">{{profile.profile_id}}</a></b>&nbsp;&nbsp;<small><i class="fa fa-database" aria-hidden="true"></i> {{profile.target}}&nbsp;&nbsp;<i class="fa fa-clock-o" aria-hidden="true"></i> {{profile.added_at.strftime('%Y-%m-%d %H:%M:%S %Z')}}{% if profile.private %}&nbsp;&nbsp;<span class="badge">Private</span>{% endif %}</small></h3>
+        <h3>Profile ID: <b><a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}">{{profile.profile_id}}</a></b>&nbsp;&nbsp;<small><i class="fa fa-database" aria-hidden="true"></i> {{profile.target}}&nbsp;&nbsp;<i class="fa fa-clock-o" aria-hidden="true"></i> {{profile.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}{% if profile.private %}&nbsp;&nbsp;<span class="badge">Private</span>{% endif %}</small></h3>
         <div id="content">
             <div id="sidebar">
                 {% block sidebar %}{% endblock %}
