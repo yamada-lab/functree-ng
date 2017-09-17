@@ -43,6 +43,7 @@
 <hr>
 <h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse">#</a></h5>
 <form id="form-save-image" class="collapse in">
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
     <div class="form-group">
         <label class="control-label">Format</label>
         <select name="format" class="form-control">
@@ -135,9 +136,9 @@
         event.preventDefault();
         $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
             .hide()
+            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': $(this).find('[name=csrf_token]').val()}))
             .append($('<input/>', {'type': 'hidden', 'name': 'format', 'value': $(this).find('[name=format]').val()}))
             .append($('<input/>', {'type': 'hidden', 'name': 'svg', 'value': (new XMLSerializer).serializeToString($('#functree > svg')[0])}))
-            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': '{{csrf_token()}}'}))
             .appendTo(document.body)
             .submit()
             .remove();

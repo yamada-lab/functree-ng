@@ -20,7 +20,7 @@
                 <th>Source</th>
                 <th>Description</th>
                 <th>Added at</th>
-                <th>Download</th>
+                <th>Action</th>
             </tr>
         </thead>
         {% for tree in trees %}
@@ -28,7 +28,11 @@
             <td>{{tree.source}}</td>
             <td>{{tree.description|truncate(50, True)}}</td>
             <td>{{tree.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
-            <td><a href="{{ url_for('route_tree', source = tree.source) }}" target="_blank">JSON</a></td>
+            <td>
+                <div class="btn-group" role="group" aria-label="...">
+                    <a href="{{ url_for('route_tree', source = tree.source) }}" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-download" aria-hidden="true"> Download</i></a>
+                </div>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -41,7 +45,7 @@
                 <th>Source</th>
                 <th>Description</th>
                 <th>Added at</th>
-                <th>Download</th>
+                <th>Action</th>
             </tr>
         </thead>
         {% for definition in definitions %}
@@ -49,7 +53,11 @@
             <td>{{definition.source}}</td>
             <td>{{definition.description|truncate(50, True)}}</td>
             <td>{{definition.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
-            <td><a href="{{ url_for('route_definition', source = definition.source) }}" target="_blank">JSON</a></td>
+            <td>
+                <div class="btn-group" role="group" aria-label="...">
+                    <a href="{{ url_for('route_definition', source = definition.source) }}" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-download" aria-hidden="true"> Download</i></a>
+                </div>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -70,7 +78,7 @@ $(function() {
             {'data': 'Source', 'width': 100},
             {'data': 'Description'},
             {'data': 'Added at', 'width': 180},
-            {'data': 'Download', 'width': 100}
+            {'data': 'Action', 'width': 100}
         ],
         'order': [
             [2, 'desc']
@@ -97,7 +105,7 @@ $(function() {
             {'data': 'Source', 'width': 100},
             {'data': 'Description'},
             {'data': 'Added at', 'width': 180},
-            {'data': 'Download', 'width': 100}
+            {'data': 'Action', 'width': 100}
         ],
         'order': [
             [2, 'desc']
