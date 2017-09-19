@@ -3,14 +3,14 @@ from functree import app, models
 
 
 class BasicForm(flask_wtf.FlaskForm):
-    __tree_sources = models.Tree.objects.aggregate(
+    _tree_sources = models.Tree.objects.aggregate(
         {'$group': {'_id': '$source'}}
     )
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
     target = wtforms.SelectField('Database', choices=[
-        (tree_source['_id'],) * 2 for tree_source in __tree_sources
+        (tree_source['_id'],) * 2 for tree_source in _tree_sources
     ])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),
@@ -20,15 +20,15 @@ class BasicForm(flask_wtf.FlaskForm):
     submit = wtforms.SubmitField('Submit')
 
 
-class McrForm(flask_wtf.FlaskForm):
-    __definition_sources = models.Definition.objects.aggregate(
+class MCRForm(flask_wtf.FlaskForm):
+    _definition_sources = models.Definition.objects.aggregate(
         {'$group': {'_id': '$source'}}
     )
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
     target = wtforms.SelectField('Database', choices=[
-        (definition_source['_id'],) * 2 for definition_source in __definition_sources
+        (definition_source['_id'],) * 2 for definition_source in _definition_sources
     ])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),
@@ -38,15 +38,15 @@ class McrForm(flask_wtf.FlaskForm):
     submit = wtforms.SubmitField('Submit')
 
 
-class JsonUploadForm(flask_wtf.FlaskForm):
-    __tree_sources = models.Tree.objects.aggregate(
+class JSONUploadForm(flask_wtf.FlaskForm):
+    _tree_sources = models.Tree.objects.aggregate(
         {'$group': {'_id': '$source'}}
     )
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
     target = wtforms.SelectField('Database', choices=[
-        (tree_source['_id'],) * 2 for tree_source in __tree_sources
+        (tree_source['_id'],) * 2 for tree_source in _tree_sources
     ])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),

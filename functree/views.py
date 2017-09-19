@@ -32,7 +32,7 @@ def route_analysis(mode):
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'mcr':
-        form = forms.McrForm()
+        form = forms.MCRForm()
         if form.validate_on_submit():
             result = analysis.perform_mcr(
                 f=form.input_file.data,
@@ -52,7 +52,7 @@ def route_analysis(mode):
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'upload_profile':
-        form = forms.JsonUploadForm()
+        form = forms.JSONUploadForm()
         if form.validate_on_submit():
             input_data = json.load(form.input_file.data)[0]
             profile = models.Profile(
