@@ -9,7 +9,7 @@ def route_index():
     return flask.render_template('index.html')
 
 
-@app.route('/analysis/<mode>/', methods=['GET', 'POST'])
+@app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
     if mode == 'basic':
         form = forms.BasicForm()
@@ -140,14 +140,14 @@ def route_profile(profile_id):
         return flask.jsonify([profile])
 
 
-@app.route('/tree/<source>/latest')
+@app.route('/tree/<string:source>')
 def route_tree(source):
     excludes = ('id',)
     tree = models.Tree.objects().exclude(*excludes).get_or_404(source=source)
     return flask.jsonify([tree])
 
 
-@app.route('/definition/<source>/latest')
+@app.route('/definition/<string:source>')
 def route_definition(source):
     excludes = ('id',)
     definition = models.Definition.objects().exclude(*excludes).get_or_404(source=source)
@@ -180,7 +180,7 @@ def route_save_image():
 
 @app.route('/action/init_profiles/')
 @auth.login_required
-def route_admin_init_profiles():
+def route_init_profiles():
     f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/profile/example.json'), 'r')
     input_data = json.load(f)[0]
     models.Profile.objects.all().delete()
@@ -198,7 +198,7 @@ def route_admin_init_profiles():
 
 @app.route('/action/update_trees/')
 @auth.login_required
-def route_admin_update_trees():
+def route_update_trees():
     models.Tree.objects.all().delete()
     func_tree = models.Tree(
         tree=tree.get_tree(),
@@ -211,7 +211,7 @@ def route_admin_update_trees():
 
 @app.route('/action/update_definitions/')
 @auth.login_required
-def route_admin_update_definitions():
+def route_update_definitions():
     models.Definition.objects.all().delete()
     definition = models.Definition(
         definition=crckm.get_definition(),
@@ -223,14 +223,14 @@ def route_admin_update_definitions():
 
 
 @auth.get_password
-def get_pw(username):
+def auth_get_password(username):
     if username == app.config['FUNCTREE_ADMIN_USERNAME']:
         return app.config['FUNCTREE_ADMIN_PASSWORD']
     return None
 
 
 @auth.error_handler
-def auth_error():
+def auth_error_handler():
     return flask.render_template('error.html', error=werkzeug.exceptions.Unauthorized()), 401
 
 
