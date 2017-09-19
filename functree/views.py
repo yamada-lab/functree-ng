@@ -19,7 +19,7 @@ def route_analysis(mode):
                 target=form.target.data
             )
             profile = models.Profile(
-                profile_id=uuid.uuid4().hex,
+                profile_id=uuid.uuid4(),
                 profile=result['profile'],
                 series=result['series'],
                 columns=result['columns'],
@@ -39,7 +39,7 @@ def route_analysis(mode):
                 target=form.target.data
             )
             profile = models.Profile(
-                profile_id=uuid.uuid4().hex,
+                profile_id=uuid.uuid4(),
                 profile=result['profile'],
                 series=result['series'],
                 columns=result['columns'],
@@ -56,7 +56,7 @@ def route_analysis(mode):
         if form.validate_on_submit():
             input_data = json.load(form.input_file.data)[0]
             profile = models.Profile(
-                profile_id=uuid.uuid4().hex,
+                profile_id=uuid.uuid4(),
                 profile=input_data['profile'],
                 series=input_data['series'],
                 columns=input_data['columns'],
@@ -103,7 +103,7 @@ def route_contact():
 
 @app.route('/viewer/')
 def route_viewer():
-    profile_id = flask.request.args.get('profile_id', type=str)
+    profile_id = flask.request.args.get('profile_id', type=uuid.UUID)
     mode = flask.request.args.get('mode', default='functree', type=str)
     profile = models.Profile.objects().get_or_404(profile_id=profile_id)
     if mode == 'functree':
@@ -129,25 +129,28 @@ def route_admin():
     return flask.render_template('admin.html', **locals())
 
 
-@app.route('/profile/<profile_id>', methods=['GET', 'POST'])
+@app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
 def route_profile(profile_id):
     if flask.request.form.get('_method') == 'DELETE':
         models.Profile.objects.get_or_404(profile_id=profile_id).delete()
         return flask.redirect(flask.url_for('route_list'))
     else:
-        profile = models.Profile.objects.get_or_404(profile_id=profile_id)
+        excludes = ('id',)
+        profile = models.Profile.objects.exclude(*excludes).get_or_404(profile_id=profile_id)
         return flask.jsonify([profile])
 
 
 @app.route('/tree/<source>/latest')
 def route_tree(source):
-    tree = models.Tree.objects().get_or_404(source=source)
+    excludes = ('id',)
+    tree = models.Tree.objects().exclude(*excludes).get_or_404(source=source)
     return flask.jsonify([tree])
 
 
 @app.route('/definition/<source>/latest')
 def route_definition(source):
-    definition = models.Definition.objects().get_or_404(source=source)
+    excludes = ('id',)
+    definition = models.Definition.objects().exclude(*excludes).get_or_404(source=source)
     return flask.jsonify([definition])
 
 
@@ -182,7 +185,7 @@ def route_admin_init_profiles():
     input_data = json.load(f)[0]
     models.Profile.objects.all().delete()
     profile = models.Profile(
-        profile_id=uuid.uuid4().hex,
+        profile_id=uuid.uuid4(),
         profile=input_data['profile'],
         series=input_data['series'],
         columns=input_data['columns'],

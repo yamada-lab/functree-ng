@@ -12,7 +12,7 @@ class Profile(db.Document):
     _tree_sources = Tree.objects.aggregate(
         {'$group': {'_id': '$source'}}
     )
-    profile_id = db.StringField(required=True)
+    profile_id = db.UUIDField(binary=True, required=True, unique=True)
     profile = db.ListField(default=[])
     series = db.ListField(default=[])
     columns = db.ListField(default=[])
