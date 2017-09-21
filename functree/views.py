@@ -206,6 +206,10 @@ def route_update_trees():
         description='KEGG version of Functional Tree',
         added_at=datetime.datetime.utcnow()
     ).save()
+    sources = models.Tree.objects.aggregate(
+        {'$group': {'_id': '$source'}}
+    )
+    models.Profile.target.choices = models.Definition.source.choices = [source['_id'] for source in sources]
     return flask.redirect(flask.url_for('route_admin'))
 
 

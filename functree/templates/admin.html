@@ -17,9 +17,6 @@
     <div class="page-header">
         <h3>Operations</h3>
     </div>
-    <div class="alert alert-warning" role="alert">
-        <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Attention!</strong> Do not forget restart the application after <b>"Update Functional Trees"</b> or <b>"Update module definitions"</b> to reflect the change.
-    </div>
     <ul>
         <li><a href="{{ url_for('route_init_profiles') }}" onclick="return confirm('Are you sure that you want to initialize profile collection?');">Initialize profile collection</a></li>
         <li><a href="{{ url_for('route_update_trees') }}" onclick="return confirm('Are you sure that you want to update Functional Trees?');">Update Functional Trees</a></li>
