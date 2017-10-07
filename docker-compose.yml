@@ -5,10 +5,10 @@ services:
     links:
       - db
     ports:
-      - "8000:8000"
-    command: gunicorn functree:app --config gunicorn.conf.py
+      - "8080:8080"
+    command: uwsgi --ini /app/uwsgi.ini
   db:
-    image: mongo:3.4
+    image: mongo:3.4.9
     volumes_from:
       - db_data
     command: mongod --storageEngine wiredTiger

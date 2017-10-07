@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.6.2
 
 LABEL maintainer="Yuta Yamate <yyamate@bio.titech.ac.jp>"
 
@@ -13,3 +13,7 @@ RUN npm install --global yarn && \
   yarn install && \
   yarn run bower install && \
   yarn run build
+
+EXPOSE 3031 8080
+
+CMD ["uwsgi", "--ini", "/app/uwsgi.ini"]
