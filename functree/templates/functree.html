@@ -1,10 +1,10 @@
 {% extends 'viewer.html' %}
 
 {% block sidebar %}
-<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-functree" data-toggle="collapse">#</a></h5>
 {# Disable Jinja's syntax for Vue.js #}
 {% raw %}
-<form id="form-functree" class="collapse in" v-on:submit.prevent="submit" v-on:reset="reset">
+<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-options" data-toggle="collapse">#</a></h5>
+<form id="form-options" class="collapse in" v-on:submit.prevent="submit" v-on:reset="reset">
     <div class="form-group">
         <label class="control-label">Data series</label>
         <select class="form-control input-sm" v-on:change="clickOptionSeries" v-model="series">
@@ -40,6 +40,36 @@
     </div>
 </form>
 {% endraw %}
+<hr>
+<h5><i class="fa fa-info-circle" aria-hidden="true"></i> Information <a href="#form-information" data-toggle="collapse">#</a></h5>
+<form id="form-information" class="collapse in">
+    <div class="form-group">
+        <label class="control-label">Selected</label>
+        <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="No function selected" readonly style="background: #fff;" >
+            <div class="input-group-addon" role="button" onclick="$('#form-information input')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+        </div>
+    </div>
+    <div class="form-group text-center">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-information">View detail <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+    </div>
+</form>
+<div id="modal-information" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Information</h4>
+            </div>
+            <div class="modal-body">
+                <pre></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <hr>
 <h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse">#</a></h5>
 <form id="form-save-image" class="collapse in">
@@ -80,7 +110,7 @@
             .update();
 
         new Vue({
-            'el': '#form-functree',
+            'el': '#form-options',
             'data': {
                 'series': '',
                 'columnsSingle': '',
@@ -142,6 +172,24 @@
             .appendTo(document.body)
             .submit()
             .remove();
+    });
+
+    $('#modal-information').on('show.bs.modal', function(event) {
+        var target = $(this).find('.modal-body > pre');
+        var entry = $('#form-information input').val();
+        $.ajax({
+            'url': '{{ url_for('route_get_entry') }}' + entry,
+            'type': 'get',
+            'dataType': 'text'
+        }).done(function(data) {
+            target.text(data);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 404) {
+                target.text('No information available: ' + entry);
+            } else {
+                target.text('Ajax error');
+            }
+        });
     });
 </script>
 {% endblock %}

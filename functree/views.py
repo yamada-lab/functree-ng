@@ -1,4 +1,4 @@
-import datetime, json, os, uuid
+import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
 from functree import __version__, app, auth, filters, forms, models, analysis, tree
 from .crckm.src import download as crckm
@@ -152,6 +152,26 @@ def route_definition(source):
     excludes = ('id',)
     definition = models.Definition.objects().exclude(*excludes).get_or_404(source=source)
     return flask.jsonify([definition])
+
+
+# HTTPS proxy for TogoWS
+@app.route('/entry/')
+@app.route('/entry/<string:entry>')
+def route_get_entry(entry=''):
+    TOGOWS_GET_ENTRY_ENDPOINT = 'http://togows.org/entry/'
+    if re.match(r'^K\d{5}$', entry):
+        db = 'kegg-orthology'
+    elif re.match(r'^M\d{5}$', entry):
+        db = 'kegg-module'
+    elif re.match(r'^map\d{5}$', entry):
+        db = 'kegg-pathway'
+    else:
+        flask.abort(404)
+    try:
+        res = urllib.request.urlopen(TOGOWS_GET_ENTRY_ENDPOINT + db + '/' + entry)
+        return flask.Response(res.read(), content_type=res.headers['Content-Type'])
+    except urllib.error.HTTPError as e:
+        flask.abort(e.code)
 
 
 @app.route('/action/save_image/', methods=['POST'])

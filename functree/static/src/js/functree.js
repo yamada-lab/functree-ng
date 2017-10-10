@@ -21,6 +21,9 @@ const DEFAULT_CONFIG = {
             '#E0462F',
             '#DA9F33'
         ]
+    },
+    'externalElement': {
+        'nodeEntry': '#form-information input'
     }
 }
 
@@ -281,6 +284,10 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
+                if (this.config.externalElement.nodeEntry) {
+                    d3.select(this.config.externalElement.nodeEntry)
+                        .attr('value', d.entry);
+                }
                 d3.select(d3.event.target)
                     .style('r', 10)
                     .style('fill', '#000')
@@ -332,6 +339,10 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
+                if (this.config.externalElement.nodeEntry) {
+                    d3.select(this.config.externalElement.nodeEntry)
+                        .attr('value', d.entry);
+                }
                 this._highlightLinks(d);
             })
             .on('mouseout', () => {
@@ -443,6 +454,10 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
+                if (this.config.externalElement.nodeEntry) {
+                    d3.select(this.config.externalElement.nodeEntry)
+                        .attr('value', d.entry);
+                }
                 d3.select(d3.event.target)
                     .style('fill', '#000')
                     .style('opacity', 0.5);
