@@ -11,6 +11,7 @@
     <div class="page-header">
         <h2>{{title}}</h2>
     </div>
+    <p>This is a listing of all available profiles. To hide your profile from this list, check <b>"Keep the result private"</b> before the submission.</p>
     <table id="table-profile" class="table table-hover table-striped" width="100%">
         <thead>
             <tr>
@@ -18,9 +19,7 @@
                 <th>Database</th>
                 <th>Description</th>
                 <th>Added at</th>
-                <th>Viewer</th>
-                <th>Download</th>
-                <th>Delete</th>
+                <th>Action</th>
             </tr>
         </thead>
         {% for profile in profiles %}
@@ -29,13 +28,15 @@
             <td><a href="{{ url_for('route_data') + '#table-tree' }}">{{profile.target}}</a></td>
             <td>{{profile.description|truncate(50, True)}}</td>
             <td>{{profile.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
-            <td><a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}">Go to viewer</a></td>
-            <td><a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank">JSON</a></td>
             <td>
                 <form action="{{ url_for('route_profile', profile_id=profile.profile_id )}}" method="post">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-                    <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                    <div class="btn-group" role="group" aria-label="...">
+                        <a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}" class="btn btn-default btn-xs"><i class="fa fa-eye" aria-hidden="true"> View</i></a>
+                        <a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-download" aria-hidden="true"> Download</i></a>
+                        <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                    </div>
                 </form>
             </td>
         </tr>
@@ -56,15 +57,13 @@
         $('#table-profile').DataTable({
             'dom': '<"row"<"col-sm-6"l><"col-sm-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-5"iB><"col-sm-7"p>>',
             'columns': [
-                {'data': 'Profile ID', 'width': 260},
+                {'data': 'Profile ID', 'width': 300},
                 {'data': 'Database', 'width': 100},
                 {'data': 'Description'},
                 {'data': 'Added at', 'width': 180},
-                {'data': 'Viewer', 'width': 100},
-                {'data': 'Download', 'width': 100},
-                {'data': 'Delete', 'width': 100}
+                {'data': 'Action', 'width': 200}
             ],
-            'order': [[2, 'desc']],
+            'order': [[3, 'desc']],
             'scrollX': true,
             'stateSave': true,
             'buttons': [

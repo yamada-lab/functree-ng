@@ -1,4 +1,4 @@
-import datetime, json, os, uuid
+import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
 from functree import __version__, app, auth, filters, forms, models, analysis, tree
 from .crckm.src import download as crckm
@@ -9,7 +9,7 @@ def route_index():
     return flask.render_template('index.html')
 
 
-@app.route('/analysis/<mode>/', methods=['GET', 'POST'])
+@app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
     if mode == 'basic':
         form = forms.BasicForm()
@@ -19,7 +19,7 @@ def route_analysis(mode):
                 target=form.target.data
             )
             profile = models.Profile(
-                profile_id=uuid.uuid4().hex,
+                profile_id=uuid.uuid4(),
                 profile=result['profile'],
                 series=result['series'],
                 columns=result['columns'],
@@ -32,14 +32,14 @@ def route_analysis(mode):
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'mcr':
-        form = forms.McrForm()
+        form = forms.MCRForm()
         if form.validate_on_submit():
             result = analysis.perform_mcr(
                 f=form.input_file.data,
                 target=form.target.data
             )
             profile = models.Profile(
-                profile_id=uuid.uuid4().hex,
+                profile_id=uuid.uuid4(),
                 profile=result['profile'],
                 series=result['series'],
                 columns=result['columns'],
@@ -52,11 +52,11 @@ def route_analysis(mode):
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'upload_profile':
-        form = forms.JsonUploadForm()
+        form = forms.JSONUploadForm()
         if form.validate_on_submit():
             input_data = json.load(form.input_file.data)[0]
             profile = models.Profile(
-                profile_id=uuid.uuid4().hex,
+                profile_id=uuid.uuid4(),
                 profile=input_data['profile'],
                 series=input_data['series'],
                 columns=input_data['columns'],
@@ -103,7 +103,7 @@ def route_contact():
 
 @app.route('/viewer/')
 def route_viewer():
-    profile_id = flask.request.args.get('profile_id', type=str)
+    profile_id = flask.request.args.get('profile_id', type=uuid.UUID)
     mode = flask.request.args.get('mode', default='functree', type=str)
     profile = models.Profile.objects().get_or_404(profile_id=profile_id)
     if mode == 'functree':
@@ -129,26 +129,49 @@ def route_admin():
     return flask.render_template('admin.html', **locals())
 
 
-@app.route('/profile/<profile_id>', methods=['GET', 'POST'])
+@app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
 def route_profile(profile_id):
     if flask.request.form.get('_method') == 'DELETE':
         models.Profile.objects.get_or_404(profile_id=profile_id).delete()
         return flask.redirect(flask.url_for('route_list'))
     else:
-        profile = models.Profile.objects.get_or_404(profile_id=profile_id)
+        excludes = ('id',)
+        profile = models.Profile.objects.exclude(*excludes).get_or_404(profile_id=profile_id)
         return flask.jsonify([profile])
 
 
-@app.route('/tree/<source>/latest')
+@app.route('/tree/<string:source>')
 def route_tree(source):
-    tree = models.Tree.objects().get_or_404(source=source)
+    excludes = ('id',)
+    tree = models.Tree.objects().exclude(*excludes).get_or_404(source=source)
     return flask.jsonify([tree])
 
 
-@app.route('/definition/<source>/latest')
+@app.route('/definition/<string:source>')
 def route_definition(source):
-    definition = models.Definition.objects().get_or_404(source=source)
+    excludes = ('id',)
+    definition = models.Definition.objects().exclude(*excludes).get_or_404(source=source)
     return flask.jsonify([definition])
+
+
+# HTTPS proxy for TogoWS
+@app.route('/entry/')
+@app.route('/entry/<string:entry>')
+def route_get_entry(entry=''):
+    TOGOWS_GET_ENTRY_ENDPOINT = 'http://togows.org/entry/'
+    if re.match(r'^K\d{5}$', entry):
+        db = 'kegg-orthology'
+    elif re.match(r'^M\d{5}$', entry):
+        db = 'kegg-module'
+    elif re.match(r'^map\d{5}$', entry):
+        db = 'kegg-pathway'
+    else:
+        flask.abort(404)
+    try:
+        res = urllib.request.urlopen(TOGOWS_GET_ENTRY_ENDPOINT + db + '/' + entry)
+        return flask.Response(res.read(), content_type=res.headers['Content-Type'])
+    except urllib.error.HTTPError as e:
+        flask.abort(e.code)
 
 
 @app.route('/action/save_image/', methods=['POST'])
@@ -177,12 +200,12 @@ def route_save_image():
 
 @app.route('/action/init_profiles/')
 @auth.login_required
-def route_admin_init_profiles():
+def route_init_profiles():
     f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/profile/example.json'), 'r')
     input_data = json.load(f)[0]
     models.Profile.objects.all().delete()
     profile = models.Profile(
-        profile_id=uuid.uuid4().hex,
+        profile_id=uuid.uuid4(),
         profile=input_data['profile'],
         series=input_data['series'],
         columns=input_data['columns'],
@@ -195,7 +218,7 @@ def route_admin_init_profiles():
 
 @app.route('/action/update_trees/')
 @auth.login_required
-def route_admin_update_trees():
+def route_update_trees():
     models.Tree.objects.all().delete()
     func_tree = models.Tree(
         tree=tree.get_tree(),
@@ -203,12 +226,16 @@ def route_admin_update_trees():
         description='KEGG version of Functional Tree',
         added_at=datetime.datetime.utcnow()
     ).save()
+    sources = models.Tree.objects.aggregate(
+        {'$group': {'_id': '$source'}}
+    )
+    models.Profile.target.choices = models.Definition.source.choices = [source['_id'] for source in sources]
     return flask.redirect(flask.url_for('route_admin'))
 
 
 @app.route('/action/update_definitions/')
 @auth.login_required
-def route_admin_update_definitions():
+def route_update_definitions():
     models.Definition.objects.all().delete()
     definition = models.Definition(
         definition=crckm.get_definition(),
@@ -220,14 +247,14 @@ def route_admin_update_definitions():
 
 
 @auth.get_password
-def get_pw(username):
+def auth_get_password(username):
     if username == app.config['FUNCTREE_ADMIN_USERNAME']:
         return app.config['FUNCTREE_ADMIN_PASSWORD']
     return None
 
 
 @auth.error_handler
-def auth_error():
+def auth_error_handler():
     return flask.render_template('error.html', error=werkzeug.exceptions.Unauthorized()), 401
 
 

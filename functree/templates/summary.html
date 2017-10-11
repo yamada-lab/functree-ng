@@ -29,16 +29,15 @@
                     <td>{{profile.private}}</td>
                 </tr>
                 <tr>
-                    <th>Download</th>
-                    <td><a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank">JSON</a></td>
-                </tr>
-                <tr>
-                    <th>Delete</th>
+                    <th>Action</th>
                     <td>
-                        <form method="post" action="{{ url_for('route_profile', profile_id=profile.profile_id )}}">
+                        <form action="{{ url_for('route_profile', profile_id=profile.profile_id )}}" method="post">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
-                            <button type="submit" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#confirm-submit" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                            <div class="btn-group" role="group" aria-label="...">
+                                <a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-download" aria-hidden="true"> Download</i></a>
+                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                            </div>
                         </form>
                     </td>
                 </tr>

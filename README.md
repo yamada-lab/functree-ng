@@ -24,9 +24,9 @@ $ yarn run build
 ```
 Start up the application:
 ```bash
-$ python3 run.py
+$ uwsgi --ini uwsgi.ini
 ```
-Then open http://localhost:5000/ in your web browser.
+Then open http://localhost:8080/ in your web browser.
 
 ### Using Docker and Docker Compose
 Add the following variable to `instance/config.py`:
@@ -37,7 +37,6 @@ Execute the command below. `docker-compose` will automatically set up Docker con
 ```bash
 $ docker-compose up
 ```
-Then open http://localhost:8000/ in your web browser.
 
 ## Configuration
 To configure the behavior of the application, create `instance/config.py` with the same format as `functree/config.py`.

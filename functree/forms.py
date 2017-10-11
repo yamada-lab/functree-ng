@@ -1,17 +1,12 @@
 import wtforms, flask_wtf, flask_wtf.file
-from functree import app, models
+from functree import models
 
 
 class BasicForm(flask_wtf.FlaskForm):
-    __tree_sources = models.Tree.objects.aggregate(
-        {'$group': {'_id': '$source'}}
-    )
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
-    target = wtforms.SelectField('Database', choices=[
-        (tree_source['_id'],) * 2 for tree_source in __tree_sources
-    ])
+    target = wtforms.SelectField('Database', choices=[])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
@@ -19,17 +14,19 @@ class BasicForm(flask_wtf.FlaskForm):
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")')
     submit = wtforms.SubmitField('Submit')
 
+    def __init__(self, *args, **kwargs):
+        super(BasicForm, self).__init__(*args, **kwargs)
+        targets = models.Tree.objects.aggregate(
+            {'$group': {'_id': '$source'}}
+        )
+        self.target.choices = [(target['_id'],) * 2 for target in targets]
 
-class McrForm(flask_wtf.FlaskForm):
-    __definition_sources = models.Definition.objects.aggregate(
-        {'$group': {'_id': '$source'}}
-    )
+
+class MCRForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
-    target = wtforms.SelectField('Database', choices=[
-        (definition_source['_id'],) * 2 for definition_source in __definition_sources
-    ])
+    target = wtforms.SelectField('Database', choices=[])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
@@ -37,20 +34,29 @@ class McrForm(flask_wtf.FlaskForm):
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")')
     submit = wtforms.SubmitField('Submit')
 
+    def __init__(self, *args, **kwargs):
+        super(MCRForm, self).__init__(*args, **kwargs)
+        targets = models.Definition.objects.aggregate(
+            {'$group': {'_id': '$source'}}
+        )
+        self.target.choices = [(target['_id'],) * 2 for target in targets]
 
-class JsonUploadForm(flask_wtf.FlaskForm):
-    __tree_sources = models.Tree.objects.aggregate(
-        {'$group': {'_id': '$source'}}
-    )
+
+class JSONUploadForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
-    target = wtforms.SelectField('Database', choices=[
-        (tree_source['_id'],) * 2 for tree_source in __tree_sources
-    ])
+    target = wtforms.SelectField('Database', choices=[])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
     ])
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")')
     submit = wtforms.SubmitField('Submit')
+
+    def __init__(self, *args, **kwargs):
+        super(JSONUploadForm, self).__init__(*args, **kwargs)
+        targets = models.Tree.objects.aggregate(
+            {'$group': {'_id': '$source'}}
+        )
+        self.target.choices = [(target['_id'],) * 2 for target in targets]

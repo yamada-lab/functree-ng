@@ -81,7 +81,7 @@
                     'extend': 'csv',
                     'fieldSeparator': '\t',
                     'fieldBoundary': '',
-                    'filename': '{{profile.profile_id + '_' +profile.series[series]}}',
+                    'filename': '{{profile.profile_id|string + '_' + profile.series[series]}}',
                     'extension': '.tsv'
                 }
             ]

@@ -10,7 +10,7 @@ services:
       - "5000:5000"
     command: python3 /app/run.py
   db:
-    image: mongo:3.4
+    image: mongo:3.4.9
     volumes_from:
       - db_data
     command: mongod --storageEngine wiredTiger

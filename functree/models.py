@@ -2,35 +2,25 @@ from functree import db
 
 
 class Tree(db.Document):
-    tree = db.DictField()
-    source = db.StringField()
-    description = db.StringField()
-    added_at = db.DateTimeField()
-
-
-class Profile(db.Document):
-    __tree_sources = Tree.objects.aggregate(
-        {'$group': {'_id': '$source'}}
-    )
-    profile_id = db.StringField()
-    profile = db.ListField(default=[])
-    series = db.ListField(default=[])
-    columns = db.ListField(default=[])
-    target = db.StringField(choices=[
-        tree_source['_id'] for tree_source in __tree_sources
-    ])
-    description = db.StringField(max_length=50)
-    added_at = db.DateTimeField()
-    private = db.BooleanField(default=False)
+    tree = db.DictField(required=True)
+    source = db.StringField(required=True)
+    description = db.StringField(required=True, max_length=50)
+    added_at = db.DateTimeField(required=True)
 
 
 class Definition(db.Document):
-    __tree_sources = Tree.objects.aggregate(
-        {'$group': {'_id': '$source'}}
-    )
-    definition = db.DictField()
-    source = db.StringField(choices=[
-        tree_source['_id'] for tree_source in __tree_sources
-    ])
-    description = db.StringField()
-    added_at = db.DateTimeField()
+    definition = db.DictField(default={})
+    source = db.StringField(required=True, choices=[])
+    description = db.StringField(required=True, max_length=50)
+    added_at = db.DateTimeField(required=True)
+
+
+class Profile(db.Document):
+    profile_id = db.UUIDField(binary=True, required=True, unique=True)
+    profile = db.ListField(default=[])
+    series = db.ListField(default=[])
+    columns = db.ListField(default=[])
+    target = db.StringField(required=True, choices=[])
+    description = db.StringField(required=True, max_length=50)
+    added_at = db.DateTimeField(required=True)
+    private = db.BooleanField(default=False)
