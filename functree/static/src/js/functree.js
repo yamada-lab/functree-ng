@@ -561,6 +561,30 @@ const FuncTree = class {
     }
 
 
+    search(word) {
+        const node = d3.select('#nodes')
+            .selectAll('circle');
+        const hits = node
+            .filter((d) => {
+                return d.entry === word;
+            });
+        hits.style('fill', '#f00')
+            .style('opacity', 0.5)
+            .transition()
+            .duration(1000)
+            .style('r', 50)
+            .style('stroke-width', 0)
+            .style('opacity', 0)
+            .each('end', function() {
+                d3.select(this)
+                    .attr('style', null);
+            });
+        if (!hits[0].length) {
+            alert('No results found: ' + word);
+        }
+    }
+
+
     getNodes(node=this.root, nodes=[], depth=0) {
         node.depth = depth;
         nodes.push(node);
