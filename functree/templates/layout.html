@@ -47,7 +47,7 @@
                         <li{% if request.endpoint == 'route_data' %} class="active"{% endif %}><a href="{{ url_for('route_data') }}"><i class="fa fa-book" aria-hidden="true"></i> Data</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li{% if request.endpoint == 'route_help' %} class="active"{% endif %}><a href="{{ url_for('route_help') }}"><i class="fa fa-question" aria-hidden="true"></i> Help</a></li>
+                        <li><a href="{{ url_for('route_docs') }}"><i class="fa fa-question" aria-hidden="true"></i> Help</a></li>
                         <li{% if request.endpoint == 'route_about' %} class="active"{% endif %}><a href="{{ url_for('route_about') }}"><i class="fa fa-info" aria-hidden="true"></i> About</a></li>
                         <li{% if request.endpoint == 'route_contact' %} class="active"{% endif %}><a href="{{ url_for('route_contact') }}"><i class="fa fa-envelope-o" aria-hidden="true"></i> Contact</a></li>
                     </ul>

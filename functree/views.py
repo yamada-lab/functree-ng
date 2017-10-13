@@ -85,9 +85,10 @@ def route_data():
     return flask.render_template('data.html', **locals())
 
 
-@app.route('/help/')
-def route_help():
-    return flask.render_template('help.html')
+@app.route('/docs/', defaults={'filename': 'index.html'})
+@app.route('/docs/<path:filename>')
+def route_docs(filename):
+    return flask.send_from_directory('../docs/_build/html', filename)
 
 
 @app.route('/about/')
