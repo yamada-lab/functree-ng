@@ -22,8 +22,8 @@ const DEFAULT_CONFIG = {
             '#DA9F33'
         ]
     },
-    'externalElement': {
-        'nodeEntry': '#form-information input'
+    'external': {
+        'entry': 'vmEntryDetail.entry'
     }
 }
 
@@ -284,9 +284,8 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.externalElement.nodeEntry) {
-                    d3.select(this.config.externalElement.nodeEntry)
-                        .attr('value', d.entry);
+                if (this.config.external.entry) {
+                    eval(this.config.external.entry + ' = d.entry');
                 }
                 d3.select(d3.event.target)
                     .style('r', 10)
@@ -339,9 +338,8 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.externalElement.nodeEntry) {
-                    d3.select(this.config.externalElement.nodeEntry)
-                        .attr('value', d.entry);
+                if (this.config.external.entry) {
+                    eval(this.config.external.entry + ' = d.entry');
                 }
                 this._highlightLinks(d);
             })
@@ -454,9 +452,8 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.externalElement.nodeEntry) {
-                    d3.select(this.config.externalElement.nodeEntry)
-                        .attr('value', d.entry);
+                if (this.config.external.entry) {
+                    eval(this.config.external.entry + ' = d.entry');
                 }
                 d3.select(d3.event.target)
                     .style('fill', '#000')

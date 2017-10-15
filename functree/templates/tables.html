@@ -42,15 +42,17 @@
         </table>
     </div>
 </div>
-<div id="modal-information" class="modal fade" tabindex="-1" role="dialog">
+{# Disable Jinja's syntax for Vue.js #}
+{% raw %}
+<div id="modal-entry-detail" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Information</h4>
+                <h4 class="modal-title">Entry detail: <code>{{entry}}</code></h4>
             </div>
             <div class="modal-body">
-                <pre></pre>
+                <pre>{{detail}}</pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -58,6 +60,7 @@
         </div>
     </div>
 </div>
+{% endraw %}
 {% endblock %}
 
 {% block script %}
@@ -79,7 +82,7 @@
                 {
                     'data': 'entry',
                     'render': function(data, type, full, meta) {
-                        var $el = $('<a/>', {'href': '#modal-information', 'data-toggle': 'modal', 'data-entry': data}).text(data);
+                        var $el = $('<a/>', {'href': '#modal-entry-detail', 'data-toggle': 'modal', 'data-entry': data}).text(data);
                         return $el[0].outerHTML;
                     }
                 },
@@ -104,20 +107,27 @@
             ]
         });
 
-        $('#modal-information').on('show.bs.modal', function(event) {
-            var target = $(this).find('.modal-body > pre');
-            var entry = $(event.relatedTarget).data('entry');
+        var vmEntryDetail = new Vue({
+            'el': '#modal-entry-detail',
+            'data': {
+                'entry': '',
+                'detail': ''
+            }
+        });
+
+        $('#modal-entry-detail').on('show.bs.modal', function(event) {
+            vmEntryDetail.entry = $(event.relatedTarget).data('entry');
             $.ajax({
-                'url': '{{ url_for('route_get_entry') }}' + entry,
+                'url': '{{ url_for('route_get_entry') }}' + vmEntryDetail.entry,
                 'type': 'get',
                 'dataType': 'text'
             }).done(function(data) {
-                target.text(data);
+                vmEntryDetail.detail = data;
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status === 404) {
-                    target.text('No information available: ' + entry);
+                    vmEntryDetail.detail = 'No information available';
                 } else {
-                    target.text('Ajax error');
+                    vmEntryDetail.detail = 'Ajax error';
                 }
             });
         });

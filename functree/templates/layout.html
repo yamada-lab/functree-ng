@@ -61,6 +61,7 @@
             </div>
         </footer>
         {% block script %}
+        <script src="{{ url_for('static', filename='bower_components/vue/dist/vue.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>

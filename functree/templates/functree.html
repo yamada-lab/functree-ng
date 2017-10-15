@@ -58,36 +58,36 @@
         <button type="reset" class="btn btn-default btn-sm"> Reset</button>
     </div>
 </form>
-{% endraw %}
 <hr>
 <h5><i class="fa fa-info-circle" aria-hidden="true"></i> Information <a href="#form-information" data-toggle="collapse">#</a></h5>
-<form id="form-information" class="collapse in">
+<form id="form-entry-detail" class="collapse in">
     <div class="form-group">
         <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="No function selected" readonly style="background: #fff;" >
-            <div class="input-group-addon" role="button" onclick="$('#form-information input')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+            <input type="text" class="form-control input-sm" placeholder="No entry selected" readonly style="background: #fff;" v-bind:value="entry">
+            <div class="input-group-addon" role="button" onclick="$('#form-entry-detail input')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
     </div>
     <div class="form-group text-center">
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-information">View detail <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#form-entry-detail .modal">View detail <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
     </div>
-</form>
-<div id="modal-information" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Information</h4>
-            </div>
-            <div class="modal-body">
-                <pre></pre>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Entry detail: <code>{{entry}}</code></h4>
+                </div>
+                <div class="modal-body">
+                    <pre>{{detail}}</pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>
+{% endraw %}
 <hr>
 <h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse">#</a></h5>
 <form id="form-save-image" class="collapse in">
@@ -116,7 +116,6 @@
 {% block script %}
 {{super()}}
 <script src="{{ url_for('static', filename='bower_components/d3/d3.min.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/vue/dist/vue.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/functree.js') }}"></script>
 <script>
     d3.json('{{ url_for('route_tree', source=profile.target) }}', function(error, tree_data) {
@@ -211,6 +210,30 @@
         $('#loading').remove();
     })});
 
+    var vmEntryDetail = new Vue({
+        'el': '#form-entry-detail',
+        'data': {
+            'entry': '',
+            'detail': ''
+        }
+    });
+
+    $('#form-entry-detail .modal').on('show.bs.modal', function(event) {
+        $.ajax({
+            'url': '{{ url_for('route_get_entry') }}' + vmEntryDetail.entry,
+            'type': 'get',
+            'dataType': 'text'
+        }).done(function(data) {
+            vmEntryDetail.detail = data
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status === 404) {
+                vmEntryDetail.detail = 'No information available'
+            } else {
+                vmEntryDetail.detail = 'Ajax error';
+            }
+        });
+    });
+
     $('#form-save-image').on('submit', function(event) {
         event.preventDefault();
         $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
@@ -221,24 +244,6 @@
             .appendTo(document.body)
             .submit()
             .remove();
-    });
-
-    $('#modal-information').on('show.bs.modal', function(event) {
-        var target = $(this).find('.modal-body > pre');
-        var entry = $('#form-information input').val();
-        $.ajax({
-            'url': '{{ url_for('route_get_entry') }}' + entry,
-            'type': 'get',
-            'dataType': 'text'
-        }).done(function(data) {
-            target.text(data);
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status === 404) {
-                target.text('No information available: ' + entry);
-            } else {
-                target.text('Ajax error');
-            }
-        });
     });
 </script>
 {% endblock %}
