@@ -3,12 +3,15 @@
 import gulp from 'gulp'
 import babel from 'gulp-babel'
 import sass from 'gulp-sass'
+import sourcemaps from 'gulp-sourcemaps'
 import plumber from 'gulp-plumber'
 
 gulp.task('babel', () => {
     return gulp.src('functree/static/src/js/*.js')
+        .pipe(sourcemaps.init())
         .pipe(plumber())
         .pipe(babel())
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('functree/static/dist/js'));
 });
 
@@ -18,7 +21,9 @@ gulp.task('babel:watch', () => {
 
 gulp.task('sass', () => {
     return gulp.src('functree/static/src/scss/*.scss')
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sourcemaps.init())
+        .pipe(sass({'outputStyle': 'compressed'}).on('error', sass.logError))
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('functree/static/dist/css'));
 });
 
