@@ -23,7 +23,8 @@ const DEFAULT_CONFIG = {
         ]
     },
     'external': {
-        'entry': 'vmEntryDetail.entry'
+        'entry': 'vmEntryDetail.entry',
+        'breadcrumb': 'vmBreadcrumb.items'
     }
 }
 
@@ -222,6 +223,9 @@ const FuncTree = class {
                 this._highlightLinks(d.target);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select('#links')
                     .selectAll('path')
                     .attr('style', null);
@@ -294,6 +298,9 @@ const FuncTree = class {
                 this._highlightLinks(d);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select(d3.event.target)
                     .attr('style', null);
                 d3.select('#links')
@@ -344,6 +351,9 @@ const FuncTree = class {
                 this._highlightLinks(d);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select('#links')
                     .selectAll('path')
                     .attr('style', null);
@@ -375,17 +385,13 @@ const FuncTree = class {
                 const n = i % config.color.class.length;
                 return config.color.class[n];
             })
-            .on('mouseover', (d) => {
+            .on('mouseover', () => {
                 d3.select(d3.event.target)
                     .style('fill', '#000')
                     .style('opacity', 0.5);
-                this._highlightLinks(d);
             })
             .on('mouseout', () => {
                 d3.select(d3.event.target)
-                    .attr('style', null);
-                d3.select('#charts')
-                    .selectAll('rect')
                     .attr('style', null);
             });
         bar
@@ -461,6 +467,9 @@ const FuncTree = class {
                 this._highlightLinks(d);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select(d3.event.target)
                     .attr('style', null);
                 d3.select('#links')
@@ -613,6 +622,9 @@ const FuncTree = class {
                 return this.config.color.class[n];
             })
             .style('stroke-width', 1.5);
+        if (this.config.external.breadcrumb) {
+            eval(this.config.external.breadcrumb + '.unshift(node.entry)');
+        }
         if (node.parent) {
             this._highlightLinks(node.parent);
         }

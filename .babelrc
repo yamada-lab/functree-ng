@@ -4,7 +4,8 @@
     ["minify", {
       "mangle": {
         "blacklist": {
-          "d": true
+          "d": true,
+          "node": true
         }
       }
     }]

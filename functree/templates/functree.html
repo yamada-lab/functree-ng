@@ -107,6 +107,10 @@
 
 {% block mainpane %}
 <div id="functree">
+    <ol class="breadcrumb" v-model="items" v-if="items.length">
+        <i class="fa fa-dot-circle-o" aria-hidden="true"></i>&nbsp;
+        <li v-for="item in items">{% raw %}{{item}}{% endraw %}</li>
+    </ol>
 </div>
 {% endblock %}
 
@@ -212,6 +216,13 @@
         'data': {
             'entry': '',
             'detail': ''
+        }
+    });
+
+    var vmBreadcrumb = new Vue({
+        'el': '#functree > .breadcrumb',
+        'data': {
+            'items': []
         }
     });
 
