@@ -6,8 +6,6 @@
 {% endblock %}
 
 {% block sidebar %}
-{# Disable Jinja's syntax for Vue.js #}
-{% raw %}
 <h5><i class="fa fa-search" aria-hidden="true"></i> Search <a href="#form-search" data-toggle="collapse">#</a></h5>
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
     <div class="form-group">
@@ -28,21 +26,21 @@
         <label class="control-label">Data series</label>
         <select class="form-control input-sm" v-on:change="clickOptionSeries" v-model="series">
             <option disabled value="">- Select data series -</option>
-            <option v-for="(option, index) in options[0]" v-bind:value="index">{{option}}</option>
+            <option v-for="(option, index) in options[0]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
     </div>
     <div class="form-group">
         <label class="control-label">Data mapping: Single</label>
         <select class="form-control input-sm" v-model="columnsSingle">
             <option value="">- Select a column -</option>
-            <option v-for="(option, index) in options[1]" v-bind:value="index">{{option}}</option>
+            <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
     </div>
     <div class="form-group">
         <label class="control-label">Data mapping: Multiple</label>
         <select class="form-control input-sm" multiple v-model="columnsMultiple">
             <option value="">- Select columns -</option>
-            <option v-for="(option, index) in options[1]" v-bind:value="index">{{option}}</option>
+            <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
     </div>
     <div class="form-group">
@@ -75,10 +73,10 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Entry detail: <code>{{entry}}</code></h4>
+                    <h4 class="modal-title">Entry detail: <code>{% raw %}{{entry}}{% endraw %}</code></h4>
                 </div>
                 <div class="modal-body">
-                    <pre>{{detail}}</pre>
+                    <pre>{% raw %}{{detail}}{% endraw %}</pre>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -87,7 +85,6 @@
         </div>
     </div>
 </form>
-{% endraw %}
 <hr>
 <h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse">#</a></h5>
 <form id="form-save-image" class="collapse in">
