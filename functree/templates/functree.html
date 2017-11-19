@@ -44,6 +44,14 @@
         </select>
     </div>
     <div class="form-group">
+        <label class="control-label">Color specification</label>
+        <select class="form-control input-sm" v-model="colorSpecification">
+            <option value="class">By class</option>
+            <option value="entry">By entry</option>
+            <option value="column">By column</option>
+        </select>
+    </div>
+    <div class="form-group">
         <div class="checkbox">
             <label>
                 <input type="checkbox" checked="checked" v-model="normalize">
@@ -146,6 +154,7 @@
                 'columnsSingle': '',
                 'columnsMultiple': '',
                 'normalize': true,
+                'colorSpecification': 'class',
                 'options': [
                     profile.series,
                     []
@@ -157,23 +166,45 @@
                 },
                 'submit': function() {
                     var self = this;
-                    var profile_dict = {};
-                    for (var i = 0; i < profile.profile.length; i++) {
+                    var colorSet = profile.colors.reduce(function(a, b) {
+                        a[b[0]] = b[1];
+                        return a;
+                    }, {});
+                    var profileDict = {};
+                    for (var i in profile.profile) {
                         var node = profile.profile[i];
-                        var p = {
+
+                        try {
+                            switch (self.colorSpecification) {
+                                case 'class':
+                                    var color = null;
+                                    break;
+                                case 'column':
+                                    var column = profile.columns[this.series][self.columnsSingle];
+                                    var color = colorSet[column];
+                                    break;
+                                case 'entry':
+                                    var entry = node.entry;
+                                    var color = colorSet[entry];
+                                    break;
+                            }
+                        } catch (e) {
+                            var color = null
+                        }
+
+                        profileDict[node.entry] = {
                             'value': node.values[self.series][self.columnsSingle],
                             'values': node.values[self.series]
                                 .filter(function(value, index) {
                                     return self.columnsMultiple.includes(index);
-                                })
+                                }),
+                            'color': color
                         }
-                        profile_dict[node.entry] = p;
                     }
-                    for (var i = 0; i < funcTree.nodes.length; i++) {
+                    for (var i in funcTree.nodes) {
                         var node = funcTree.nodes[i];
-                        if (profile_dict[node.entry]) {
-                            node.value = profile_dict[node.entry].value;
-                            node.values = profile_dict[node.entry].values;
+                        if (profileDict[node.entry]) {
+                            Object.assign(node, profileDict[node.entry]);
                         }
                     }
                     funcTree

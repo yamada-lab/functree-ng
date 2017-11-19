@@ -437,11 +437,15 @@ const FuncTree = class {
             })
             .attr('r', 0)
             .attr('fill', (d) => {
-                if (this.config.displayBars) {
-                    return '#fff';
+                if (d.color) {
+                    return d.color;
                 } else {
-                    const n = d.depth % this.config.color.class.length;
-                    return this.config.color.class[n];
+                    if (this.config.displayBars) {
+                        return '#fff';
+                    } else {
+                        const n = d.depth % this.config.color.class.length;
+                        return this.config.color.class[n];
+                    }
                 }
             })
             .attr('stroke', () => {
@@ -489,6 +493,18 @@ const FuncTree = class {
             })
             .attr('transform', (d) => {
                 return 'rotate(' + (d.x - 90) + '),translate(' + d.y + ')';
+            })
+            .attr('fill', (d) => {
+                if (d.color) {
+                    return d.color;
+                } else {
+                    if (this.config.displayBars) {
+                        return '#fff';
+                    } else {
+                        const n = d.depth % this.config.color.class.length;
+                        return this.config.color.class[n];
+                    }
+                }
             });
         circle.exit()
             .transition()
