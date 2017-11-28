@@ -126,13 +126,64 @@
 <script src="{{ url_for('static', filename='bower_components/d3/d3.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/functree.js') }}"></script>
 <script>
-    d3.json('{{ url_for('route_tree', source=profile.target) }}', function(error, tree_data) {
-    d3.json('{{ url_for('route_profile', profile_id=profile.profile_id) }}', function(error, profile_data) {
-        var profile = profile_data[0];
-        var funcTree = new FuncTree(tree_data[0]['tree']);
-        funcTree
-            .create()
-            .update();
+    axios.all([
+        axios.get('{{ url_for('route_tree', source=profile.target) }}'),
+        axios.get('{{ url_for('route_profile', profile_id=profile.profile_id) }}')
+    ])
+    .then(axios.spread(function(res0, res1) {
+        visualize(res0.data[0], res1.data[0]);
+    }))
+    .then(function() {
+        $('#loading').remove();
+    })
+    .catch(function(error) {
+        $('#loading > div').html('<p><i class="fa fa-exclamation-circle fa-4x fa-fw"></i></p><p>Ajax error</p>');
+    });
+
+    var vmEntryDetail = new Vue({
+        'el': '#form-entry-detail',
+        'data': {
+            'entry': '',
+            'detail': ''
+        }
+    });
+
+    var vmBreadcrumb = new Vue({
+        'el': '#functree > .breadcrumb',
+        'data': {
+            'items': []
+        }
+    });
+
+    $('#form-entry-detail .modal').on('show.bs.modal', function(event) {
+        axios.get('{{ url_for('route_get_entry') }}' + vmEntryDetail.entry)
+            .then(function(res) {
+                vmEntryDetail.detail = res.data;
+            })
+            .catch(function(error) {
+                if (error.response.status === 404) {
+                    vmEntryDetail.detail = 'No information available'
+                } else {
+                    vmEntryDetail.detail = 'Ajax error';
+                }
+            });
+    });
+
+    $('#form-save-image').on('submit', function(event) {
+        event.preventDefault();
+        $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
+            .hide()
+            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': $(this).find('[name=csrf_token]').val()}))
+            .append($('<input/>', {'type': 'hidden', 'name': 'format', 'value': $(this).find('[name=format]').val()}))
+            .append($('<input/>', {'type': 'hidden', 'name': 'svg', 'value': (new XMLSerializer).serializeToString($('#functree > svg')[0])}))
+            .appendTo(document.body)
+            .submit()
+            .remove();
+    });
+
+    function visualize(tree, profile) {
+        var funcTree = new FuncTree(tree.tree).create();
+        funcTree.update();
 
         new Vue({
             'el': '#form-search',
@@ -220,51 +271,6 @@
                     return 0;
                 })
         });
-
-        $('#loading').remove();
-    })});
-
-    var vmEntryDetail = new Vue({
-        'el': '#form-entry-detail',
-        'data': {
-            'entry': '',
-            'detail': ''
-        }
-    });
-
-    var vmBreadcrumb = new Vue({
-        'el': '#functree > .breadcrumb',
-        'data': {
-            'items': []
-        }
-    });
-
-    $('#form-entry-detail .modal').on('show.bs.modal', function(event) {
-        $.ajax({
-            'url': '{{ url_for('route_get_entry') }}' + vmEntryDetail.entry,
-            'type': 'get',
-            'dataType': 'text'
-        }).done(function(data) {
-            vmEntryDetail.detail = data
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status === 404) {
-                vmEntryDetail.detail = 'No information available'
-            } else {
-                vmEntryDetail.detail = 'Ajax error';
-            }
-        });
-    });
-
-    $('#form-save-image').on('submit', function(event) {
-        event.preventDefault();
-        $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
-            .hide()
-            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': $(this).find('[name=csrf_token]').val()}))
-            .append($('<input/>', {'type': 'hidden', 'name': 'format', 'value': $(this).find('[name=format]').val()}))
-            .append($('<input/>', {'type': 'hidden', 'name': 'svg', 'value': (new XMLSerializer).serializeToString($('#functree > svg')[0])}))
-            .appendTo(document.body)
-            .submit()
-            .remove();
-    });
+    }
 </script>
 {% endblock %}
