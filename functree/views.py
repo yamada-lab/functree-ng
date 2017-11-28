@@ -1,6 +1,6 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
-from functree import __version__, app, auth, filters, forms, models, analysis, tree
+from functree import __version__, app, auth, filters, forms, models, tree, basic_mapping, module_coverage, direct_mapping
 from .crckm.src import download as crckm
 
 
@@ -11,61 +11,32 @@ def route_index():
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
-    if mode == 'basic':
-        form = forms.BasicForm()
+    if mode == 'basic_mapping':
+        form = forms.BasicMappingForm()
         if form.validate_on_submit():
-            result = analysis.perform_basic(
-                f=form.input_file.data,
-                target=form.target.data
-            )
-            profile = models.Profile(
-                profile_id=uuid.uuid4(),
-                profile=result['profile'],
-                series=result['series'],
-                columns=result['columns'],
-                target=form.target.data,
-                description=form.description.data,
-                added_at=datetime.datetime.utcnow(),
-                private=form.private.data
-            ).save()
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id))
+            profile_id = basic_mapping.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'mcr':
-        form = forms.MCRForm()
+    elif mode == 'module_coverage':
+        form = forms.ModuleCoverageForm()
         if form.validate_on_submit():
-            result = analysis.perform_mcr(
-                f=form.input_file.data,
-                target=form.target.data
-            )
-            profile = models.Profile(
-                profile_id=uuid.uuid4(),
-                profile=result['profile'],
-                series=result['series'],
-                columns=result['columns'],
-                target=form.target.data,
-                description=form.description.data,
-                added_at=datetime.datetime.utcnow(),
-                private=form.private.data
-            ).save()
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id))
+            profile_id = module_coverage.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'upload_profile':
+    elif mode == 'direct_mapping':
+        form = forms.DirectMappingForm()
+        if form.validate_on_submit():
+            profile_id = direct_mapping.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
+        else:
+            return flask.render_template('analysis.html', form=form, mode=mode)
+    elif mode == 'json_upload':
         form = forms.JSONUploadForm()
         if form.validate_on_submit():
-            input_data = json.load(form.input_file.data)[0]
-            profile = models.Profile(
-                profile_id=uuid.uuid4(),
-                profile=input_data['profile'],
-                series=input_data['series'],
-                columns=input_data['columns'],
-                target=form.target.data,
-                description=form.description.data,
-                added_at=datetime.datetime.utcnow(),
-                private=form.private.data
-            ).save()
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id))
+            profile_id = direct_mapping.from_json(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     else:

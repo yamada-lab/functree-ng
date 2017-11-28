@@ -12,15 +12,15 @@ const DEFAULT_CONFIG = {
     'displayRounds': true,
     'displayBars': false,
     'displayNodesLowerThan': 5,
-    'color': {
-        'class': [
-            '#5f5f5f',
-            '#2F57D0',
-            '#5381DF',
-            '#41B360',
-            '#E0462F',
-            '#DA9F33'
-        ]
+    'colorizeBy': 'class',
+    'colorSet': {
+        'default': '#5f5f5f',
+        0: '#5f5f5f',
+        1: '#2F57D0',
+        2: '#5381DF',
+        3: '#41B360',
+        4: '#E0462F',
+        5: '#DA9F33'
     },
     'external': {
         'entry': 'vmEntryDetail.entry',
@@ -46,6 +46,11 @@ const FuncTree = class {
 
     configure(config=DEFAULT_CONFIG) {
         this.config = Object.assign(this.config, config);
+        return this;
+    }
+
+    configureColorSet(colorSet={}) {
+        this.config.colorSet = Object.assign(this.config.colorSet, colorSet);
         return this;
     }
 
@@ -198,7 +203,7 @@ const FuncTree = class {
             .append('path')
             .attr('fill', 'none')
             .attr('stroke', '#999')
-            .attr('stroke-width', 0.5)
+            .attr('stroke-width', 0.25)
             .attr('stroke-dasharray', (d) => {
                 if (d.source.depth === 0) {
                     return '3,3';
@@ -272,12 +277,12 @@ const FuncTree = class {
             .attr('transform', () => {
                 return 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + ')';
             })
-            .attr('r', 1)
+            .attr('r', 0.5)
             .attr('fill', (d) => {
                 return d._children ? '#ddd' : '#fff';
             })
             .attr('stroke', '#999')
-            .attr('stroke-width', 0.5)
+            .attr('stroke-width', 0.25)
             .attr('cursor', 'pointer')
             .attr('data-toggle', 'tooltip')
             .attr('data-original-title', (d) => {
@@ -382,8 +387,8 @@ const FuncTree = class {
             .attr('width', 2)
             .attr('height', 0)
             .attr('fill', function(d, i) {
-                const n = i % config.color.class.length;
-                return config.color.class[n];
+                const n = i % Object.keys(config.colorSet).length;
+                return config.colorSet[n];
             })
             .on('mouseover', () => {
                 d3.select(d3.event.target)
@@ -437,12 +442,19 @@ const FuncTree = class {
             })
             .attr('r', 0)
             .attr('fill', (d) => {
-                if (this.config.displayBars) {
-                    return '#fff';
-                } else {
-                    const n = d.depth % this.config.color.class.length;
-                    return this.config.color.class[n];
+                let color;
+                switch (this.config.colorizeBy) {
+                    case 'class':
+                        const n = d.depth % Object.keys(this.config.colorSet).length;
+                        color = this.config.colorSet[n];
+                        break;
+                    case 'entry':
+                        color = this.config.colorSet[d.entry] || this.config.colorSet.default;
+                        break;
+                    default:
+                        color = this.config.colorSet.default;
                 }
+                return color;
             })
             .attr('stroke', () => {
                 return this.config.displayBars ? '#333' : '#fff';
@@ -481,6 +493,7 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('r', (d) => {
                 const r_ = 25;
+                if (d.depth < 2) return 0;
                 if (this.config.normalize) {
                     return d.value / max[d.depth] * r_ || 0;
                 } else {
@@ -489,6 +502,21 @@ const FuncTree = class {
             })
             .attr('transform', (d) => {
                 return 'rotate(' + (d.x - 90) + '),translate(' + d.y + ')';
+            })
+            .attr('fill', (d) => {
+                let color;
+                switch (this.config.colorizeBy) {
+                    case 'class':
+                        const n = d.depth % Object.keys(this.config.colorSet).length;
+                        color = this.config.colorSet[n];
+                        break;
+                    case 'entry':
+                        color = this.config.colorSet[d.entry] || this.config.colorSet.default;
+                        break;
+                    default:
+                        color = this.config.colorSet.default;
+                }
+                return color;
             });
         circle.exit()
             .transition()
@@ -618,8 +646,8 @@ const FuncTree = class {
                 }
             })
             .style('stroke', (d) => {
-                const n = d.target.depth % this.config.color.class.length;
-                return this.config.color.class[n];
+                const n = d.target.depth % Object.keys(this.config.colorSet).length;
+                return this.config.colorSet[n];
             })
             .style('stroke-width', 1.5);
         if (this.config.external.breadcrumb) {
