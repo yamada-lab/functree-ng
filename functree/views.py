@@ -74,15 +74,17 @@ def route_analysis(mode):
 
 @app.route('/list/')
 def route_list():
-    profiles = models.Profile.objects().filter(private=False)
-    return flask.render_template('list.html', **locals())
+    only = ('profile_id', 'description', 'added_at')
+    profiles = models.Profile.objects().filter(private=False).only(*only)
+    return flask.render_template('list.html', profiles=profiles)
 
 
 @app.route('/data/')
 def route_data():
-    trees = models.Tree.objects().all()
-    definitions = models.Definition.objects().all()
-    return flask.render_template('data.html', **locals())
+    only = ('source', 'description', 'added_at')
+    trees = models.Tree.objects().all().only(*only)
+    definitions = models.Definition.objects().all().only(*only)
+    return flask.render_template('data.html', trees=trees, definitions=definitions)
 
 
 @app.route('/docs/', defaults={'filename': 'index.html'})
@@ -93,8 +95,7 @@ def route_docs(filename):
 
 @app.route('/about/')
 def route_about():
-    version = __version__
-    return flask.render_template('about.html', **locals())
+    return flask.render_template('about.html', version=__version__)
 
 
 @app.route('/contact/')
@@ -106,7 +107,8 @@ def route_contact():
 def route_viewer():
     profile_id = flask.request.args.get('profile_id', type=uuid.UUID)
     mode = flask.request.args.get('mode', default='functree', type=str)
-    profile = models.Profile.objects().get_or_404(profile_id=profile_id)
+    excludes = ('profile',)
+    profile = models.Profile.objects().exclude(*excludes).get_or_404(profile_id=profile_id)
     if mode == 'functree':
         return flask.render_template('functree.html', profile=profile, mode=mode)
     elif mode == 'charts':
@@ -124,10 +126,12 @@ def route_viewer():
 @app.route('/admin/')
 @auth.login_required
 def route_admin():
-    profiles = models.Profile.objects().all()
-    trees = models.Tree.objects().all()
-    definitions = models.Definition.objects().all()
-    return flask.render_template('admin.html', **locals())
+    counts = {
+        'profile': models.Profile.objects().count(),
+        'tree': models.Tree.objects().count(),
+        'definition': models.Definition.objects().count()
+    }
+    return flask.render_template('admin.html', counts=counts)
 
 
 @app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
