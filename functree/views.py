@@ -45,7 +45,7 @@ def route_analysis(mode):
 
 @app.route('/list/')
 def route_list():
-    only = ('profile_id', 'description', 'added_at')
+    only = ('profile_id', 'description', 'added_at', 'target')
     profiles = models.Profile.objects().filter(private=False).only(*only)
     return flask.render_template('list.html', profiles=profiles)
 
