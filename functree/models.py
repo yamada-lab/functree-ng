@@ -24,4 +24,4 @@ class Profile(db.Document):
     target = db.StringField(required=True, choices=[])
     description = db.StringField(required=True, max_length=50)
     added_at = db.DateTimeField(required=True)
-    private = db.BooleanField(default=False)
+    private = db.BooleanField(default=True)

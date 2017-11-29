@@ -187,7 +187,8 @@ def route_init_profiles():
         columns=input_data['columns'],
         target=input_data['target'],
         description=input_data['description'],
-        added_at=datetime.datetime.utcnow()
+        added_at=datetime.datetime.utcnow(),
+        private=False
     ).save()
     return flask.redirect(flask.url_for('route_admin'))
 

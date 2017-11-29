@@ -11,7 +11,7 @@ class BasicMappingForm(flask_wtf.FlaskForm):
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
     ])
-    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")')
+    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
     submit = wtforms.SubmitField('Submit')
 
     def __init__(self, *args, **kwargs):
@@ -31,7 +31,7 @@ class ModuleCoverageForm(flask_wtf.FlaskForm):
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
     ])
-    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")')
+    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
     submit = wtforms.SubmitField('Submit')
 
     def __init__(self, *args, **kwargs):
@@ -52,7 +52,7 @@ class DirectMappingForm(flask_wtf.FlaskForm):
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
     ])
-    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")')
+    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
     submit = wtforms.SubmitField('Submit')
 
     def __init__(self, *args, **kwargs):
@@ -72,7 +72,7 @@ class JSONUploadForm(flask_wtf.FlaskForm):
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
     ])
-    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")')
+    private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
     submit = wtforms.SubmitField('Submit')
 
     def __init__(self, *args, **kwargs):
