@@ -4,7 +4,7 @@ from functree import models
 
 
 def from_table(form):
-    raw_table = pd.read_csv(form.input_file.data, delimiter='\t', comment='#', header=0, index_col=0)
+    raw_table = pd.read_csv(form.input_file.data, delimiter='\t', comment='#', header=0, index_col=0).dropna(how='all')
     profile = []
     for entry in raw_table.index:
         profile.append({'entry': entry, 'values': [raw_table.ix[entry].tolist()]})

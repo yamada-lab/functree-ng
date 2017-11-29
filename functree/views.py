@@ -1,7 +1,7 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
-from functree import __version__, app, auth, filters, forms, models, tree, basic_mapping, module_coverage, direct_mapping
-from .crckm.src import download as crckm
+from functree import __version__, app, auth, filters, forms, models, tree, analysis
+from functree.crckm.src import download as crckm
 
 
 @app.route('/')
@@ -14,28 +14,28 @@ def route_analysis(mode):
     if mode == 'basic_mapping':
         form = forms.BasicMappingForm()
         if form.validate_on_submit():
-            profile_id = basic_mapping.from_table(form)
+            profile_id = analysis.basic_mapping.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'module_coverage':
         form = forms.ModuleCoverageForm()
         if form.validate_on_submit():
-            profile_id = module_coverage.from_table(form)
+            profile_id = analysis.module_coverage.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'direct_mapping':
         form = forms.DirectMappingForm()
         if form.validate_on_submit():
-            profile_id = direct_mapping.from_table(form)
+            profile_id = analysis.direct_mapping.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'json_upload':
         form = forms.JSONUploadForm()
         if form.validate_on_submit():
-            profile_id = direct_mapping.from_json(form)
+            profile_id = analysis.direct_mapping.from_json(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
