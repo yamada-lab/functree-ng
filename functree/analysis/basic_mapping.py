@@ -5,11 +5,15 @@ from functree import models, tree, analysis
 
 def from_table(form):
     result = calc_abundances(f=form.input_file.data, target=form.target.data)
+    colors = []
+    if form.color_file.data:
+        colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').as_matrix().tolist()
     return models.Profile(
         profile_id=uuid.uuid4(),
         profile=result['profile'],
         series=result['series'],
         columns=result['columns'],
+        colors=colors,
         target=form.target.data,
         description=form.description.data,
         added_at=datetime.datetime.utcnow(),

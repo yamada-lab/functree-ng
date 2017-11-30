@@ -9,7 +9,7 @@ def from_table(form):
     for entry in raw_table.index:
         profile.append({'entry': entry, 'values': [raw_table.ix[entry].tolist()]})
     colors = []
-    if form.color_file.data:    # If color set is specified, parse it
+    if form.color_file.data:
         colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').as_matrix().tolist()
     return models.Profile(
         profile_id=uuid.uuid4(),
