@@ -12,9 +12,15 @@ const DEFAULT_CONFIG = {
     'displayRounds': true,
     'displayBars': false,
     'displayNodesLowerThan': 5,
-    'colorizeBy': 'class',
+    'colorizeBy': 'layer',
     'colorSet': {
         'default': '#5f5f5f',
+        'root': '#5f5f5f',
+        'brite1': '#2F57D0',
+        'brite2': '#5381DF',
+        'pathway': '#41B360',
+        'module': '#E0462F',
+        'ko': '#DA9F33',
         0: '#5f5f5f',
         1: '#2F57D0',
         2: '#5381DF',
@@ -114,7 +120,7 @@ const FuncTree = class {
             })
         );
 
-        const getClassMax = (nodes, maxFunc) => {
+        const getLayerMax = (nodes, maxFunc) => {
             return Array.from(new Array(depth + 1))
                 .map((v, i) => {
                     const candidates = nodes
@@ -125,13 +131,13 @@ const FuncTree = class {
                     return d3.max(candidates);
                 });
         };
-        const maxValue = getClassMax(nodes, (x) => {
+        const maxValue = getLayerMax(nodes, (x) => {
             return x.value;
         });
-        const maxSumOfValues = getClassMax(nodes, (x) => {
+        const maxSumOfValues = getLayerMax(nodes, (x) => {
             return d3.sum(x.values);
         });
-        const maxMaxOfValues = getClassMax(nodes, (x) => {
+        const maxMaxOfValues = getLayerMax(nodes, (x) => {
             return d3.max(x.values);
         });
 
@@ -444,9 +450,8 @@ const FuncTree = class {
             .attr('fill', (d) => {
                 let color;
                 switch (this.config.colorizeBy) {
-                    case 'class':
-                        const n = d.depth % Object.keys(this.config.colorSet).length;
-                        color = this.config.colorSet[n];
+                    case 'layer':
+                        color = this.config.colorSet[d.layer];
                         break;
                     case 'entry':
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
@@ -506,9 +511,8 @@ const FuncTree = class {
             .attr('fill', (d) => {
                 let color;
                 switch (this.config.colorizeBy) {
-                    case 'class':
-                        const n = d.depth % Object.keys(this.config.colorSet).length;
-                        color = this.config.colorSet[n];
+                    case 'layer':
+                        color = this.config.colorSet[d.layer];
                         break;
                     case 'entry':
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
