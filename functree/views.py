@@ -173,7 +173,7 @@ def route_save_image():
 @app.route('/action/init_profiles/')
 @auth.login_required
 def route_init_profiles():
-    f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/profile/example.json'), 'r')
+    f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/profile.json'), 'r')
     input_data = json.load(f)[0]
     models.Profile.objects.all().delete()
     profile = models.Profile(

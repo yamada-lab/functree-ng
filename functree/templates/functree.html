@@ -46,7 +46,7 @@
     <div class="form-group">
         <label class="control-label">Color specification</label>
         <select class="form-control input-sm" v-model="colorizeBy">
-            <option value="class">Class</option>
+            <option value="layer">Layer</option>
             <option value="entry">Entry</option>
         </select>
     </div>
@@ -204,7 +204,7 @@
                 'columnsSingle': '',
                 'columnsMultiple': '',
                 'normalize': true,
-                'colorizeBy': 'class',
+                'colorizeBy': 'layer',
                 'options': [
                     profile.series,
                     []

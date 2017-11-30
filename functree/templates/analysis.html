@@ -59,10 +59,10 @@
                         {{ form.input_file.label(class='col-sm-2 control-label') }}
                         <div class="col-sm-10">
                             {{ form.input_file(class_='form-control-file') }}
-                            {% if mode == 'basic_mapping' or mode == 'module_coverage' %}
-                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/profile/example.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
+                            {% if mode == 'basic_mapping' or mode == 'module_coverage' or mode == 'direct_mapping' %}
+                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
                             {% elif mode == 'json_upload' %}
-                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/profile/example.json') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
+                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.json') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
                             {% endif %}
                             {% if form.input_file.errors %}
                             <span class="help-block">
@@ -78,6 +78,7 @@
                         {{ form.color_file.label(class='col-sm-2 control-label') }}
                         <div class="col-sm-10">
                             {{ form.color_file(class_='form-control-file') }}
+                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/colors.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
                             {% if form.color_file.errors %}
                             <span class="help-block">
                                 {% for message in form.color_file.errors %}
