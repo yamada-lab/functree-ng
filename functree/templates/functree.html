@@ -32,14 +32,14 @@
     <div class="form-group">
         <label class="control-label">Data mapping: Single</label>
         <select class="form-control input-sm" v-model="columnsSingle">
-            <option value="">- Select a column -</option>
+            <option disabled value="">- Select a column -</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
     </div>
     <div class="form-group">
         <label class="control-label">Data mapping: Multiple</label>
         <select class="form-control input-sm" multiple v-model="columnsMultiple">
-            <option value="">- Select columns -</option>
+            <option disabled value="">- Select columns -</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
     </div>
@@ -48,6 +48,7 @@
         <select class="form-control input-sm" v-model="colorizeBy">
             <option value="layer">Layer</option>
             <option value="entry">Entry</option>
+            <option value="column">Column</option>
         </select>
     </div>
     <div class="form-group">
@@ -236,11 +237,17 @@
                     funcTree
                         .configure({
                             'normalize': self.normalize,
-                            'colorizeBy': self.colorizeBy
+                            'colorizeBy': self.colorizeBy,
+                            'selectedColumns': {
+                                'single': self.columnsSingle,
+                                'multiple': self.columnsMultiple
+                            }
                         })
                         .configureColorSet(
                             profile.colors.reduce(function(a, b) {
                                 a[b[0]] = b[1];
+                                var n = profile.columns[self.series].indexOf(b[0]);
+                                if (~n) a[n] = b[1];
                                 return a;
                             }, {})
                         )

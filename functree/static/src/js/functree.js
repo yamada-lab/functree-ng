@@ -14,19 +14,11 @@ const DEFAULT_CONFIG = {
     'displayNodesLowerThan': 5,
     'colorizeBy': 'layer',
     'colorSet': {
-        'default': '#5f5f5f',
-        'root': '#5f5f5f',
-        'brite1': '#2F57D0',
-        'brite2': '#5381DF',
-        'pathway': '#41B360',
-        'module': '#E0462F',
-        'ko': '#DA9F33',
-        0: '#5f5f5f',
-        1: '#2F57D0',
-        2: '#5381DF',
-        3: '#41B360',
-        4: '#E0462F',
-        5: '#DA9F33'
+        'default': '#5f5f5f'
+    },
+    'selectedColumns': {
+        'single': null,
+        'multiple': null
     },
     'external': {
         'entry': 'vmEntryDetail.entry',
@@ -43,6 +35,7 @@ const FuncTree = class {
         this.config = Object.assign(DEFAULT_CONFIG, config);
         this.tree = d3.layout.tree()
             .size([360, this.config.diameter / 2]);
+        this.colorScale = d3.scale.category20();
         let id = 0;
         for (const node of this.nodes) {
             node.id = id++;
@@ -338,7 +331,7 @@ const FuncTree = class {
     }
 
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
-        const config = this.config;
+        const self = this;
         const chart = d3.select('#charts')
             .selectAll('g')
             .data(nodes, (d) => {
@@ -393,8 +386,8 @@ const FuncTree = class {
             .attr('width', 2)
             .attr('height', 0)
             .attr('fill', function(d, i) {
-                const n = i % Object.keys(config.colorSet).length;
-                return config.colorSet[n];
+                const n = self.config.selectedColumns.multiple[i];
+                return self.config.colorSet[n] || self.colorScale('column-' + n);
             })
             .on('mouseover', () => {
                 d3.select(d3.event.target)
@@ -410,9 +403,9 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('y', function(d, i) {
                 const p = this.parentNode.__data__;
-                const maxHight = config.diameter / 2 / depth * 0.8;
+                const maxHight = self.config.diameter / 2 / depth * 0.8;
                 const subSum = d3.sum(p.values.slice(0, i));
-                if (config.normalize) {
+                if (self.config.normalize) {
                     return subSum / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return subSum;
@@ -420,12 +413,16 @@ const FuncTree = class {
             })
             .attr('height', function(d) {
                 const p = this.parentNode.__data__;
-                const maxHight = config.diameter / 2 / depth * 0.8;
-                if (config.normalize) {
+                const maxHight = self.config.diameter / 2 / depth * 0.8;
+                if (self.config.normalize) {
                     return d / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return d;
                 }
+            })
+            .attr('fill', function(d, i) {
+                const n = self.config.selectedColumns.multiple[i];
+                return self.config.colorSet[n] || self.colorScale('column-' + n);
             });
         bar.exit()
             .transition()
@@ -451,10 +448,14 @@ const FuncTree = class {
                 let color;
                 switch (this.config.colorizeBy) {
                     case 'layer':
-                        color = this.config.colorSet[d.layer];
+                        color = this.config.colorSet[d.layer] || this.colorScale(d.layer);
                         break;
                     case 'entry':
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
+                        break;
+                    case 'column':
+                        const n = this.config.selectedColumns.single;
+                        color = this.config.colorSet[n] || this.colorScale('column-' + n);
                         break;
                     default:
                         color = this.config.colorSet.default;
@@ -512,10 +513,14 @@ const FuncTree = class {
                 let color;
                 switch (this.config.colorizeBy) {
                     case 'layer':
-                        color = this.config.colorSet[d.layer];
+                        color = this.config.colorSet[d.layer] || this.colorScale(d.layer);
                         break;
                     case 'entry':
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
+                        break;
+                    case 'column':
+                        const n = this.config.selectedColumns.single;
+                        color = this.config.colorSet[n] || this.colorScale('column-' + n);
                         break;
                     default:
                         color = this.config.colorSet.default;
