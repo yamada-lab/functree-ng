@@ -26,6 +26,7 @@ class Profile(db.Document):
     added_at = db.DateTimeField(required=True)
     expire_at = db.DateTimeField(required=True)
     private = db.BooleanField(default=True)
+    locked = db.BooleanField(default=False)
     meta = {
         'indexes': [
             {'fields': ['expire_at'], 'expireAfterSeconds': 0}

@@ -45,7 +45,7 @@ def route_analysis(mode):
 
 @app.route('/list/')
 def route_list():
-    only = ('profile_id', 'description', 'added_at', 'target')
+    only = ('profile_id', 'description', 'added_at', 'target', 'locked')
     profiles = models.Profile.objects().filter(private=False).only(*only)
     return flask.render_template('list.html', profiles=profiles)
 
@@ -108,7 +108,7 @@ def route_admin():
 @app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
 def route_profile(profile_id):
     if flask.request.form.get('_method') == 'DELETE':
-        models.Profile.objects.get_or_404(profile_id=profile_id).delete()
+        models.Profile.objects.get_or_404(profile_id=profile_id, locked=False).delete()
         return flask.redirect(flask.url_for('route_list'))
     else:
         excludes = ('id',)
@@ -189,7 +189,8 @@ def route_init_profiles():
         description=input_data['description'],
         added_at=datetime.datetime.utcnow(),
         expire_at=datetime.datetime(2101, 1, 1),
-        private=False
+        private=False,
+        locked=True
     ).save()
     return flask.redirect(flask.url_for('route_admin'))
 
