@@ -17,6 +17,10 @@
                     <td>{{profile.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
                 </tr>
                 <tr>
+                    <th>Expire at</th>
+                    <td>{{profile.expire_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
+                </tr>
+                <tr>
                     <th>Database</th>
                     <td><a href="{{ url_for('route_data') + '#table-tree' }}">{{profile.target}}</a></td>
                 </tr>

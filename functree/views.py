@@ -180,7 +180,7 @@ def route_init_profiles():
     f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/profile.json'), 'r')
     input_data = json.load(f)[0]
     models.Profile.objects.all().delete()
-    profile = models.Profile(
+    models.Profile(
         profile_id=uuid.uuid4(),
         profile=input_data['profile'],
         series=input_data['series'],
@@ -188,6 +188,7 @@ def route_init_profiles():
         target=input_data['target'],
         description=input_data['description'],
         added_at=datetime.datetime.utcnow(),
+        expire_at=datetime.datetime(2101, 1, 1),
         private=False
     ).save()
     return flask.redirect(flask.url_for('route_admin'))
@@ -197,7 +198,7 @@ def route_init_profiles():
 @auth.login_required
 def route_update_trees():
     models.Tree.objects.all().delete()
-    func_tree = models.Tree(
+    models.Tree(
         tree=tree.get_tree(),
         source='KEGG',
         description='KEGG version of Functional Tree',
@@ -214,7 +215,7 @@ def route_update_trees():
 @auth.login_required
 def route_update_definitions():
     models.Definition.objects.all().delete()
-    definition = models.Definition(
+    models.Definition(
         definition=crckm.get_definition(),
         source='KEGG',
         description='KEGG Module definitions',

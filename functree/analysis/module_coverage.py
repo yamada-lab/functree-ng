@@ -11,6 +11,7 @@ def from_table(form):
     colors = []
     if form.color_file.data:
         colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').as_matrix().tolist()
+    utcnow = datetime.datetime.utcnow()
     return models.Profile(
         profile_id=uuid.uuid4(),
         profile=result['profile'],
@@ -19,7 +20,8 @@ def from_table(form):
         colors=colors,
         target=form.target.data,
         description=form.description.data,
-        added_at=datetime.datetime.utcnow(),
+        added_at=utcnow,
+        expire_at=utcnow + datetime.timedelta(days=app.config['FUNCTREE_PROFILE_TTL_DAYS']),
         private=form.private.data
     ).save().profile_id
 

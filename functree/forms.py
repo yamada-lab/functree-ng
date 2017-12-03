@@ -6,7 +6,7 @@ class BasicMappingForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
-    color_file = flask_wtf.file.FileField('Color file')
+    color_file = flask_wtf.file.FileField('Color file (Optional)')
     target = wtforms.SelectField('Database', choices=[])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),
@@ -27,7 +27,7 @@ class ModuleCoverageForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
-    color_file = flask_wtf.file.FileField('Color file')
+    color_file = flask_wtf.file.FileField('Color file (Optional)')
     target = wtforms.SelectField('Database', choices=[])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),
@@ -48,7 +48,7 @@ class DirectMappingForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
-    color_file = flask_wtf.file.FileField('Color file')
+    color_file = flask_wtf.file.FileField('Color file (Optional)')
     target = wtforms.SelectField('Database', choices=[])
     description = wtforms.TextField('Description', validators=[
         wtforms.validators.DataRequired(),

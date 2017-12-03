@@ -54,7 +54,7 @@
                         <li><b>Description:</b> Statement that represents the result</li>
                     </ul>
                     {% endif %}
-                    <p><i class="fa fa-info-circle" aria-hidden="true"></i> For more detail, see <a href="{{ url_for('route_docs') }}">documentation</a>.</p>
+                    <p><i class="fa fa-info-circle" aria-hidden="true"></i> The result will expire <b>{{config['FUNCTREE_PROFILE_TTL_DAYS']}} days</b> after the submission. For more detail, see <a href="{{ url_for('route_docs') }}">documentation</a>.</p>
                 </div>
                 <div class="panel-body">
                     <div class="form-group{% if form.input_file.errors %} has-error{% endif %}">
