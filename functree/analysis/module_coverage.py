@@ -1,6 +1,6 @@
 import sys, os, uuid, datetime, copy
 import pandas as pd
-from functree import models, tree, analysis
+from functree import app, models, tree, analysis
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../crckm/src'))
 import format_and_calculation as crckm
