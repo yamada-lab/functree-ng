@@ -3,7 +3,7 @@ from functree import app
 
 
 @app.template_filter('localtime')
-def localtime(datetime, zone=app.config['TIME_ZONE']):
+def localtime(datetime, zone=app.config['FUNCTREE_TIME_ZONE']):
     tz = pytz.timezone(zone)
     return datetime.astimezone(tz)
 

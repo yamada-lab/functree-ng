@@ -4,6 +4,7 @@ __pycache__/
 instance/*
 !instance/README
 dist/
+docs/_build/
 npm-debug.log
 node_modules/
 bower_components/

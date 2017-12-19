@@ -1,20 +1,30 @@
+$navbar_height: 50px;
+$svg_width: 1800px;     /* Refer to functree.js */
+$svg_height: 1800px;    /* Refer to functree.js */
+$footer_height: 40px;
+
+
 body {
     margin-bottom: 40px;
 }
+
 #page-wrapper {
     min-height: 600px;
 }
+
 #content-wrapper {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    margin: 50px 15px 40px 15px;    /* the height of #navbar, .footer */
+    margin: $navbar_height 15px $footer_height 15px;
+
+    h3 {
+        white-space: nowrap;
+    }
 }
-#content-wrapper > h3 {
-    white-space: nowrap;
-}
+
 #content {
     position: absolute;
     top: 0;
@@ -23,6 +33,7 @@ body {
     margin-top: 60px;
     display: flex;
 }
+
 #sidebar {
     width: 250px;
     min-width: 250px;
@@ -32,17 +43,20 @@ body {
     border-right: solid thin #ddd;
     overflow-y: scroll;
 }
+
 #maincontent {
     width: 100%;
     min-width: 600px;
     height: auto;
     margin-bottom: 15px;
 }
+
 #mainpane-wrapper {
     position: relative;
     height: 100%;
     margin-left: 15px;
 }
+
 #mainpane {
     position: absolute;
     top: 0;
@@ -51,11 +65,12 @@ body {
     left: 0;
     margin-top: 55px;
 }
+
 #functree {
     width: 100%;
-    max-width: 1800px;
-    height: 100%;           /* FIXME: Does not work on Safari  */
-    max-height: 1800px;
+    max-width: $svg_width;
+    height: 100%;
+    max-height: $svg_height;
     position: absolute;
     border: 1px solid transparent;
     border-color: #ddd;
@@ -63,17 +78,27 @@ body {
     box-shadow: 0 1px 1px rgba(0,0,0,0.05);
     background-color: #fff;
     overflow: hidden;
+
+    svg {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-top: -($svg_width / 2);
+        margin-left: -($svg_height / 2);
+    }
+
+    .breadcrumb {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        font-size: 12px;
+        z-index: 10;
+    }
 }
-#functree > svg {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    margin-top: -900px;     /* Half of the height of svg */
-    margin-left: -900px;    /* Half of the width of svg */
-}
+
 #loading {
     background-color: #000;
-    opacity: 0.6;
+    opacity: 0.5;
     position: absolute;
     top: 0;
     right: 0;
@@ -84,15 +109,20 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    div {
+        text-align: center;
+        color: #fff;
+    }
 }
-#loading > div {
-    text-align: center;
-    color: #fff;
-}
+
 .footer {
-    height: 40px;
+    height: $footer_height;
     min-width: 880px;
-}
-.footer > .container > .text-muted {
-    margin: 10px 0;
+
+    .container {
+         .text-muted {
+             margin: 10px 0;
+         }
+     }
 }

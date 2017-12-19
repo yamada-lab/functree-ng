@@ -14,6 +14,9 @@ RUN npm install --global yarn && \
   yarn run bower install && \
   yarn run build
 
+RUN pip3 install -r docs/requirements.txt
+RUN cd docs && make html
+
 EXPOSE 3031 8080
 
 CMD ["uwsgi", "--ini", "/app/uwsgi.ini"]

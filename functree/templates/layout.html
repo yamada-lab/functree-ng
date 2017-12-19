@@ -12,7 +12,6 @@
         <meta charset="utf-8">
         <meta name="author" content="Yuta Yamate">
         <meta name="description" content="Visualization and analysis tool for omics data based on biological functional tree">
-        <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/layout.css') }}">
@@ -37,17 +36,18 @@
                             <a href="{{ url_for('route_analysis', mode='basic') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Analysis</li>
-                                <li><a href="{{ url_for('route_analysis', mode='basic') }}">- Basic mapping</a></li>
-                                <li><a href="{{ url_for('route_analysis', mode='mcr') }}">- Module Completion Ratio</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='basic_mapping') }}">- Basic mapping</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='module_coverage') }}">- Module coverage</a></li>
                                 <li class="dropdown-header">Upload</li>
-                                <li><a href="{{ url_for('route_analysis', mode='upload_profile') }}">- Upload profile</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">- Direct mapping</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='json_upload') }}">- JSON upload</a></li>
                             </ul>
                         </li>
                         <li{% if request.endpoint == 'route_list' %} class="active"{% endif %}><a href="{{ url_for('route_list') }}"><i class="fa fa-list" aria-hidden="true"></i> Profiles</a></li>
                         <li{% if request.endpoint == 'route_data' %} class="active"{% endif %}><a href="{{ url_for('route_data') }}"><i class="fa fa-book" aria-hidden="true"></i> Data</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li{% if request.endpoint == 'route_help' %} class="active"{% endif %}><a href="{{ url_for('route_help') }}"><i class="fa fa-question" aria-hidden="true"></i> Help</a></li>
+                        <li><a href="{{ url_for('route_docs') }}"><i class="fa fa-question" aria-hidden="true"></i> Help</a></li>
                         <li{% if request.endpoint == 'route_about' %} class="active"{% endif %}><a href="{{ url_for('route_about') }}"><i class="fa fa-info" aria-hidden="true"></i> About</a></li>
                         <li{% if request.endpoint == 'route_contact' %} class="active"{% endif %}><a href="{{ url_for('route_contact') }}"><i class="fa fa-envelope-o" aria-hidden="true"></i> Contact</a></li>
                     </ul>
@@ -61,6 +61,8 @@
             </div>
         </footer>
         {% block script %}
+        <script src="{{ url_for('static', filename='bower_components/vue/dist/vue.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='bower_components/axios/dist/axios.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>

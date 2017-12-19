@@ -1,7 +1,7 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
-from functree import __version__, app, auth, filters, forms, models, analysis, tree
-from .crckm.src import download as crckm
+from functree import __version__, app, auth, filters, forms, models, tree, analysis
+from functree.crckm.src import download as crckm
 
 
 @app.route('/')
@@ -11,61 +11,32 @@ def route_index():
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
-    if mode == 'basic':
-        form = forms.BasicForm()
+    if mode == 'basic_mapping':
+        form = forms.BasicMappingForm()
         if form.validate_on_submit():
-            result = analysis.perform_basic(
-                f=form.input_file.data,
-                target=form.target.data
-            )
-            profile = models.Profile(
-                profile_id=uuid.uuid4(),
-                profile=result['profile'],
-                series=result['series'],
-                columns=result['columns'],
-                target=form.target.data,
-                description=form.description.data,
-                added_at=datetime.datetime.utcnow(),
-                private=form.private.data
-            ).save()
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id))
+            profile_id = analysis.basic_mapping.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'mcr':
-        form = forms.MCRForm()
+    elif mode == 'module_coverage':
+        form = forms.ModuleCoverageForm()
         if form.validate_on_submit():
-            result = analysis.perform_mcr(
-                f=form.input_file.data,
-                target=form.target.data
-            )
-            profile = models.Profile(
-                profile_id=uuid.uuid4(),
-                profile=result['profile'],
-                series=result['series'],
-                columns=result['columns'],
-                target=form.target.data,
-                description=form.description.data,
-                added_at=datetime.datetime.utcnow(),
-                private=form.private.data
-            ).save()
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id))
+            profile_id = analysis.module_coverage.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'upload_profile':
+    elif mode == 'direct_mapping':
+        form = forms.DirectMappingForm()
+        if form.validate_on_submit():
+            profile_id = analysis.direct_mapping.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
+        else:
+            return flask.render_template('analysis.html', form=form, mode=mode)
+    elif mode == 'json_upload':
         form = forms.JSONUploadForm()
         if form.validate_on_submit():
-            input_data = json.load(form.input_file.data)[0]
-            profile = models.Profile(
-                profile_id=uuid.uuid4(),
-                profile=input_data['profile'],
-                series=input_data['series'],
-                columns=input_data['columns'],
-                target=form.target.data,
-                description=form.description.data,
-                added_at=datetime.datetime.utcnow(),
-                private=form.private.data
-            ).save()
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id))
+            profile_id = analysis.direct_mapping.from_json(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
     else:
@@ -74,26 +45,28 @@ def route_analysis(mode):
 
 @app.route('/list/')
 def route_list():
-    profiles = models.Profile.objects().filter(private=False)
-    return flask.render_template('list.html', **locals())
+    only = ('profile_id', 'description', 'added_at', 'target', 'locked')
+    profiles = models.Profile.objects().filter(private=False).only(*only)
+    return flask.render_template('list.html', profiles=profiles)
 
 
 @app.route('/data/')
 def route_data():
-    trees = models.Tree.objects().all()
-    definitions = models.Definition.objects().all()
-    return flask.render_template('data.html', **locals())
+    only = ('source', 'description', 'added_at')
+    trees = models.Tree.objects().all().only(*only)
+    definitions = models.Definition.objects().all().only(*only)
+    return flask.render_template('data.html', trees=trees, definitions=definitions)
 
 
-@app.route('/help/')
-def route_help():
-    return flask.render_template('help.html')
+@app.route('/docs/', defaults={'filename': 'index.html'})
+@app.route('/docs/<path:filename>')
+def route_docs(filename):
+    return flask.send_from_directory('../docs/_build/html', filename)
 
 
 @app.route('/about/')
 def route_about():
-    version = __version__
-    return flask.render_template('about.html', **locals())
+    return flask.render_template('about.html', version=__version__)
 
 
 @app.route('/contact/')
@@ -105,7 +78,8 @@ def route_contact():
 def route_viewer():
     profile_id = flask.request.args.get('profile_id', type=uuid.UUID)
     mode = flask.request.args.get('mode', default='functree', type=str)
-    profile = models.Profile.objects().get_or_404(profile_id=profile_id)
+    excludes = ('profile',)
+    profile = models.Profile.objects().exclude(*excludes).get_or_404(profile_id=profile_id)
     if mode == 'functree':
         return flask.render_template('functree.html', profile=profile, mode=mode)
     elif mode == 'charts':
@@ -123,16 +97,18 @@ def route_viewer():
 @app.route('/admin/')
 @auth.login_required
 def route_admin():
-    profiles = models.Profile.objects().all()
-    trees = models.Tree.objects().all()
-    definitions = models.Definition.objects().all()
-    return flask.render_template('admin.html', **locals())
+    counts = {
+        'profile': models.Profile.objects().count(),
+        'tree': models.Tree.objects().count(),
+        'definition': models.Definition.objects().count()
+    }
+    return flask.render_template('admin.html', counts=counts)
 
 
 @app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
 def route_profile(profile_id):
     if flask.request.form.get('_method') == 'DELETE':
-        models.Profile.objects.get_or_404(profile_id=profile_id).delete()
+        models.Profile.objects.get_or_404(profile_id=profile_id, locked=False).delete()
         return flask.redirect(flask.url_for('route_list'))
     else:
         excludes = ('id',)
@@ -201,17 +177,20 @@ def route_save_image():
 @app.route('/action/init_profiles/')
 @auth.login_required
 def route_init_profiles():
-    f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/profile/example.json'), 'r')
+    f = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/profile.json'), 'r')
     input_data = json.load(f)[0]
     models.Profile.objects.all().delete()
-    profile = models.Profile(
+    models.Profile(
         profile_id=uuid.uuid4(),
         profile=input_data['profile'],
         series=input_data['series'],
         columns=input_data['columns'],
         target=input_data['target'],
         description=input_data['description'],
-        added_at=datetime.datetime.utcnow()
+        added_at=datetime.datetime.utcnow(),
+        expire_at=datetime.datetime(2101, 1, 1),
+        private=False,
+        locked=True
     ).save()
     return flask.redirect(flask.url_for('route_admin'))
 
@@ -220,7 +199,7 @@ def route_init_profiles():
 @auth.login_required
 def route_update_trees():
     models.Tree.objects.all().delete()
-    func_tree = models.Tree(
+    models.Tree(
         tree=tree.get_tree(),
         source='KEGG',
         description='KEGG version of Functional Tree',
@@ -237,7 +216,7 @@ def route_update_trees():
 @auth.login_required
 def route_update_definitions():
     models.Definition.objects.all().delete()
-    definition = models.Definition(
+    models.Definition(
         definition=crckm.get_definition(),
         source='KEGG',
         description='KEGG Module definitions',

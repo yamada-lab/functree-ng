@@ -6,8 +6,8 @@ EXCLUDES = ['Global and overview maps', 'Drug Development', 'Chemical structure 
 
 
 class Node(dict):
-    def __init__(self, *args, **kw):
-        super(Node, self).__init__(*args, **kw)
+    def __init__(self, *args, **kwargs):
+        super(Node, self).__init__(*args, **kwargs)
 
     def add_child(self, node):
         if not 'children' in self:
@@ -135,6 +135,24 @@ def download_htext(htext, format='htext'):
     return res
 
 
+def get_nodes(node, nodes=None):
+    if nodes is None:
+        nodes = []
+    nodes.append(node)
+    if 'children' in node:
+        for child_node in node['children']:
+            get_nodes(child_node, nodes)
+    return nodes
+
+
+def delete_children(node, layer):
+    if node['layer'] == layer:
+        node.pop('children')
+    if 'children' in node:
+        for i in node['children']:
+            delete_children(i, layer)
+
+
 def parse_arguments():
     parser = argparse.ArgumentParser(prog=__file__, description='Functional Tree JSON generator')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.2.0')
@@ -151,4 +169,3 @@ if __name__ == '__main__':
         'created_at': datetime.datetime.utcnow().isoformat()
     }
     args.output.write(json.dumps(data, indent=args.indent) + '\n')
-    sys.exit(0)

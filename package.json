@@ -4,7 +4,7 @@
   "author": {
     "name": "Yuta Yamate",
     "email": "yyamate@bio.titech.ac.jp",
-    "url": "https://yyuuta88.github.io/"
+    "url": "https://yyuuta88.github.io"
   },
   "repository": {
     "type": "git",
@@ -14,14 +14,17 @@
     "url": "https://github.com/yyuuta88/functree-ng/issues"
   },
   "license": "MIT",
+  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-minify": "^0.2.0",
     "bower": "^1.8.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
     "gulp-plumber": "^1.1.0",
-    "gulp-sass": "^3.1.0"
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.6.1"
   },
   "scripts": {
     "bower": "bower",
@@ -31,6 +34,5 @@
     "sass:watch": "gulp sass:watch",
     "build": "gulp build"
   },
-  "private": true,
-  "dependencies": {}
+  "private": true
 }

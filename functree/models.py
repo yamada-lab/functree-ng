@@ -20,7 +20,15 @@ class Profile(db.Document):
     profile = db.ListField(default=[])
     series = db.ListField(default=[])
     columns = db.ListField(default=[])
+    colors = db.ListField(default=[])
     target = db.StringField(required=True, choices=[])
     description = db.StringField(required=True, max_length=50)
     added_at = db.DateTimeField(required=True)
-    private = db.BooleanField(default=False)
+    expire_at = db.DateTimeField(required=True)
+    private = db.BooleanField(default=True)
+    locked = db.BooleanField(default=False)
+    meta = {
+        'indexes': [
+            {'fields': ['expire_at'], 'expireAfterSeconds': 0}
+        ]
+    }

@@ -12,18 +12,17 @@ const DEFAULT_CONFIG = {
     'displayRounds': true,
     'displayBars': false,
     'displayNodesLowerThan': 5,
-    'color': {
-        'class': [
-            '#5f5f5f',
-            '#2F57D0',
-            '#5381DF',
-            '#41B360',
-            '#E0462F',
-            '#DA9F33'
-        ]
+    'colorizeBy': 'layer',
+    'colorSet': {
+        'default': '#5f5f5f'
     },
-    'externalElement': {
-        'nodeEntry': '#form-information input'
+    'selectedColumns': {
+        'single': null,
+        'multiple': null
+    },
+    'external': {
+        'entry': 'vmEntryDetail.entry',
+        'breadcrumb': 'vmBreadcrumb.items'
     }
 }
 
@@ -36,6 +35,7 @@ const FuncTree = class {
         this.config = Object.assign(DEFAULT_CONFIG, config);
         this.tree = d3.layout.tree()
             .size([360, this.config.diameter / 2]);
+        this.colorScale = d3.scale.category20();
         let id = 0;
         for (const node of this.nodes) {
             node.id = id++;
@@ -45,6 +45,11 @@ const FuncTree = class {
 
     configure(config=DEFAULT_CONFIG) {
         this.config = Object.assign(this.config, config);
+        return this;
+    }
+
+    configureColorSet(colorSet={}) {
+        this.config.colorSet = Object.assign(this.config.colorSet, colorSet);
         return this;
     }
 
@@ -108,7 +113,7 @@ const FuncTree = class {
             })
         );
 
-        const getClassMax = (nodes, maxFunc) => {
+        const getLayerMax = (nodes, maxFunc) => {
             return Array.from(new Array(depth + 1))
                 .map((v, i) => {
                     const candidates = nodes
@@ -119,13 +124,13 @@ const FuncTree = class {
                     return d3.max(candidates);
                 });
         };
-        const maxValue = getClassMax(nodes, (x) => {
+        const maxValue = getLayerMax(nodes, (x) => {
             return x.value;
         });
-        const maxSumOfValues = getClassMax(nodes, (x) => {
+        const maxSumOfValues = getLayerMax(nodes, (x) => {
             return d3.sum(x.values);
         });
-        const maxMaxOfValues = getClassMax(nodes, (x) => {
+        const maxMaxOfValues = getLayerMax(nodes, (x) => {
             return d3.max(x.values);
         });
 
@@ -197,7 +202,7 @@ const FuncTree = class {
             .append('path')
             .attr('fill', 'none')
             .attr('stroke', '#999')
-            .attr('stroke-width', 0.5)
+            .attr('stroke-width', 0.25)
             .attr('stroke-dasharray', (d) => {
                 if (d.source.depth === 0) {
                     return '3,3';
@@ -222,6 +227,9 @@ const FuncTree = class {
                 this._highlightLinks(d.target);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select('#links')
                     .selectAll('path')
                     .attr('style', null);
@@ -268,12 +276,12 @@ const FuncTree = class {
             .attr('transform', () => {
                 return 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + ')';
             })
-            .attr('r', 1)
+            .attr('r', 0.5)
             .attr('fill', (d) => {
                 return d._children ? '#ddd' : '#fff';
             })
             .attr('stroke', '#999')
-            .attr('stroke-width', 0.5)
+            .attr('stroke-width', 0.25)
             .attr('cursor', 'pointer')
             .attr('data-toggle', 'tooltip')
             .attr('data-original-title', (d) => {
@@ -284,9 +292,8 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.externalElement.nodeEntry) {
-                    d3.select(this.config.externalElement.nodeEntry)
-                        .attr('value', d.entry);
+                if (this.config.external.entry) {
+                    eval(this.config.external.entry + ' = d.entry');
                 }
                 d3.select(d3.event.target)
                     .style('r', 10)
@@ -295,6 +302,9 @@ const FuncTree = class {
                 this._highlightLinks(d);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select(d3.event.target)
                     .attr('style', null);
                 d3.select('#links')
@@ -321,7 +331,7 @@ const FuncTree = class {
     }
 
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
-        const config = this.config;
+        const self = this;
         const chart = d3.select('#charts')
             .selectAll('g')
             .data(nodes, (d) => {
@@ -339,13 +349,15 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.externalElement.nodeEntry) {
-                    d3.select(this.config.externalElement.nodeEntry)
-                        .attr('value', d.entry);
+                if (this.config.external.entry) {
+                    eval(this.config.external.entry + ' = d.entry');
                 }
                 this._highlightLinks(d);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select('#links')
                     .selectAll('path')
                     .attr('style', null);
@@ -374,20 +386,16 @@ const FuncTree = class {
             .attr('width', 2)
             .attr('height', 0)
             .attr('fill', function(d, i) {
-                const n = i % config.color.class.length;
-                return config.color.class[n];
+                const n = self.config.selectedColumns.multiple[i];
+                return self.config.colorSet[n] || self.colorScale('column-' + n);
             })
-            .on('mouseover', (d) => {
+            .on('mouseover', () => {
                 d3.select(d3.event.target)
                     .style('fill', '#000')
                     .style('opacity', 0.5);
-                this._highlightLinks(d);
             })
             .on('mouseout', () => {
                 d3.select(d3.event.target)
-                    .attr('style', null);
-                d3.select('#charts')
-                    .selectAll('rect')
                     .attr('style', null);
             });
         bar
@@ -395,9 +403,9 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('y', function(d, i) {
                 const p = this.parentNode.__data__;
-                const maxHight = config.diameter / 2 / depth * 0.8;
+                const maxHight = self.config.diameter / 2 / depth * 0.8;
                 const subSum = d3.sum(p.values.slice(0, i));
-                if (config.normalize) {
+                if (self.config.normalize) {
                     return subSum / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return subSum;
@@ -405,12 +413,16 @@ const FuncTree = class {
             })
             .attr('height', function(d) {
                 const p = this.parentNode.__data__;
-                const maxHight = config.diameter / 2 / depth * 0.8;
-                if (config.normalize) {
+                const maxHight = self.config.diameter / 2 / depth * 0.8;
+                if (self.config.normalize) {
                     return d / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return d;
                 }
+            })
+            .attr('fill', function(d, i) {
+                const n = self.config.selectedColumns.multiple[i];
+                return self.config.colorSet[n] || self.colorScale('column-' + n);
             });
         bar.exit()
             .transition()
@@ -433,12 +445,22 @@ const FuncTree = class {
             })
             .attr('r', 0)
             .attr('fill', (d) => {
-                if (this.config.displayBars) {
-                    return '#fff';
-                } else {
-                    const n = d.depth % this.config.color.class.length;
-                    return this.config.color.class[n];
+                let color;
+                switch (this.config.colorizeBy) {
+                    case 'layer':
+                        color = this.config.colorSet[d.layer] || this.colorScale(d.layer);
+                        break;
+                    case 'entry':
+                        color = this.config.colorSet[d.entry] || this.config.colorSet.default;
+                        break;
+                    case 'column':
+                        const n = this.config.selectedColumns.single;
+                        color = this.config.colorSet[n] || this.colorScale('column-' + n);
+                        break;
+                    default:
+                        color = this.config.colorSet.default;
                 }
+                return color;
             })
             .attr('stroke', () => {
                 return this.config.displayBars ? '#333' : '#fff';
@@ -454,9 +476,8 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.externalElement.nodeEntry) {
-                    d3.select(this.config.externalElement.nodeEntry)
-                        .attr('value', d.entry);
+                if (this.config.external.entry) {
+                    eval(this.config.external.entry + ' = d.entry');
                 }
                 d3.select(d3.event.target)
                     .style('fill', '#000')
@@ -464,6 +485,9 @@ const FuncTree = class {
                 this._highlightLinks(d);
             })
             .on('mouseout', () => {
+                if (this.config.external.breadcrumb) {
+                    eval(this.config.external.breadcrumb + ' = []');
+                }
                 d3.select(d3.event.target)
                     .attr('style', null);
                 d3.select('#links')
@@ -475,6 +499,7 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('r', (d) => {
                 const r_ = 25;
+                if (d.depth < 2) return 0;
                 if (this.config.normalize) {
                     return d.value / max[d.depth] * r_ || 0;
                 } else {
@@ -483,6 +508,24 @@ const FuncTree = class {
             })
             .attr('transform', (d) => {
                 return 'rotate(' + (d.x - 90) + '),translate(' + d.y + ')';
+            })
+            .attr('fill', (d) => {
+                let color;
+                switch (this.config.colorizeBy) {
+                    case 'layer':
+                        color = this.config.colorSet[d.layer] || this.colorScale(d.layer);
+                        break;
+                    case 'entry':
+                        color = this.config.colorSet[d.entry] || this.config.colorSet.default;
+                        break;
+                    case 'column':
+                        const n = this.config.selectedColumns.single;
+                        color = this.config.colorSet[n] || this.colorScale('column-' + n);
+                        break;
+                    default:
+                        color = this.config.colorSet.default;
+                }
+                return color;
             });
         circle.exit()
             .transition()
@@ -612,10 +655,13 @@ const FuncTree = class {
                 }
             })
             .style('stroke', (d) => {
-                const n = d.target.depth % this.config.color.class.length;
-                return this.config.color.class[n];
+                const n = d.target.depth % Object.keys(this.config.colorSet).length;
+                return this.config.colorSet[n];
             })
             .style('stroke-width', 1.5);
+        if (this.config.external.breadcrumb) {
+            eval(this.config.external.breadcrumb + '.unshift(node.entry)');
+        }
         if (node.parent) {
             this._highlightLinks(node.parent);
         }

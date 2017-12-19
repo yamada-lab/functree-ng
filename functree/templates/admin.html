@@ -10,9 +10,9 @@
         <h3>Statistics</h3>
     </div>
     <ul>
-        <li><a href="{{ url_for('route_list') }}">Registered profiles</a> (including private profiles): <span class="badge">{{profiles.count()}}</span></li>
-        <li><a href="{{ url_for('route_data') + '#table-tree' }}">Functional Trees</a>: <span class="badge">{{trees.count()}}</span></li>
-        <li><a href="{{ url_for('route_data') + '#table-definition' }}">Module definitions</a>: <span class="badge">{{definitions.count()}}</span></li>
+        <li><a href="{{ url_for('route_list') }}">Registered profiles</a> (including private profiles): <span class="badge">{{counts.profile}}</span></li>
+        <li><a href="{{ url_for('route_data') + '#table-tree' }}">Functional Trees</a>: <span class="badge">{{counts.tree}}</span></li>
+        <li><a href="{{ url_for('route_data') + '#table-definition' }}">Module definitions</a>: <span class="badge">{{counts.definition}}</span></li>
     </ul>
     <div class="page-header">
         <h3>Operations</h3>

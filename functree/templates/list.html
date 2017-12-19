@@ -35,7 +35,7 @@
                     <div class="btn-group" role="group" aria-label="...">
                         <a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}" class="btn btn-default btn-xs"><i class="fa fa-eye" aria-hidden="true"> View</i></a>
                         <a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-download" aria-hidden="true"> Download</i></a>
-                        <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>
+                        {% if not profile.locked %}<button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>{% endif %}
                     </div>
                 </form>
             </td>

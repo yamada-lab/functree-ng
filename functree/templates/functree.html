@@ -6,8 +6,6 @@
 {% endblock %}
 
 {% block sidebar %}
-{# Disable Jinja's syntax for Vue.js #}
-{% raw %}
 <h5><i class="fa fa-search" aria-hidden="true"></i> Search <a href="#form-search" data-toggle="collapse">#</a></h5>
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
     <div class="form-group">
@@ -28,21 +26,29 @@
         <label class="control-label">Data series</label>
         <select class="form-control input-sm" v-on:change="clickOptionSeries" v-model="series">
             <option disabled value="">- Select data series -</option>
-            <option v-for="(option, index) in options[0]" v-bind:value="index">{{option}}</option>
+            <option v-for="(option, index) in options[0]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
     </div>
     <div class="form-group">
         <label class="control-label">Data mapping: Single</label>
         <select class="form-control input-sm" v-model="columnsSingle">
-            <option value="">- Select a column -</option>
-            <option v-for="(option, index) in options[1]" v-bind:value="index">{{option}}</option>
+            <option disabled value="">- Select a column -</option>
+            <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
     </div>
     <div class="form-group">
         <label class="control-label">Data mapping: Multiple</label>
         <select class="form-control input-sm" multiple v-model="columnsMultiple">
-            <option value="">- Select columns -</option>
-            <option v-for="(option, index) in options[1]" v-bind:value="index">{{option}}</option>
+            <option disabled value="">- Select columns -</option>
+            <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Color specification</label>
+        <select class="form-control input-sm" v-model="colorizeBy">
+            <option value="layer">Layer</option>
+            <option value="entry">Entry</option>
+            <option value="column">Column</option>
         </select>
     </div>
     <div class="form-group">
@@ -58,36 +64,35 @@
         <button type="reset" class="btn btn-default btn-sm"> Reset</button>
     </div>
 </form>
-{% endraw %}
 <hr>
-<h5><i class="fa fa-info-circle" aria-hidden="true"></i> Information <a href="#form-information" data-toggle="collapse">#</a></h5>
-<form id="form-information" class="collapse in">
+<h5><i class="fa fa-info-circle" aria-hidden="true"></i> Information <a href="#form-entry-detail" data-toggle="collapse">#</a></h5>
+<form id="form-entry-detail" class="collapse in">
     <div class="form-group">
         <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="No function selected" readonly style="background: #fff;" >
-            <div class="input-group-addon" role="button" onclick="$('#form-information input')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+            <input type="text" class="form-control input-sm" placeholder="No entry selected" readonly style="background: #fff;" v-bind:value="entry">
+            <div class="input-group-addon" role="button" onclick="$('#form-entry-detail input')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
     </div>
     <div class="form-group text-center">
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-information">View detail <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#form-entry-detail .modal">View detail <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
     </div>
-</form>
-<div id="modal-information" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Information</h4>
-            </div>
-            <div class="modal-body">
-                <pre></pre>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Entry detail: <code v-if="entry">{% raw %}{{entry}}{% endraw %}</code></h4>
+                </div>
+                <div class="modal-body">
+                    <pre>{% raw %}{{detail}}{% endraw %}</pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 <hr>
 <h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse">#</a></h5>
 <form id="form-save-image" class="collapse in">
@@ -110,22 +115,76 @@
 
 {% block mainpane %}
 <div id="functree">
+    <ol class="breadcrumb" v-model="items" v-if="items.length">
+        <i class="fa fa-dot-circle-o" aria-hidden="true"></i>&nbsp;
+        <li v-for="item in items">{% raw %}{{item}}{% endraw %}</li>
+    </ol>
 </div>
 {% endblock %}
 
 {% block script %}
 {{super()}}
 <script src="{{ url_for('static', filename='bower_components/d3/d3.min.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/vue/dist/vue.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/functree.js') }}"></script>
 <script>
-    d3.json('{{ url_for('route_tree', source=profile.target) }}', function(error, tree_data) {
-    d3.json('{{ url_for('route_profile', profile_id=profile.profile_id) }}', function(error, profile_data) {
-        var profile = profile_data[0];
-        var funcTree = new FuncTree(tree_data[0]['tree']);
-        funcTree
-            .create()
-            .update();
+    axios.all([
+        axios.get('{{ url_for('route_tree', source=profile.target) }}'),
+        axios.get('{{ url_for('route_profile', profile_id=profile.profile_id) }}')
+    ])
+    .then(axios.spread(function(res0, res1) {
+        visualize(res0.data[0], res1.data[0]);
+    }))
+    .then(function() {
+        $('#loading').remove();
+    })
+    .catch(function(error) {
+        $('#loading > div').html('<p><i class="fa fa-exclamation-circle fa-4x fa-fw"></i></p><p>Ajax error</p>');
+    });
+
+    var vmEntryDetail = new Vue({
+        'el': '#form-entry-detail',
+        'data': {
+            'entry': '',
+            'detail': ''
+        }
+    });
+
+    var vmBreadcrumb = new Vue({
+        'el': '#functree > .breadcrumb',
+        'data': {
+            'items': []
+        }
+    });
+
+    $('#form-entry-detail .modal').on('show.bs.modal', function(event) {
+        axios.get('{{ url_for('route_get_entry') }}' + vmEntryDetail.entry)
+            .then(function(res) {
+                vmEntryDetail.detail = res.data;
+            })
+            .catch(function(error) {
+                if (error.response.status === 404) {
+                    vmEntryDetail.detail = 'No information available'
+                } else {
+                    vmEntryDetail.detail = 'Ajax error';
+                }
+            });
+    });
+
+    $('#form-save-image').on('submit', function(event) {
+        event.preventDefault();
+        $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
+            .hide()
+            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': $(this).find('[name=csrf_token]').val()}))
+            .append($('<input/>', {'type': 'hidden', 'name': 'format', 'value': $(this).find('[name=format]').val()}))
+            .append($('<input/>', {'type': 'hidden', 'name': 'svg', 'value': (new XMLSerializer).serializeToString($('#functree > svg')[0])}))
+            .appendTo(document.body)
+            .submit()
+            .remove();
+    });
+
+    function visualize(tree, profile) {
+        var funcTree = new FuncTree(tree.tree).create();
+        funcTree.update();
 
         new Vue({
             'el': '#form-search',
@@ -146,6 +205,7 @@
                 'columnsSingle': '',
                 'columnsMultiple': '',
                 'normalize': true,
+                'colorizeBy': 'layer',
                 'options': [
                     profile.series,
                     []
@@ -157,29 +217,40 @@
                 },
                 'submit': function() {
                     var self = this;
-                    var profile_dict = {};
-                    for (var i = 0; i < profile.profile.length; i++) {
+                    var profileDict = {};
+                    for (var i in profile.profile) {
                         var node = profile.profile[i];
-                        var p = {
+                        profileDict[node.entry] = {
                             'value': node.values[self.series][self.columnsSingle],
                             'values': node.values[self.series]
                                 .filter(function(value, index) {
                                     return self.columnsMultiple.includes(index);
                                 })
                         }
-                        profile_dict[node.entry] = p;
                     }
-                    for (var i = 0; i < funcTree.nodes.length; i++) {
+                    for (var i in funcTree.nodes) {
                         var node = funcTree.nodes[i];
-                        if (profile_dict[node.entry]) {
-                            node.value = profile_dict[node.entry].value;
-                            node.values = profile_dict[node.entry].values;
+                        if (profileDict[node.entry]) {
+                            Object.assign(node, profileDict[node.entry]);
                         }
                     }
                     funcTree
                         .configure({
-                            'normalize': self.normalize
+                            'normalize': self.normalize,
+                            'colorizeBy': self.colorizeBy,
+                            'selectedColumns': {
+                                'single': self.columnsSingle,
+                                'multiple': self.columnsMultiple
+                            }
                         })
+                        .configureColorSet(
+                            profile.colors.reduce(function(a, b) {
+                                a[b[0]] = b[1];
+                                var n = profile.columns[self.series].indexOf(b[0]);
+                                if (~n) a[n] = b[1];
+                                return a;
+                            }, {})
+                        )
                         .update();
                 },
                 'reset': function() {
@@ -207,38 +278,6 @@
                     return 0;
                 })
         });
-
-        $('#loading').remove();
-    })});
-
-    $('#form-save-image').on('submit', function(event) {
-        event.preventDefault();
-        $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
-            .hide()
-            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': $(this).find('[name=csrf_token]').val()}))
-            .append($('<input/>', {'type': 'hidden', 'name': 'format', 'value': $(this).find('[name=format]').val()}))
-            .append($('<input/>', {'type': 'hidden', 'name': 'svg', 'value': (new XMLSerializer).serializeToString($('#functree > svg')[0])}))
-            .appendTo(document.body)
-            .submit()
-            .remove();
-    });
-
-    $('#modal-information').on('show.bs.modal', function(event) {
-        var target = $(this).find('.modal-body > pre');
-        var entry = $('#form-information input').val();
-        $.ajax({
-            'url': '{{ url_for('route_get_entry') }}' + entry,
-            'type': 'get',
-            'dataType': 'text'
-        }).done(function(data) {
-            target.text(data);
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status === 404) {
-                target.text('No information available: ' + entry);
-            } else {
-                target.text('Ajax error');
-            }
-        });
-    });
+    }
 </script>
 {% endblock %}
