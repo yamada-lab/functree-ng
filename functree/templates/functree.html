@@ -10,7 +10,7 @@
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
     <div class="form-group">
         <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="Search" v-model.lazy.trim="searchWord">
+            <input type="text" class="form-control input-sm" placeholder="Entry name" v-model.lazy.trim="searchWord">
             <span class="input-group-btn">
                 <button class="btn btn-primary btn-sm" type="submit">
                     <i class='fa fa-search fa-fw'></i>
@@ -30,30 +30,31 @@
         </select>
     </div>
     <div class="form-group">
-        <label class="control-label">Data mapping: Single</label>
+        <label class="control-label">Data mapping: Circle</label>
+        <h6>Choose a column to map</h6>
         <select class="form-control input-sm" v-model="columnsSingle">
             <option value="">None</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
-    </div>
-    <div class="form-group">
-        <label class="control-label">Color specification: Single</label>
+        <h6>Color coding</h6>
         <select class="form-control input-sm" v-model="colorizeBy">
             <option value="layer">Layer</option>
-            <option value="entry">Entry</option>
             <option value="column">Column</option>
+            <option value="entry">Entry</option>
         </select>
     </div>
     <div class="form-group">
-        <label class="control-label">Data mapping: Multiple</label>
+        <label class="control-label">Data mapping: Stacked bar</label>
+        <h6>Choose column(s) to map</h6>
         <select class="form-control input-sm" multiple v-model="columnsMultiple">
-            <option disabled value="">- Select columns -</option>
+            <option disabled value="">- Choose column(s) to map -</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
+        <h6>Stacking</h6>
         <div class="checkbox">
             <label>
                 <input type="checkbox" v-model="percentage">
-                100% stacked bar chart
+                Enable 100% stacking
             </label>
         </div>
     </div>
@@ -75,13 +76,17 @@
 <h5><i class="fa fa-info-circle" aria-hidden="true"></i> Information <a href="#form-entry-detail" data-toggle="collapse">#</a></h5>
 <form id="form-entry-detail" class="collapse in">
     <div class="form-group">
+        <label class="control-label">Selected entry</label>
         <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="No entry selected" readonly style="background: #fff;" v-bind:value="entry">
-            <div class="input-group-addon" role="button" onclick="$('#form-entry-detail input')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+            <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
+            <input type="hidden" name="mode" value="functree">
+            <input type="text" name="root" class="form-control input-sm" placeholder="No entry selected" readonly style="background: #fff;" v-bind:value="entry">
+            <div class="input-group-addon" role="button" onclick="$('#form-entry-detail input[name=root]')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
     </div>
     <div class="form-group text-center">
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#form-entry-detail .modal">View detail <i class="fa fa-angle-double-right" aria-hidden="true"></i></button>
+        <button type="submit" class="btn btn-success btn-sm">Set as root</button>
     </div>
     <div class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
@@ -133,6 +138,7 @@
 {{super()}}
 <script src="{{ url_for('static', filename='bower_components/d3/d3.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/functree.js') }}"></script>
+<script>var rootEntry = {% if root %}'{{root}}'{% else %}undefined{% endif %};</script>
 <script>
     axios.all([
         axios.get('{{ url_for('route_tree', source=profile.target) }}'),
@@ -170,7 +176,7 @@
             })
             .catch(function(error) {
                 if (error.response.status === 404) {
-                    vmEntryDetail.detail = 'No information available'
+                    vmEntryDetail.detail = 'No information available';
                 } else {
                     vmEntryDetail.detail = 'Ajax error';
                 }
@@ -190,8 +196,16 @@
     });
 
     function visualize(tree, profile) {
-        var funcTree = new FuncTree(tree.tree).create();
-        funcTree.update();
+        var funcTree = new FuncTree(tree.tree);
+        if (rootEntry) {
+            var roots = funcTree.nodes.filter(function(x) {
+                return x.entry === rootEntry;
+            });
+            if (roots.length) {
+                funcTree = new FuncTree(roots[0]);
+            }
+        }
+        funcTree.create().update();
 
         new Vue({
             'el': '#form-search',
@@ -272,12 +286,15 @@
 
         $('#form-search input').autocomplete({
             'minLength': 2,
-            'source': funcTree.getNodes()
+            'source': funcTree.nodes
                 .map(function(x) {
                     return x.entry;
                 })
+                .filter(function(x, i, self) {
+                    return self.indexOf(x) === i;
+                })
                 .filter(function(x) {
-                    return !x.startsWith('*') && !x.match(/K\d{5}/);
+                    return !x.startsWith('*');
                 })
                 .sort(function(a, b) {
                     a = a.toString().toLowerCase();
@@ -288,5 +305,9 @@
                 })
         });
     }
+
+    $(window).on('beforeunload', function() {
+        return null;
+    });
 </script>
 {% endblock %}

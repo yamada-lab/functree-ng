@@ -81,7 +81,8 @@ def route_viewer():
     excludes = ('profile',)
     profile = models.Profile.objects().exclude(*excludes).get_or_404(profile_id=profile_id)
     if mode == 'functree':
-        return flask.render_template('functree.html', profile=profile, mode=mode)
+        root = flask.request.args.get('root', type=str)
+        return flask.render_template('functree.html', profile=profile, mode=mode, root=root)
     elif mode == 'charts':
         series = flask.request.args.get('series', default=0, type=int)
         return flask.render_template('charts.html', profile=profile, mode=mode, series=series)

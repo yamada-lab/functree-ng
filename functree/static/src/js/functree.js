@@ -337,6 +337,9 @@ const FuncTree = class {
             .filter((d) => {
                 const excludes = ['root', 'brite1'];
                 return !~excludes.indexOf(d.layer);
+            })
+            .filter((d) => {
+                return d.depth > 0;
             });
         const chart = d3.select('#charts')
             .selectAll('g')
@@ -449,6 +452,9 @@ const FuncTree = class {
             .filter((d) => {
                 const excludes = ['root', 'brite1'];
                 return !~excludes.indexOf(d.layer);
+            })
+            .filter((d) => {
+                return d.depth > 0;
             });
         const circle = d3.select('#rounds')
             .selectAll('circle')
@@ -516,7 +522,6 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('r', (d) => {
                 const r_ = 25;
-                if (d.depth < 2) return 0;
                 if (this.config.normalize) {
                     return d.value / max[d.depth] * r_ || 0;
                 } else {
@@ -640,7 +645,7 @@ const FuncTree = class {
                     .attr('style', null);
             });
         if (!hits[0].length) {
-            alert('No results found: ' + word);
+            alert('No results found from displayed entries: ' + word);
         }
     }
 
