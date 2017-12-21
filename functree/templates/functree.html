@@ -32,8 +32,16 @@
     <div class="form-group">
         <label class="control-label">Data mapping: Single</label>
         <select class="form-control input-sm" v-model="columnsSingle">
-            <option disabled value="">- Select a column -</option>
+            <option value="">None</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="control-label">Color specification: Single</label>
+        <select class="form-control input-sm" v-model="colorizeBy">
+            <option value="layer">Layer</option>
+            <option value="entry">Entry</option>
+            <option value="column">Column</option>
         </select>
     </div>
     <div class="form-group">
@@ -42,16 +50,15 @@
             <option disabled value="">- Select columns -</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" v-model="percentage">
+                100% stacked bar chart
+            </label>
+        </div>
     </div>
     <div class="form-group">
-        <label class="control-label">Color specification</label>
-        <select class="form-control input-sm" v-model="colorizeBy">
-            <option value="layer">Layer</option>
-            <option value="entry">Entry</option>
-            <option value="column">Column</option>
-        </select>
-    </div>
-    <div class="form-group">
+        <label class="control-label">Other settings</label>
         <div class="checkbox">
             <label>
                 <input type="checkbox" checked="checked" v-model="normalize">
@@ -205,6 +212,7 @@
                 'columnsSingle': '',
                 'columnsMultiple': '',
                 'normalize': true,
+                'percentage': false,
                 'colorizeBy': 'layer',
                 'options': [
                     profile.series,
@@ -238,6 +246,7 @@
                         .configure({
                             'normalize': self.normalize,
                             'colorizeBy': self.colorizeBy,
+                            'percentage': self.percentage,
                             'selectedColumns': {
                                 'single': self.columnsSingle,
                                 'multiple': self.columnsMultiple

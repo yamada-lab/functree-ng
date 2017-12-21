@@ -9,6 +9,7 @@ const DEFAULT_CONFIG = {
     'diameter': 800,
     'duration': 1000,
     'normalize': true,
+    'percentage': false,
     'displayRounds': true,
     'displayBars': false,
     'displayNodesLowerThan': 5,
@@ -332,9 +333,14 @@ const FuncTree = class {
 
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
         const self = this;
+        const data = nodes
+            .filter((d) => {
+                const excludes = ['root', 'brite1'];
+                return !~excludes.indexOf(d.layer);
+            });
         const chart = d3.select('#charts')
             .selectAll('g')
-            .data(nodes, (d) => {
+            .data(data, (d) => {
                 return d.id;
             });
         chart.enter()
@@ -404,8 +410,11 @@ const FuncTree = class {
             .attr('y', function(d, i) {
                 const p = this.parentNode.__data__;
                 const maxHight = self.config.diameter / 2 / depth * 0.8;
+                const sum = d3.sum(p.values);
                 const subSum = d3.sum(p.values.slice(0, i));
-                if (self.config.normalize) {
+                if (self.config.percentage) {
+                    return subSum / sum * maxHight || 0;
+                } else if (self.config.normalize) {
                     return subSum / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return subSum;
@@ -413,8 +422,11 @@ const FuncTree = class {
             })
             .attr('height', function(d) {
                 const p = this.parentNode.__data__;
+                const sum = d3.sum(p.values);
                 const maxHight = self.config.diameter / 2 / depth * 0.8;
-                if (self.config.normalize) {
+                if (self.config.percentage) {
+                    return d / sum * maxHight || 0;
+                } else if (self.config.normalize) {
                     return d / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return d;
@@ -433,9 +445,14 @@ const FuncTree = class {
     }
 
     _updateRounds(nodes, source, depth, max) {
+        const data = nodes
+            .filter((d) => {
+                const excludes = ['root', 'brite1'];
+                return !~excludes.indexOf(d.layer);
+            });
         const circle = d3.select('#rounds')
             .selectAll('circle')
-            .data(nodes, (d) => {
+            .data(data, (d) => {
                 return d.id;
             });
         circle.enter()
