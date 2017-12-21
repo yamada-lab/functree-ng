@@ -324,12 +324,15 @@ const FuncTree = class {
         const self = this;
         const data = nodes
             .filter((d) => {
-                const excludes = ['root', 'brite1'];
+                const excludes = ['root'];
                 return !~excludes.indexOf(d.layer);
             })
             .filter((d) => {
                 return d.depth > 0;
             });
+        const barWidth = d3.scale.linear()
+            .domain([4, 0])
+            .range([1.5, 5]);
         const chart = d3.select('#charts')
             .selectAll('g')
             .data(data, (d) => {
@@ -381,7 +384,10 @@ const FuncTree = class {
             .append('rect')
             .attr('x', -1)
             .attr('y', 0)
-            .attr('width', 2)
+            .attr('width', function(d) {
+                const p = this.parentNode.__data__;
+                return barWidth(p.depth);
+            })
             .attr('height', 0)
             .attr('fill', function(d, i) {
                 const n = self.config._selectedColumns.multiple[i];
@@ -439,7 +445,7 @@ const FuncTree = class {
     _updateRounds(nodes, source, depth, max) {
         const data = nodes
             .filter((d) => {
-                const excludes = ['root', 'brite1'];
+                const excludes = ['root'];
                 return !~excludes.indexOf(d.layer);
             })
             .filter((d) => {
@@ -560,8 +566,8 @@ const FuncTree = class {
                 return d.id;
             });
         const fontSize = d3.scale.linear()
-            .range([4, 8])
-            .domain([3, 0]);
+            .domain([3, 0])
+            .range([4, 8]);
         label.enter()
             .append('g')
             .attr('transform', (d) => {
