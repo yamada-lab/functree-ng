@@ -107,8 +107,9 @@
 </form>
 <hr>
 <h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse">#</a></h5>
-<form id="form-save-image" class="collapse in">
+<form id="form-save-image" class="collapse in" action="{{ url_for('route_save_image') }}" method="POST" target="_blank">
     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    <input type="hidden" name="svg" value="">
     <div class="form-group">
         <label class="control-label">Format</label>
         <select name="format" class="form-control">
@@ -120,7 +121,7 @@
         </select>
     </div>
     <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="$('#form-save-image input[name=svg]').val((new XMLSerializer).serializeToString($('#functree > svg')[0])); $('#form-save-image').submit();"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
     </div>
 </form>
 {% endblock %}
@@ -181,18 +182,6 @@
                     vmEntryDetail.detail = 'Ajax error';
                 }
             });
-    });
-
-    $('#form-save-image').on('submit', function(event) {
-        event.preventDefault();
-        $('<form/>', {'action': '{{ url_for('route_save_image') }}', 'method': 'POST', 'target': '_blank'})
-            .hide()
-            .append($('<input/>', {'type': 'hidden', 'name': 'csrf_token', 'value': $(this).find('[name=csrf_token]').val()}))
-            .append($('<input/>', {'type': 'hidden', 'name': 'format', 'value': $(this).find('[name=format]').val()}))
-            .append($('<input/>', {'type': 'hidden', 'name': 'svg', 'value': (new XMLSerializer).serializeToString($('#functree > svg')[0])}))
-            .appendTo(document.body)
-            .submit()
-            .remove();
     });
 
     function visualize(tree, profile) {
