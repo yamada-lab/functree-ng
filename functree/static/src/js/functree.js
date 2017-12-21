@@ -10,16 +10,10 @@ const DEFAULT_CONFIG = {
     'duration': 1000,
     'normalize': true,
     'percentage': false,
-    'displayRounds': true,
-    'displayBars': false,
     'displayNodesLowerThan': 5,
     'colorizeBy': 'layer',
     'colorSet': {
         'default': '#5f5f5f'
-    },
-    'selectedColumns': {
-        'single': null,
-        'multiple': null
     },
     'external': {
         'entry': 'vmEntryDetail.entry',
@@ -33,7 +27,7 @@ const FuncTree = class {
         this.root.x0 = 0;
         this.root.y0 = 0;
         this.nodes = this.getNodes();
-        this.config = Object.assign(DEFAULT_CONFIG, config);
+        this.config = mergeRecursive(DEFAULT_CONFIG, config);
         this.tree = d3.layout.tree()
             .size([360, this.config.diameter / 2]);
         this.colorScale = d3.scale.category20();
@@ -45,12 +39,7 @@ const FuncTree = class {
     }
 
     configure(config=DEFAULT_CONFIG) {
-        this.config = Object.assign(this.config, config);
-        return this;
-    }
-
-    configureColorSet(colorSet={}) {
-        this.config.colorSet = Object.assign(this.config.colorSet, colorSet);
+        this.config = mergeRecursive(this.config, config);
         return this;
     }
 
@@ -206,7 +195,7 @@ const FuncTree = class {
             .attr('stroke-width', 0.25)
             .attr('stroke-dasharray', (d) => {
                 if (d.source.depth === 0) {
-                    return '3,3';
+                    return '1,1';
                 }
             })
             .attr('d', (d) => {
@@ -395,7 +384,7 @@ const FuncTree = class {
             .attr('width', 2)
             .attr('height', 0)
             .attr('fill', function(d, i) {
-                const n = self.config.selectedColumns.multiple[i];
+                const n = self.config._selectedColumns.multiple[i];
                 return self.config.colorSet[n] || self.colorScale('column-' + n);
             })
             .on('mouseover', () => {
@@ -436,7 +425,7 @@ const FuncTree = class {
                 }
             })
             .attr('fill', function(d, i) {
-                const n = self.config.selectedColumns.multiple[i];
+                const n = self.config._selectedColumns.multiple[i];
                 return self.config.colorSet[n] || self.colorScale('column-' + n);
             });
         bar.exit()
@@ -477,7 +466,7 @@ const FuncTree = class {
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
                         break;
                     case 'column':
-                        const n = this.config.selectedColumns.single;
+                        const n = this.config._selectedColumns.single;
                         color = this.config.colorSet[n] || this.colorScale('column-' + n);
                         break;
                     default:
@@ -485,9 +474,7 @@ const FuncTree = class {
                 }
                 return color;
             })
-            .attr('stroke', () => {
-                return this.config.displayBars ? '#333' : '#fff';
-            })
+            .attr('stroke', '#fff')
             .attr('stroke-width', 0.5)
             .attr('opacity', 0.75)
             .attr('data-toggle', 'tooltip')
@@ -541,7 +528,7 @@ const FuncTree = class {
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
                         break;
                     case 'column':
-                        const n = this.config.selectedColumns.single;
+                        const n = this.config._selectedColumns.single;
                         color = this.config.colorSet[n] || this.colorScale('column-' + n);
                         break;
                     default:
@@ -560,14 +547,21 @@ const FuncTree = class {
     }
 
     _updateLabels(nodes, source, maxValue, maxSumOfValues) {
-        const data = nodes.filter((d) => {
-            return d.depth < 2;
-        });
+        const data = nodes
+            .filter((d) => {
+                return 0 < d.depth && d.depth < 3;
+            })
+            .filter((d) => {
+                return !d.name.startsWith('*');
+            });
         const label = d3.select('#labels')
             .selectAll('g')
             .data(data, (d) => {
                 return d.id;
-            })
+            });
+        const fontSize = d3.scale.linear()
+            .range([4, 8])
+            .domain([3, 0]);
         label.enter()
             .append('g')
             .attr('transform', (d) => {
@@ -577,30 +571,16 @@ const FuncTree = class {
             .attr('text-anchor', 'middle')
             .attr('font-family', 'arial, sans-serif')
             .attr('font-size', (d) => {
-                const value = this.config.displayRounds ?
-                    d.value :
-                    d3.sum(d.values);
-                const max = this.config.displayRounds ?
-                    maxValue[d.depth] :
-                    maxSumOfValues[d.depth];
-                const size = (value / max * 10 || 0) + 10;
-                return size;
+                return fontSize(d.depth);
             })
             .attr('y', (d) => {
-                const value = this.config.displayRounds ?
-                    d.value :
-                    d3.sum(d.values);
-                const max = this.config.displayRounds ?
-                    maxValue[d.depth] :
-                    maxSumOfValues[d.depth];
-                const size = (value / max * 10 + 5 || 0) + 10;
-                return - size / 2;
+                return - fontSize(d.depth) / 2;
             })
             .attr('fill', '#555')
             .text((d) => {
                 return d.name
                     .replace(/ \[.*\]/, '')
-                    .split(', ')[0];
+                    // .split(', ')[0];
             });
         label
             .transition()
@@ -688,4 +668,20 @@ const FuncTree = class {
             this._highlightLinks(node.parent);
         }
     }
+}
+
+
+function mergeRecursive(obj1, obj2) {
+    for (var p in obj2) {
+        try {
+            if (obj2[p].constructor == Object) {
+                obj1[p] = mergeRecursive(obj1[p], obj2[p]);
+            } else {
+                obj1[p] = obj2[p];
+            }
+        } catch (e) {
+            obj1[p] = obj2[p];
+        }
+    }
+    return obj1;
 }

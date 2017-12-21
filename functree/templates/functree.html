@@ -261,19 +261,17 @@
                             'normalize': self.normalize,
                             'colorizeBy': self.colorizeBy,
                             'percentage': self.percentage,
-                            'selectedColumns': {
-                                'single': self.columnsSingle,
-                                'multiple': self.columnsMultiple
-                            }
-                        })
-                        .configureColorSet(
-                            profile.colors.reduce(function(a, b) {
+                            'colorSet': profile.colors.reduce(function(a, b) {
                                 a[b[0]] = b[1];
                                 var n = profile.columns[self.series].indexOf(b[0]);
                                 if (~n) a[n] = b[1];
                                 return a;
-                            }, {})
-                        )
+                            }, {}),
+                            '_selectedColumns': {
+                                'single': self.columnsSingle,
+                                'multiple': self.columnsMultiple
+                            }
+                        })
                         .update();
                 },
                 'reset': function() {
