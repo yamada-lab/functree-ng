@@ -1,10 +1,5 @@
 {% extends 'viewer.html' %}
 
-{% block head %}
-{{super()}}
-<link rel="stylesheet" href="{{ url_for('static', filename='bower_components/jquery-ui/themes/base/jquery-ui.min.css') }}">
-{% endblock %}
-
 {% block sidebar %}
 <h5><i class="fa fa-search" aria-hidden="true"></i> Search <a href="#form-search" data-toggle="collapse">#</a></h5>
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
