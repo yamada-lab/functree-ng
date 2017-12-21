@@ -571,7 +571,7 @@ const FuncTree = class {
         label.enter()
             .append('g')
             .attr('transform', (d) => {
-                return 'rotate(' + (d.x - 90) + '),translate(' + d.y + '),rotate(' + (90 - d.x) + ')';
+                return 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + '),rotate(' + (90 - source.x0) + ')';
             })
             .append('text')
             .attr('text-anchor', 'middle')
@@ -584,9 +584,7 @@ const FuncTree = class {
             })
             .attr('fill', '#555')
             .text((d) => {
-                return d.name
-                    .replace(/ \[.*\]/, '')
-                    // .split(', ')[0];
+                return d.name.replace(/ \[.*\]/, '');
             });
         label
             .transition()
@@ -597,6 +595,9 @@ const FuncTree = class {
         label.exit()
             .transition()
             .duration(this.config.duration)
+            .attr('transform', (d) => {
+                return 'rotate(' + (source.x - 90) + '),translate(' + source.y + '),rotate(' + (90 - source.x) + ')';
+            })
             .remove();
         label.selectAll('text')
             .call(d3.behavior.drag()
