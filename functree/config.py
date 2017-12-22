@@ -6,6 +6,9 @@
 DEBUG = False
 SECRET_KEY = 'Replace me with long random characters!'
 MONGODB_HOST = 'mongodb://127.0.0.1:27017/functree?tz_aware=true'
+CACHE_TYPE = 'filesystem'
+CACHE_DIR = '/var/cache/functree'
+CACHE_DEFAULT_TIMEOUT = 600
 JSONIFY_PRETTYPRINT_REGULAR = False
 FUNCTREE_TIME_ZONE = 'UTC'
 FUNCTREE_ADMIN_USERNAME = 'admin'

@@ -1,6 +1,6 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
-from functree import __version__, app, auth, filters, forms, models, tree, analysis
+from functree import __version__, app, auth, filters, forms, models, tree, analysis, cache
 from functree.crckm.src import download as crckm
 
 
@@ -107,6 +107,7 @@ def route_admin():
 
 
 @app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
+@cache.cached()
 def route_profile(profile_id):
     if flask.request.form.get('_method') == 'DELETE':
         models.Profile.objects.get_or_404(profile_id=profile_id, locked=False).delete()
@@ -118,6 +119,7 @@ def route_profile(profile_id):
 
 
 @app.route('/tree/<string:source>')
+@cache.cached()
 def route_tree(source):
     excludes = ('id',)
     tree = models.Tree.objects().exclude(*excludes).get_or_404(source=source)
@@ -206,6 +208,7 @@ def route_update_trees():
         description='KEGG version of Functional Tree',
         added_at=datetime.datetime.utcnow()
     ).save()
+    cache.clear()
     sources = models.Tree.objects.aggregate(
         {'$group': {'_id': '$source'}}
     )
