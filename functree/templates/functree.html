@@ -75,7 +75,7 @@
         <div class="input-group">
             <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
             <input type="hidden" name="mode" value="functree">
-            <input type="text" name="root" class="form-control input-sm" placeholder="No entry selected" readonly style="background: #fff;" v-bind:value="entry">
+            <input type="text" name="root" class="form-control input-sm" placeholder="No entry selected" v-bind:value="entry">
             <div class="input-group-addon" role="button" onclick="$('#form-entry-detail input[name=root]')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
     </div>
@@ -187,6 +187,8 @@
             });
             if (roots.length) {
                 funcTree = new FuncTree(roots[0]);
+            } else {
+                alert('No entry found: ' + rootEntry + '\nMake sure that the name is entered correctly.');
             }
         }
         funcTree.create().update();
