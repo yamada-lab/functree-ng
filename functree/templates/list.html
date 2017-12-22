@@ -29,7 +29,7 @@
             <td>{{profile.description|truncate(50, True)}}</td>
             <td>{{profile.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}</td>
             <td>
-                <form action="{{ url_for('route_profile', profile_id=profile.profile_id )}}" method="post">
+                <form action="{{ url_for('route_profile_delete', profile_id=profile.profile_id )}}" method="post">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                     <div class="btn-group" role="group" aria-label="...">

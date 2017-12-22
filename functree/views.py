@@ -106,16 +106,21 @@ def route_admin():
     return flask.render_template('admin.html', counts=counts)
 
 
-@app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
+@app.route('/profile/<uuid:profile_id>', methods=['GET'])
 @cache.cached()
 def route_profile(profile_id):
+    excludes = ('id',)
+    profile = models.Profile.objects.exclude(*excludes).get_or_404(profile_id=profile_id)
+    return flask.jsonify([profile])
+
+
+@app.route('/profile/<uuid:profile_id>', methods=['POST'])
+def route_profile_delete(profile_id):
     if flask.request.form.get('_method') == 'DELETE':
         models.Profile.objects.get_or_404(profile_id=profile_id, locked=False).delete()
         return flask.redirect(flask.url_for('route_list'))
     else:
-        excludes = ('id',)
-        profile = models.Profile.objects.exclude(*excludes).get_or_404(profile_id=profile_id)
-        return flask.jsonify([profile])
+        return flask.abort(405)
 
 
 @app.route('/tree/<string:source>')
