@@ -27,7 +27,7 @@
     <div class="form-group">
         <label class="control-label">Data mapping: Circle</label>
         <h6>Choose a column to map</h6>
-        <select class="form-control input-sm" v-model="columnsSingle">
+        <select class="form-control input-sm" v-model.number="columnsSingle">
             <option value="">None</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
@@ -41,7 +41,7 @@
     <div class="form-group">
         <label class="control-label">Data mapping: Stacked bar</label>
         <h6>Choose column(s) to map</h6>
-        <select class="form-control input-sm" multiple v-model="columnsMultiple">
+        <select class="form-control input-sm" multiple v-model.number="columnsMultiple">
             <option disabled value="">- Choose column(s) to map -</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
@@ -61,6 +61,8 @@
                 Enable normalization
             </label>
         </div>
+        <h6>Max depth of tree</h6>
+        <input type="number" class="form-control input-sm" min="0" v-model.number="maxDepth">
     </div>
     <div class="form-group text-center">
         <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> Update</button>
@@ -179,6 +181,10 @@
             });
     });
 
+    $(window).on('beforeunload', function() {
+        return null;
+    });
+
     function visualize(tree, profile) {
         var funcTree = new FuncTree(tree.tree);
         if (rootEntry) {
@@ -188,10 +194,12 @@
             if (roots.length) {
                 funcTree = new FuncTree(roots[0]);
             } else {
-                alert('No entry found: ' + rootEntry + '\nMake sure that the name is entered correctly.');
+                alert('No entry found: ' + rootEntry);
             }
         }
-        funcTree.create().update();
+        funcTree
+            .create()
+            .update();
 
         new Vue({
             'el': '#form-search',
@@ -214,6 +222,7 @@
                 'normalize': true,
                 'percentage': false,
                 'colorizeBy': 'layer',
+                'maxDepth': 4,
                 'options': [
                     profile.series,
                     []
@@ -224,16 +233,21 @@
                     this.$set(this.options, 1, profile.columns[this.series]);
                 },
                 'submit': function() {
+                    console.log(this);
                     var self = this;
                     var profileDict = {};
                     for (var i in profile.profile) {
                         var node = profile.profile[i];
-                        profileDict[node.entry] = {
-                            'value': node.values[self.series][self.columnsSingle],
-                            'values': node.values[self.series]
-                                .filter(function(value, index) {
-                                    return self.columnsMultiple.includes(index);
-                                })
+                        try {
+                            profileDict[node.entry] = {
+                                'value': node.values[self.series][self.columnsSingle],
+                                'values': node.values[self.series]
+                                    .filter(function(value, index) {
+                                        return self.columnsMultiple.includes(index);
+                                    })
+                            }
+                        } catch (e) {
+                            //
                         }
                     }
                     for (var i in funcTree.nodes) {
@@ -253,15 +267,18 @@
                                 if (~n) a[n] = b[1];
                                 return a;
                             }, {}),
+                            'maxDepth': self.maxDepth,
                             '_selectedColumns': {
                                 'single': self.columnsSingle,
                                 'multiple': self.columnsMultiple
                             }
                         })
+                        .initTree(zeroize=false)
                         .update();
                 },
                 'reset': function() {
                     funcTree
+                        .configure(JSON.parse(JSON.stringify(DEFAULT_CONFIG)))
                         .initTree()
                         .update();
                 }
@@ -289,9 +306,5 @@
                 })
         });
     }
-
-    $(window).on('beforeunload', function() {
-        return null;
-    });
 </script>
 {% endblock %}

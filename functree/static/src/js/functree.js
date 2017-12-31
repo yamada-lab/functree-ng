@@ -10,7 +10,7 @@ const DEFAULT_CONFIG = {
     'duration': 1000,
     'normalize': true,
     'percentage': false,
-    'displayNodesLowerThan': 5,
+    'maxDepth': 4,
     'colorizeBy': 'layer',
     'colorSet': {
         'default': '#5f5f5f'
@@ -27,7 +27,7 @@ const FuncTree = class {
         this.root.x0 = 0;
         this.root.y0 = 0;
         this.nodes = this.getNodes();
-        this.config = mergeRecursive(DEFAULT_CONFIG, config);
+        this.config = mergeRecursive(JSON.parse(JSON.stringify(DEFAULT_CONFIG)), config);
         this.tree = d3.layout.tree()
             .size([360, this.config.diameter / 2]);
         this.colorScale = d3.scale.category20();
@@ -38,21 +38,23 @@ const FuncTree = class {
         this.initTree();
     }
 
-    configure(config=DEFAULT_CONFIG) {
+    configure(config={}) {
         this.config = mergeRecursive(this.config, config);
         return this;
     }
 
-    initTree() {
+    initTree(zeroize=true) {
         for (const node of this.nodes) {
-            node.values = [];
-            node.value = 0;
-            node.cols = [];
-            if (node.children && node.depth >= this.config.displayNodesLowerThan - 1) {
+            if (zeroize) {
+                node.values = [];
+                node.value = 0;
+                node.cols = [];
+            }
+            if (node.children && node.depth >= this.config.maxDepth) {
                 node._children = node.children;
                 node.children = null;
             }
-            if (node._children && node.depth < this.config.displayNodesLowerThan - 1) {
+            if (node._children && node.depth < this.config.maxDepth) {
                 node.children = node._children;
                 node._children = null;
             }
