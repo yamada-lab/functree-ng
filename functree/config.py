@@ -5,7 +5,7 @@
 #
 DEBUG = False
 SECRET_KEY = 'Replace me with long random characters!'
-MONGODB_HOST = 'mongodb://127.0.0.1:27017/functree?tz_aware=true'
+MONGODB_HOST = 'mongodb://db:27017/functree?tz_aware=true'
 CACHE_TYPE = 'filesystem'
 CACHE_DIR = '/tmp'
 CACHE_DEFAULT_TIMEOUT = 600
