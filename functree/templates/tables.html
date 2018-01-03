@@ -34,6 +34,7 @@
             <thead>
                 <tr>
                     <th>Entry</th>
+                    <th>Layer</th>
                     {% for col in profile.columns[series] %}
                     <th>{{col}}</th>
                     {% endfor %}
@@ -83,15 +84,19 @@
                         return $el[0].outerHTML;
                     }
                 },
+                {
+                    'data': 'layer',
+                    'defaultContent': 'n/a'
+                },
                 {% for col in profile.columns[series] %}
                 {'data': 'values.{{series}}.{{loop.index0}}'},
                 {% endfor %}
             ],
             'order': [
+                [1, 'asc'],
                 [0, 'asc']
             ],
             'scrollX': true,
-            'stateSave': true,
             'buttons': [
                 {
                     'text': '<i class="fa fa-download" aria-hidden="true"></i> Download TSV',
