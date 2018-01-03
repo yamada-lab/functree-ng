@@ -23,10 +23,11 @@ def from_table(form):
     ).save().profile_id
 
 
-def calc_abundances(f, target, methods=['sum', 'mean']):
+def calc_abundances(f, target, methods=['mean', 'sum']):
     df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
     root = models.Tree.objects().get(source=target)['tree']
     nodes = tree.get_nodes(root)
+    entry_to_layer = dict(map(lambda x: (x['entry'], x['layer']), nodes))
 
     manager = multiprocessing.Manager()
     shared_data = manager.dict()
@@ -42,7 +43,7 @@ def calc_abundances(f, target, methods=['sum', 'mean']):
     profile = []
     for entry in list(results.values())[0].index:
         values = [results[method].ix[entry].tolist() for method in methods]
-        profile.append({'entry': entry, 'values': values})
+        profile.append({'entry': entry, 'layer': analysis.get_layer(entry, entry_to_layer), 'values': values})
     data = {
         'profile': profile,
         'series': methods,
