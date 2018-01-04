@@ -65,10 +65,18 @@
 <script>
     axios.get('{{ url_for('route_profile', profile_id=profile.profile_id) }}')
         .then(function(res) {
-            var profile = res.data[0].profile.map(function(x) {
-                x.values = x.values[{{series}}];
-                return x;
-            });
+            var profile = res.data[0].profile
+                .map(function(x) {
+                    x.values = x.values[{{series}}];
+                    return x;
+                })
+                .sort(function(a, b) {
+                    if (a.layer > b.layer) return 1;
+                    if (a.layer < b.layer) return -1;
+                    if (a.entry > b.entry) return 1;
+                    if (a.entry < b.entry) return -1;
+                    return 0;
+                });
             var columns = res.data[0].columns[{{series}}];
             var layers = profile.reduce(function(x, y) {
                 if (!~x.indexOf(y.layer)) {
@@ -80,7 +88,7 @@
             new Vue({
                 'el': '#form-option',
                 'data': {
-                    'layer': layers[1],
+                    'layer': layers[0],
                     'layers': layers,
                     'column': 0,
                     'columns': columns
@@ -92,7 +100,7 @@
                 }
             });
 
-            visualize(profile, columns, layers[1], 0);
+            visualize(profile, columns, layers[0], 0);
         })
         .catch(function(error) {
             console.error(error);
