@@ -49,7 +49,6 @@ body {
     min-width: 600px;
     height: auto;
     margin-bottom: 15px;
-    z-index: 5
 }
 
 #mainpane-wrapper {
@@ -120,6 +119,7 @@ body {
 .footer {
     height: $footer_height;
     min-width: 880px;
+    z-index: -10;
 
     .container {
          .text-muted {
