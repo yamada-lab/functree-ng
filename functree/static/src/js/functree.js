@@ -384,7 +384,11 @@ const FuncTree = class {
             });
         bar.enter()
             .append('rect')
-            .attr('x', -1)
+            // .attr('x', -1)
+            .attr('x', function(d) {
+                const p = this.parentNode.__data__;
+                return - barWidth(p.depth) / 2;
+            })
             .attr('y', 0)
             .attr('width', function(d) {
                 const p = this.parentNode.__data__;
