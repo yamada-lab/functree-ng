@@ -670,8 +670,7 @@ const FuncTree = class {
                 }
             })
             .style('stroke', (d) => {
-                const n = d.target.depth % Object.keys(this.config.colorSet).length;
-                return this.config.colorSet[n];
+                return this.config.colorSet[d.target.layer] || this.colorScale(d.target.layer);
             })
             .style('stroke-width', 1.5);
         if (this.config.external.breadcrumb) {
