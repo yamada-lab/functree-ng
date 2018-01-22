@@ -25,6 +25,13 @@ def route_analysis(mode):
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
+    elif mode == 'comparison':
+        form = forms.ComparisonForm()
+        if form.validate_on_submit():
+            profile_id = analysis.comparison.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
+        else:
+            return flask.render_template('analysis.html', form=form, mode=mode)
     elif mode == 'direct_mapping':
         form = forms.DirectMappingForm()
         if form.validate_on_submit():
