@@ -7,6 +7,7 @@
     "jquery-ui": "^1.12.1",
     "bootstrap": "^3.3.7",
     "d3": "^3.5.17",
+    "highcharts": "^6.0.4",
     "font-awesome": "^4.7.0",
     "datatables.net": "^1.10.15",
     "datatables.net-bs": "^2.1.1",

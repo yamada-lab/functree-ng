@@ -12,6 +12,7 @@
         <meta charset="utf-8">
         <meta name="author" content="Yuta Yamate">
         <meta name="description" content="Visualization and analysis tool for omics data based on biological functional tree">
+        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/jquery-ui/themes/base/jquery-ui.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/layout.css') }}">
@@ -33,11 +34,12 @@
                     <ul class="nav navbar-nav">
                         <li{% if request.endpoint == 'route_index' %} class="active"{% endif %}><a href="{{ url_for('route_index') }}"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
                         <li class="dropdown {% if request.endpoint == 'route_analysis' %} active{% endif %}">
-                            <a href="{{ url_for('route_analysis', mode='basic') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
+                            <a href="{{ url_for('route_analysis', mode='basic_mapping') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Analysis</li>
                                 <li><a href="{{ url_for('route_analysis', mode='basic_mapping') }}">- Basic mapping</a></li>
                                 <li><a href="{{ url_for('route_analysis', mode='module_coverage') }}">- Module coverage</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='comparison') }}">- Comparison</a></li>
                                 <li class="dropdown-header">Upload</li>
                                 <li><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">- Direct mapping</a></li>
                                 <li><a href="{{ url_for('route_analysis', mode='json_upload') }}">- JSON upload</a></li>
@@ -57,7 +59,7 @@
         {% block content %}{% endblock %}
         <footer class="footer">
             <div class="container">
-                <p class="text-muted">Copyright &copy; 2014-2017 <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.</p>
+                <p class="text-muted">Copyright &copy; 2014-2018 <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.</p>
             </div>
         </footer>
         {% block script %}

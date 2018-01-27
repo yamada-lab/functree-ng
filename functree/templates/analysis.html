@@ -9,6 +9,7 @@
     <ul class="nav nav-tabs">
         <li role="presentation"{% if mode == 'basic_mapping' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='basic_mapping') }}">Basic mapping</a></li>
         <li role="presentation"{% if mode == 'module_coverage' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='module_coverage') }}">Module coverage</a></li>
+        <li role="presentation"{% if mode == 'comparison' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='comparison') }}">Comparison</a></li>
         <li role="presentation"{% if mode == 'direct_mapping' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">Direct mapping</a></li>
         <li role="presentation"{% if mode == 'json_upload' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='json_upload') }}">JSON upload</a></li>
     </ul>
@@ -36,6 +37,16 @@
                         <li><b>Database:</b> Source of definitions of module/pathways</li>
                         <li><b>Description:</b> Statement that represents the result</li>
                     </ul>
+                    {% elif mode == 'comparison' %}
+                    <legend>Comparison</legend>
+                    <p>Calculate module/pathway profiles from two <a href="http://www.genome.jp/kegg/ko.html" target="_blank">KO (KEGG Orthology)</a> abundance tables and then perform Mann-Whitney U test:<p>
+                    <ul>
+                        <li><b>Input file #1:</b> Tab-separeted KO abundance table</li>
+                        <li><b>Input file #2:</b> Tab-separeted KO abundance table</li>
+                        <li><b>Color file:</b> Tab-separeted {entry|column}-color list</li>
+                        <li><b>Database:</b> Source of definitions of module/pathways</li>
+                        <li><b>Description:</b> Statement that represents the result</li>
+                    </ul>
                     {% elif mode == 'direct_mapping' %}
                     <legend>Direct mapping</legend>
                     <p>Input and map your data directly:<p>
@@ -57,6 +68,7 @@
                     <p><i class="fa fa-info-circle" aria-hidden="true"></i> The result will expire <b>{{config['FUNCTREE_PROFILE_TTL_DAYS']}} days</b> after the submission. For more detail, see <a href="{{ url_for('route_docs') }}">documentation</a>.</p>
                 </div>
                 <div class="panel-body">
+                    {% if mode != 'comparison' %}
                     <div class="form-group{% if form.input_file.errors %} has-error{% endif %}">
                         {{ form.input_file.label(class='col-sm-2 control-label') }}
                         <div class="col-sm-10">
@@ -75,6 +87,36 @@
                             {% endif %}
                         </div>
                     </div>
+                    {% else %}
+                    <div class="form-group{% if form.input_file1.errors %} has-error{% endif %}">
+                        {{ form.input_file1.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-10">
+                            {{ form.input_file1(class_='form-control-file') }}
+                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
+                            {% if form.input_file1.errors %}
+                            <span class="help-block">
+                                {% for message in form.input_file1.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group{% if form.input_file2.errors %} has-error{% endif %}">
+                        {{ form.input_file2.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-10">
+                            {{ form.input_file2(class_='form-control-file') }}
+                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
+                            {% if form.input_file2.errors %}
+                            <span class="help-block">
+                                {% for message in form.input_file2.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
                     {% if form.color_file %}
                     <div class="form-group{% if form.color_file.errors %} has-error{% endif %}">
                         {{ form.color_file.label(class='col-sm-2 control-label') }}

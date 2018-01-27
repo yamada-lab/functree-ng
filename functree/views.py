@@ -1,6 +1,6 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
-from functree import __version__, app, auth, filters, forms, models, tree, analysis
+from functree import __version__, app, auth, filters, forms, models, tree, analysis, cache
 from functree.crckm.src import download as crckm
 
 
@@ -22,6 +22,13 @@ def route_analysis(mode):
         form = forms.ModuleCoverageForm()
         if form.validate_on_submit():
             profile_id = analysis.module_coverage.from_table(form)
+            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
+        else:
+            return flask.render_template('analysis.html', form=form, mode=mode)
+    elif mode == 'comparison':
+        form = forms.ComparisonForm()
+        if form.validate_on_submit():
+            profile_id = analysis.comparison.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('analysis.html', form=form, mode=mode)
@@ -81,7 +88,8 @@ def route_viewer():
     excludes = ('profile',)
     profile = models.Profile.objects().exclude(*excludes).get_or_404(profile_id=profile_id)
     if mode == 'functree':
-        return flask.render_template('functree.html', profile=profile, mode=mode)
+        root = flask.request.args.get('root', type=str)
+        return flask.render_template('functree.html', profile=profile, mode=mode, root=root)
     elif mode == 'charts':
         series = flask.request.args.get('series', default=0, type=int)
         return flask.render_template('charts.html', profile=profile, mode=mode, series=series)
@@ -105,18 +113,25 @@ def route_admin():
     return flask.render_template('admin.html', counts=counts)
 
 
-@app.route('/profile/<uuid:profile_id>', methods=['GET', 'POST'])
+@app.route('/profile/<uuid:profile_id>', methods=['GET'])
+@cache.cached()
 def route_profile(profile_id):
+    excludes = ('id',)
+    profile = models.Profile.objects.exclude(*excludes).get_or_404(profile_id=profile_id)
+    return flask.jsonify([profile])
+
+
+@app.route('/profile/<uuid:profile_id>', methods=['POST'])
+def route_profile_delete(profile_id):
     if flask.request.form.get('_method') == 'DELETE':
         models.Profile.objects.get_or_404(profile_id=profile_id, locked=False).delete()
         return flask.redirect(flask.url_for('route_list'))
     else:
-        excludes = ('id',)
-        profile = models.Profile.objects.exclude(*excludes).get_or_404(profile_id=profile_id)
-        return flask.jsonify([profile])
+        return flask.abort(405)
 
 
 @app.route('/tree/<string:source>')
+@cache.cached()
 def route_tree(source):
     excludes = ('id',)
     tree = models.Tree.objects().exclude(*excludes).get_or_404(source=source)
@@ -205,6 +220,7 @@ def route_update_trees():
         description='KEGG version of Functional Tree',
         added_at=datetime.datetime.utcnow()
     ).save()
+    cache.clear()
     sources = models.Tree.objects.aggregate(
         {'$group': {'_id': '$source'}}
     )

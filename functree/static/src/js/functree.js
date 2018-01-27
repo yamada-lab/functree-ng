@@ -9,16 +9,11 @@ const DEFAULT_CONFIG = {
     'diameter': 800,
     'duration': 1000,
     'normalize': true,
-    'displayRounds': true,
-    'displayBars': false,
-    'displayNodesLowerThan': 5,
+    'percentage': false,
+    'maxDepth': 4,
     'colorizeBy': 'layer',
     'colorSet': {
         'default': '#5f5f5f'
-    },
-    'selectedColumns': {
-        'single': null,
-        'multiple': null
     },
     'external': {
         'entry': 'vmEntryDetail.entry',
@@ -32,7 +27,7 @@ const FuncTree = class {
         this.root.x0 = 0;
         this.root.y0 = 0;
         this.nodes = this.getNodes();
-        this.config = Object.assign(DEFAULT_CONFIG, config);
+        this.config = mergeRecursive(JSON.parse(JSON.stringify(DEFAULT_CONFIG)), config);
         this.tree = d3.layout.tree()
             .size([360, this.config.diameter / 2]);
         this.colorScale = d3.scale.category20();
@@ -43,26 +38,23 @@ const FuncTree = class {
         this.initTree();
     }
 
-    configure(config=DEFAULT_CONFIG) {
-        this.config = Object.assign(this.config, config);
+    configure(config={}) {
+        this.config = mergeRecursive(this.config, config);
         return this;
     }
 
-    configureColorSet(colorSet={}) {
-        this.config.colorSet = Object.assign(this.config.colorSet, colorSet);
-        return this;
-    }
-
-    initTree() {
+    initTree(zeroize=true) {
         for (const node of this.nodes) {
-            node.values = [];
-            node.value = 0;
-            node.cols = [];
-            if (node.children && node.depth >= this.config.displayNodesLowerThan - 1) {
+            if (zeroize) {
+                node.values = [];
+                node.value = 0;
+                node.cols = [];
+            }
+            if (node.children && node.depth >= this.config.maxDepth) {
                 node._children = node.children;
                 node.children = null;
             }
-            if (node._children && node.depth < this.config.displayNodesLowerThan - 1) {
+            if (node._children && node.depth < this.config.maxDepth) {
                 node.children = node._children;
                 node._children = null;
             }
@@ -205,7 +197,7 @@ const FuncTree = class {
             .attr('stroke-width', 0.25)
             .attr('stroke-dasharray', (d) => {
                 if (d.source.depth === 0) {
-                    return '3,3';
+                    return '1,1';
                 }
             })
             .attr('d', (d) => {
@@ -332,9 +324,20 @@ const FuncTree = class {
 
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
         const self = this;
+        const data = nodes
+            .filter((d) => {
+                const excludes = ['root'];
+                return !~excludes.indexOf(d.layer);
+            })
+            .filter((d) => {
+                return d.depth > 0;
+            });
+        const barWidth = d3.scale.linear()
+            .domain([4, 0])
+            .range([1.5, 5]);
         const chart = d3.select('#charts')
             .selectAll('g')
-            .data(nodes, (d) => {
+            .data(data, (d) => {
                 return d.id;
             });
         chart.enter()
@@ -381,12 +384,26 @@ const FuncTree = class {
             });
         bar.enter()
             .append('rect')
-            .attr('x', -1)
+            .attr('x', function(d) {
+                const p = this.parentNode.__data__;
+                return - barWidth(p.depth) / 2;
+            })
             .attr('y', 0)
-            .attr('width', 2)
+            .attr('rx', function(d) {
+                const p = this.parentNode.__data__;
+                return barWidth(p.depth) / 4;
+            })
+            .attr('ry', function(d) {
+                const p = this.parentNode.__data__;
+                return barWidth(p.depth) / 4;
+            })
+            .attr('width', function(d) {
+                const p = this.parentNode.__data__;
+                return barWidth(p.depth);
+            })
             .attr('height', 0)
             .attr('fill', function(d, i) {
-                const n = self.config.selectedColumns.multiple[i];
+                const n = self.config._selectedColumns.multiple[i];
                 return self.config.colorSet[n] || self.colorScale('column-' + n);
             })
             .on('mouseover', () => {
@@ -404,8 +421,11 @@ const FuncTree = class {
             .attr('y', function(d, i) {
                 const p = this.parentNode.__data__;
                 const maxHight = self.config.diameter / 2 / depth * 0.8;
+                const sum = d3.sum(p.values);
                 const subSum = d3.sum(p.values.slice(0, i));
-                if (self.config.normalize) {
+                if (self.config.percentage) {
+                    return subSum / sum * maxHight || 0;
+                } else if (self.config.normalize) {
                     return subSum / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return subSum;
@@ -413,15 +433,18 @@ const FuncTree = class {
             })
             .attr('height', function(d) {
                 const p = this.parentNode.__data__;
+                const sum = d3.sum(p.values);
                 const maxHight = self.config.diameter / 2 / depth * 0.8;
-                if (self.config.normalize) {
+                if (self.config.percentage) {
+                    return d / sum * maxHight || 0;
+                } else if (self.config.normalize) {
                     return d / maxSumOfValues[p.depth] * maxHight || 0;
                 } else {
                     return d;
                 }
             })
             .attr('fill', function(d, i) {
-                const n = self.config.selectedColumns.multiple[i];
+                const n = self.config._selectedColumns.multiple[i];
                 return self.config.colorSet[n] || self.colorScale('column-' + n);
             });
         bar.exit()
@@ -433,9 +456,17 @@ const FuncTree = class {
     }
 
     _updateRounds(nodes, source, depth, max) {
+        const data = nodes
+            .filter((d) => {
+                const excludes = ['root'];
+                return !~excludes.indexOf(d.layer);
+            })
+            .filter((d) => {
+                return d.depth > 0;
+            });
         const circle = d3.select('#rounds')
             .selectAll('circle')
-            .data(nodes, (d) => {
+            .data(data, (d) => {
                 return d.id;
             });
         circle.enter()
@@ -454,7 +485,7 @@ const FuncTree = class {
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
                         break;
                     case 'column':
-                        const n = this.config.selectedColumns.single;
+                        const n = this.config._selectedColumns.single;
                         color = this.config.colorSet[n] || this.colorScale('column-' + n);
                         break;
                     default:
@@ -462,9 +493,7 @@ const FuncTree = class {
                 }
                 return color;
             })
-            .attr('stroke', () => {
-                return this.config.displayBars ? '#333' : '#fff';
-            })
+            .attr('stroke', '#fff')
             .attr('stroke-width', 0.5)
             .attr('opacity', 0.75)
             .attr('data-toggle', 'tooltip')
@@ -499,7 +528,6 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('r', (d) => {
                 const r_ = 25;
-                if (d.depth < 2) return 0;
                 if (this.config.normalize) {
                     return d.value / max[d.depth] * r_ || 0;
                 } else {
@@ -519,7 +547,7 @@ const FuncTree = class {
                         color = this.config.colorSet[d.entry] || this.config.colorSet.default;
                         break;
                     case 'column':
-                        const n = this.config.selectedColumns.single;
+                        const n = this.config._selectedColumns.single;
                         color = this.config.colorSet[n] || this.colorScale('column-' + n);
                         break;
                     default:
@@ -538,47 +566,38 @@ const FuncTree = class {
     }
 
     _updateLabels(nodes, source, maxValue, maxSumOfValues) {
-        const data = nodes.filter((d) => {
-            return d.depth < 2;
-        });
+        const data = nodes
+            .filter((d) => {
+                return 0 < d.depth && d.depth < 3;
+            })
+            .filter((d) => {
+                return !d.name.startsWith('*');
+            });
         const label = d3.select('#labels')
             .selectAll('g')
             .data(data, (d) => {
                 return d.id;
-            })
+            });
+        const fontSize = d3.scale.linear()
+            .domain([3, 0])
+            .range([4, 8]);
         label.enter()
             .append('g')
             .attr('transform', (d) => {
-                return 'rotate(' + (d.x - 90) + '),translate(' + d.y + '),rotate(' + (90 - d.x) + ')';
+                return 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + '),rotate(' + (90 - source.x0) + ')';
             })
             .append('text')
             .attr('text-anchor', 'middle')
             .attr('font-family', 'arial, sans-serif')
             .attr('font-size', (d) => {
-                const value = this.config.displayRounds ?
-                    d.value :
-                    d3.sum(d.values);
-                const max = this.config.displayRounds ?
-                    maxValue[d.depth] :
-                    maxSumOfValues[d.depth];
-                const size = (value / max * 10 || 0) + 10;
-                return size;
+                return fontSize(d.depth);
             })
             .attr('y', (d) => {
-                const value = this.config.displayRounds ?
-                    d.value :
-                    d3.sum(d.values);
-                const max = this.config.displayRounds ?
-                    maxValue[d.depth] :
-                    maxSumOfValues[d.depth];
-                const size = (value / max * 10 + 5 || 0) + 10;
-                return - size / 2;
+                return - fontSize(d.depth) / 2;
             })
             .attr('fill', '#555')
             .text((d) => {
-                return d.name
-                    .replace(/ \[.*\]/, '')
-                    .split(', ')[0];
+                return d.name.replace(/ \[.*\]/, '');
             });
         label
             .transition()
@@ -589,6 +608,9 @@ const FuncTree = class {
         label.exit()
             .transition()
             .duration(this.config.duration)
+            .attr('transform', (d) => {
+                return 'rotate(' + (source.x - 90) + '),translate(' + source.y + '),rotate(' + (90 - source.x) + ')';
+            })
             .remove();
         label.selectAll('text')
             .call(d3.behavior.drag()
@@ -623,7 +645,7 @@ const FuncTree = class {
                     .attr('style', null);
             });
         if (!hits[0].length) {
-            alert('No results found: ' + word);
+            alert('No results found from displayed entries: ' + word);
         }
     }
 
@@ -655,8 +677,7 @@ const FuncTree = class {
                 }
             })
             .style('stroke', (d) => {
-                const n = d.target.depth % Object.keys(this.config.colorSet).length;
-                return this.config.colorSet[n];
+                return this.config.colorSet[d.target.layer] || this.colorScale(d.target.layer);
             })
             .style('stroke-width', 1.5);
         if (this.config.external.breadcrumb) {
@@ -666,4 +687,20 @@ const FuncTree = class {
             this._highlightLinks(node.parent);
         }
     }
+}
+
+
+function mergeRecursive(obj1, obj2) {
+    for (var p in obj2) {
+        try {
+            if (obj2[p].constructor == Object) {
+                obj1[p] = mergeRecursive(obj1[p], obj2[p]);
+            } else {
+                obj1[p] = obj2[p];
+            }
+        } catch (e) {
+            obj1[p] = obj2[p];
+        }
+    }
+    return obj1;
 }

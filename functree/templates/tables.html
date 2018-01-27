@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block sidebar %}
-<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-tables" data-toggle="collapse">#</a></h5>
+<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-tables" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
 <form id="form-tables" class="collapse in">
     <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
     <input type="hidden" name="mode" value="tables">
@@ -34,6 +34,7 @@
             <thead>
                 <tr>
                     <th>Entry</th>
+                    <th>Layer</th>
                     {% for col in profile.columns[series] %}
                     <th>{{col}}</th>
                     {% endfor %}
@@ -83,15 +84,19 @@
                         return $el[0].outerHTML;
                     }
                 },
+                {
+                    'data': 'layer',
+                    'defaultContent': 'n/a'
+                },
                 {% for col in profile.columns[series] %}
                 {'data': 'values.{{series}}.{{loop.index0}}'},
                 {% endfor %}
             ],
             'order': [
+                [1, 'asc'],
                 [0, 'asc']
             ],
             'scrollX': true,
-            'stateSave': true,
             'buttons': [
                 {
                     'text': '<i class="fa fa-download" aria-hidden="true"></i> Download TSV',
