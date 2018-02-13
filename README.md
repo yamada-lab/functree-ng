@@ -18,7 +18,7 @@ Install dependencies and build the application:
 ```bash
 $ pip3 install -r requirements.txt
 $ npm install yarn --global
-$ yarn run install
+$ yarn install
 $ yarn run bower install
 $ yarn run build
 ```
@@ -33,6 +33,7 @@ Execute the command below. `docker-compose` will automatically set up Docker con
 ```bash
 $ docker-compose up
 ```
+Then open http://localhost:8080 in your web browser.
 
 ## Configuration
 To configure the behavior of the application, create `instance/config.py` with the same format as `functree/config.py`.
