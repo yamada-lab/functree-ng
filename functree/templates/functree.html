@@ -62,7 +62,10 @@
             </label>
         </div>
         <h6>Max depth of tree</h6>
-        <input type="number" class="form-control input-sm" min="0" v-model.number="maxDepth">
+        <select class="form-control input-sm" v-model="layer">
+            <option disabled value="">- Select layer -</option>
+            <option v-for="(l, i) in layers" v-bind:value="i">{% raw %}{{l}}{% endraw %}</option>
+        </select>
     </div>
     <div class="form-group text-center">
         <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> Update</button>
@@ -201,6 +204,13 @@
             .create()
             .update();
 
+        var layers = funcTree.nodes.reduce(function(x, y) {
+            if (!~x.indexOf(y.layer)) {
+                x.push(y.layer);
+            }
+            return x;
+        }, []);
+
         new Vue({
             'el': '#form-search',
             'data': {
@@ -222,11 +232,12 @@
                 'normalize': true,
                 'percentage': false,
                 'colorizeBy': 'layer',
-                'maxDepth': 4,
                 'options': [
                     profile.series,
                     []
-                ]
+                ],
+                'layers': layers,
+                'layer': ''
             },
             'methods': {
                 'clickOptionSeries': function() {
@@ -267,7 +278,7 @@
                                 if (~n) a[n] = b[1];
                                 return a;
                             }, {}),
-                            'maxDepth': self.maxDepth,
+                            'maxDepth': self.layer,
                             '_selectedColumns': {
                                 'single': self.columnsSingle,
                                 'multiple': self.columnsMultiple
