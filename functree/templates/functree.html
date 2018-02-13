@@ -63,7 +63,6 @@
         </div>
         <h6>Max depth of tree</h6>
         <select class="form-control input-sm" v-model="layer">
-            <option disabled value="">- Select layer -</option>
             <option v-for="(l, i) in layers" v-bind:value="i">{% raw %}{{l}}{% endraw %}</option>
         </select>
     </div>
@@ -237,7 +236,7 @@
                     []
                 ],
                 'layers': layers,
-                'layer': ''
+                'layer': layers.length - 1 - (layers.length < 5 ? 0 : 1)
             },
             'methods': {
                 'clickOptionSeries': function() {
