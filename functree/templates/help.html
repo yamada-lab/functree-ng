@@ -1,0 +1,254 @@
+{% set title = 'About' %} {% extends 'layout.html' %} {% block content
+%}
+<div class="container">
+	<div class="page-header">
+		<h1>FuncTree2 Documentation</h1>
+	</div>
+	<section class="page-header">
+		<div class="row">
+			<div class="col-sm-6">
+				<p class="lead justify">
+					FuncTree2 allows you to visualize and explore omics data in the
+					hierarchical context of biological ontologies. By mapping omics
+					data onto a pre-defined interactive treemap, based on the <a
+						href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
+						target="_blank">KEGG brite functional hierarchy</a>, you can
+					quickly and comprehensively understand the functional potential of
+					your data, which will help you develop further hypothesis and
+					scientific insights. Statistical tests, module pathway
+					reconstruction, and different customization controls are built-in
+					to help you in your quest.
+				</p>
+				<p class="justify">
+					Here you will learn about the different types of analysis available
+					in FuncTree2 and the accepted data formats (Anchor). We also give
+					you some usage tips and a sneak preview of what your <a
+						href="#example">output</a> will look like.
+				</p>
+			</div>
+			<div class="col-sm-6">
+				<img alt=""
+					src="{{ url_for('static', filename='images/functree-kegg-overview.png') }}"
+					width="300px">
+			</div>
+		</div>
+	</section>
+	<section class="page-header">
+		<h2>Data format</h2>
+		<div class="row">
+			<div class="col-sm-6">
+				<table id="omics-matrix" class="table">
+					<caption style="caption-side: bottom; text-align: left;">
+						Snippet of input data matrix. <span><a
+							href="{{ url_for('static', filename='data/example/profile.tsv') }}"
+							target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
+								Download full example</a></span>
+					</caption>
+					<thead>
+						<tr role="row">
+							<th>Annotation</th>
+							<th>Sample1</th>
+							<th>Sample2</th>
+							<th>Sample3</th>
+							<th>..</th>
+							<th>sampleN</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>K00001</td>
+							<td>1</td>
+							<td>2</td>
+							<td>5</td>
+							<td>..</td>
+							<td>10</td>
+						</tr>
+						<tr>
+							<td>K00002</td>
+							<td>1</td>
+							<td>2</td>
+							<td>9</td>
+							<td>..</td>
+							<td>10</td>
+						</tr>
+						<tr>
+							<td>K00302</td>
+							<td>31</td>
+							<td>7</td>
+							<td>12</td>
+							<td>..</td>
+							<td>0</td>
+						</tr>
+						<tr>
+							<td>..</td>
+							<td>..</td>
+							<td>..</td>
+							<td>..</td>
+							<td>..</td>
+							<td>..</td>
+						</tr>
+						<tr>
+							<td>K00107</td>
+							<td>21</td>
+							<td>14</td>
+							<td>11</td>
+							<td>..</td>
+							<td>170</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-sm-6">
+				<p class="justify">A Tab separated Omics matrix, annotated with
+					one of the following ontology databases is accepted:</p>
+				<ul class="list-group">
+					<li class="list-group-item list-group-item-success">KEGG KO</li>
+					<li class="list-group-item list-group-item-success">KEGG
+						Modules</li>
+					<li class="list-group-item list-group-item-info">NCBI gene ids</li>
+				</ul>
+
+				<span class="label label-danger"> What else?</span> <span
+					class="label label-danger"> Scaled or not scaled?</span>
+
+				<p>In addition a Tab separated color list is also required.</p>
+				<span><a data-toggle="collapse" href="#color-list"><i
+						class="fa fa-eye" aria-hidden="true"></i> Display color list
+						snippet</a></span>&nbsp <span><a
+					href="{{ url_for('static', filename='data/example/color.tsv') }}"
+					target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
+						Download full example</a></span> <span class="label label-danger">
+					can;t wer make this optional? and generate colors on the fly?</span>
+				<table id="color-list"
+					class="table table-hover table-striped dataTable no-footer collapse">
+					<thead>
+						<tr role="row">
+							<th>Annotation</th>
+							<th>Color</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Translation</td>
+							<td>#ff0000</td>
+						</tr>
+						<tr>
+							<td>map03010</td>
+							<td>#ff0000</td>
+						</tr>
+						<tr>
+							<td>..</td>
+							<td>..</td>
+						</tr>
+						<tr>
+							<td>Sample2</td>
+							<td>#ffffff</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-sm-12">
+				<br />
+				<p class="justify">
+					Processed datasets could be exported in JSON <span><a
+						href="{{ url_for('static', filename='data/example/profile.json') }}"
+						target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
+							format</a></span> and re-uploaded later to FuncTree2. <span
+						class="label label-danger"> Add some specs</span>
+				</p>
+			</div>
+		</div>
+	</section>
+	<section class="page-header">
+
+		<h2>Workflow</h2>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<img alt=""
+					src="{{ url_for('static', filename='images/workflow.png') }}"
+					width="960px">
+			</div>
+		</div>
+		<ul>
+			<li>Mapping: [Rename: to Ontology preocessing and mapping] =>
+				maps KOs onto modules, pathways and brite hierarchies...
+			<li>Module coverage: Module based mapping, where each module is
+				given a coverage and abundance and then used for the pathway and
+				brite abundance
+			<li>Comparison: Two KO matrices, are used separatly for basinc
+				mapping and the output is compared using Mann-Whitney U test
+			<li>Display: Mapping without any processing. Lets the user take
+				compltete control of generating his abundance data (Examnple)
+			<li>0 size is log to penalize high p-values
+			<li>FDR?
+		</ul>
+	</section>
+	<section class="page-header">
+		<h2>Viewer</h2>
+		<section>
+			<h3>Ontology explorer</h3>
+			<div class="row">
+				<div class="col-sm-3">
+					<p class="lead" style="text-align: center;">Summarized omics
+						data are used to customize the Ontology explorer. Leaf values are
+						summed or averaged to give the parent nodes a value, which is then
+						reflected by a custom color.</p>
+					<ol>
+						<li>Zoom and pan
+						<li>Clicking on a node will collapse it.
+						<li>Tree could be rerooted
+					</ol>
+				</div>
+				<div class="col-sm-9">
+					<img alt="" class="img-responsive" style="width: 100%;"
+						src="{{ url_for('static', filename='images/mapping-stacked-100.png') }}">
+				</div>
+			</div>
+			<div class="row" style="padding-top: 20px;">
+				<div class="col-sm-6">
+					<img alt="" class="img-thumbnail img-fluid"
+						src="{{ url_for('static', filename='images/mapping-stacked-100-zoom.png') }}">
+				</div>
+				<div class="col-sm-6">
+					<img alt="" class="img-thumbnail img-fluid"
+						src="{{ url_for('static', filename='images/explorer-rerooted.png') }}">
+				</div>
+			</div>
+			<h3>Different coloring options</h3>
+			<ul>
+				<li>Layer: Automatically genrated colors for Ontology layers
+					e.g. Brite L1, L2, Pathway, Module
+				<li>Column: use the color code associated with a sample
+				<li>Entry: Reflect user prederfined colors for each entry
+			</ul>
+		</section>
+		<section>
+			<h3>Summary charts</h3>
+			<div class="row">
+				<div class="col-md-6">
+					<img class="img-thumbnail img-fluid" alt=""
+						src="{{ url_for('static', filename='images/chart-sample-barplot-100.png') }}">
+				</div>
+				<div class="col-md-6">
+					<img class="img-thumbnail img-fluid" alt=""
+						src="{{ url_for('static', filename='images/chart-sample-barplot.png') }}">
+				</div>
+
+				<div class="col-md-6">
+					<img class="img-thumbnail img-fluid" alt=""
+						src="{{ url_for('static', filename='images/chart-pie.png') }}">
+				</div>
+				<div class="col-md-6">
+					<img class="img-thumbnail img-fluid" alt=""
+						src="{{ url_for('static', filename='images/chart-heatmap.png') }}">
+				</div>
+			</div>
+		</section>
+	</section>
+	<section class="page-header">
+		<h2 id="example">Examples</h2>
+		Add metagenomics, multiomics and pangenomics examples
+	</section>
+</div>
+{% endblock %}
