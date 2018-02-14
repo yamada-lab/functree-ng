@@ -93,6 +93,9 @@ def route_viewer():
     elif mode == 'charts':
         series = flask.request.args.get('series', default=0, type=int)
         return flask.render_template('charts.html', profile=profile, mode=mode, series=series)
+    elif mode == 'pathways':
+        series = flask.request.args.get('series', default=0, type=int)
+        return flask.render_template('pathways.html', profile=profile, mode=mode, series=series)
     elif mode == 'tables':
         series = flask.request.args.get('series', default=0, type=int)
         return flask.render_template('tables.html', profile=profile, mode=mode, series=series)

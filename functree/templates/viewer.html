@@ -19,6 +19,7 @@
                     <ul class="nav nav-tabs">
                         <li role="presentation"{% if mode == 'functree' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={}&mode=functree'.format(profile.profile_id) }}"><i class="fa fa-tree" aria-hidden="true"></i> FuncTree</a></li>
                         <li role="presentation"{% if mode == 'charts' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=charts'.format(profile.profile_id) }}"><i class="fa fa-bar-chart" aria-hidden="true"></i> Charts</a></li>
+                        <li role="presentation"{% if mode == 'pathways' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=pathways'.format(profile.profile_id) }}"><i class="fa fa-map-o" aria-hidden="true"></i> iPath</a></li>
                         <li role="presentation"{% if mode == 'tables' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=tables'.format(profile.profile_id) }}"><i class="fa fa-table" aria-hidden="true"></i> Tables</a></li>
                         <li role="presentation"{% if mode == 'summary' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=summary'.format(profile.profile_id) }}"><i class="fa fa-file-text-o" aria-hidden="true"></i> Summary</a></li>
                     </ul>

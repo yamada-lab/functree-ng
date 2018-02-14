@@ -1,0 +1,88 @@
+{% extends 'viewer.html' %}
+
+{% block sidebar %}
+<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-charts" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
+<form id="form-charts" class="collapse in">
+    <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
+    <input type="hidden" name="mode" value="charts">
+    <div class="form-group">
+        <label class="control-label">Data series</label>
+        <select name="series" class="form-control input-sm">
+            {% for series_ in profile.series %}
+            <option value="{{loop.index0}}"{% if loop.index0 == series %} selected{% endif %}>{{series_}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary btn-sm">Go</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block mainpane %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Data series: <span class="badge">{{profile.series[series]}}</span>
+    </div>
+    <div class="panel-body">
+        <form id="form-option" class="form-inline" v-on:submit.prevent="submit">
+            <div class="form-group">
+                <label class="control-label">Column</label>
+                <select class="form-control input-sm" v-model="column">
+                    <option v-for="(c, index) in columns" v-bind:value="index">{% raw %}{{c}}{% endraw %}</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary"><i aria-hidden="true" class="fa fa-refresh"></i> Update</button>
+        </form>
+        <hr>
+        <div class="thumbnail">
+            <iframe name="ipath" width="100%" height="600" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script src="{{ url_for('static', filename='bower_components/highcharts/highcharts.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/highcharts/modules/exporting.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/highcharts/modules/heatmap.js') }}"></script>
+<script src="{{ url_for('static', filename='dist/js/pathways.js') }}"></script>
+<script>
+    axios.get('{{ url_for('route_profile', profile_id=profile.profile_id) }}')
+        .then(function(res) {
+            var profile = res.data[0].profile
+                .map(function(x) {
+                    x.values = x.values[{{series}}];
+                    return x;
+                })
+                .sort(function(a, b) {
+                    if (a.layer > b.layer) return 1;
+                    if (a.layer < b.layer) return -1;
+                    if (a.entry > b.entry) return 1;
+                    if (a.entry < b.entry) return -1;
+                    return 0;
+                });
+            var columns = res.data[0].columns[{{series}}];
+
+            new Vue({
+                'el': '#form-option',
+                'data': {
+                    'column': 0,
+                    'columns': columns
+                },
+                'methods': {
+                    'submit': function() {
+                        visualize(profile, columns, this.column)
+                    }
+                }
+            });
+
+            visualize(profile, columns, 0);
+        })
+        .catch(function(error) {
+            console.error(error);
+            alert('An error occurred');
+        });
+</script>
+{% endblock %}
