@@ -12,6 +12,8 @@ class BasicMappingForm(flask_wtf.FlaskForm):
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
     ])
+    
+    modulecoverage = wtforms.BooleanField('Compute module coverage', default=True)
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
     submit = wtforms.SubmitField('Submit')
 

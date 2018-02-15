@@ -37,11 +37,11 @@
                             <a href="{{ url_for('route_analysis', mode='basic_mapping') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Analysis</li>
-                                <li><a href="{{ url_for('route_analysis', mode='basic_mapping') }}">- Basic mapping</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='basic_mapping') }}">- Mapping</a></li>
                                 <li><a href="{{ url_for('route_analysis', mode='module_coverage') }}">- Module coverage</a></li>
                                 <li><a href="{{ url_for('route_analysis', mode='comparison') }}">- Comparison</a></li>
                                 <li class="dropdown-header">Upload</li>
-                                <li><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">- Direct mapping</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">- Display</a></li>
                                 <li><a href="{{ url_for('route_analysis', mode='json_upload') }}">- JSON upload</a></li>
                             </ul>
                         </li>

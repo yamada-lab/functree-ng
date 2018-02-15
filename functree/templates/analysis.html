@@ -1,201 +1,125 @@
 {% set title = 'Submit' %}
-{% extends 'layout.html' %}
-
+{% extends 'layout.html' %} 
 {% block content %}
 <div class="container">
-    <div class="page-header">
-        <h2>{{title}}</h2>
+ <div class="page-header">
+  <h2>Mapping</h2>
+ </div>
+ <br />
+ <form class="form-horizontal"
+  action="{{ url_for('route_analysis', mode=mode) }}"
+  method="POST"
+  enctype="multipart/form-data">
+  {{ form.csrf_token }}
+  <fieldset>
+   <div class="panel panel-default">
+    <div class="panel-heading">
+     <p>
+      Calculate module/pathway profile by a direct mapping from a 
+      <a href="http://www.genome.jp/kegg/ko.html" target="_blank">KO (KEGG Orthology)</a>
+      abundance table. Module abundance will be equal to the sum or mean of mapped KOs and will
+      be used to customize the Tree. Module coverage could also be calculated for additional customizations. 
+     </p>
     </div>
-    <ul class="nav nav-tabs">
-        <li role="presentation"{% if mode == 'basic_mapping' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='basic_mapping') }}">Basic mapping</a></li>
-        <li role="presentation"{% if mode == 'module_coverage' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='module_coverage') }}">Module coverage</a></li>
-        <li role="presentation"{% if mode == 'comparison' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='comparison') }}">Comparison</a></li>
-        <li role="presentation"{% if mode == 'direct_mapping' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">Direct mapping</a></li>
-        <li role="presentation"{% if mode == 'json_upload' %} class="active"{% endif %}><a href="{{ url_for('route_analysis', mode='json_upload') }}">JSON upload</a></li>
-    </ul>
-    <br>
-    <form class="form-horizontal" action="{{ url_for('route_analysis', mode=mode) }}" method="POST" enctype="multipart/form-data">
-        {{ form.csrf_token }}
-        <fieldset>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    {% if mode == 'basic_mapping' %}
-                    <legend>Basic mapping</legend>
-                    <p>Calculate module/pathway profile from a <a href="http://www.genome.jp/kegg/ko.html" target="_blank">KO (KEGG Orthology)</a> abundance table:</p>
-                    <ul>
-                        <li><b>Input file:</b> Tab-separeted KO abundance table</li>
-                        <li><b>Color file:</b> Tab-separeted {entry|column}-color list</li>
-                        <li><b>Database:</b> Source of definitions of module/pathways</li>
-                        <li><b>Description:</b> Statement that represents the result</li>
-                    </ul>
-                    {% elif mode == 'module_coverage' %}
-                    <legend>Module coverage</legend>
-                    <p>Calculate module coverage profile from a <a href="http://www.genome.jp/kegg/ko.html" target="_blank">KO (KEGG Orthology)</a> abundance table:<p>
-                    <ul>
-                        <li><b>Input file:</b> Tab-separeted KO abundance table</li>
-                        <li><b>Color file:</b> Tab-separeted {entry|column}-color list</li>
-                        <li><b>Database:</b> Source of definitions of module/pathways</li>
-                        <li><b>Description:</b> Statement that represents the result</li>
-                    </ul>
-                    {% elif mode == 'comparison' %}
-                    <legend>Comparison</legend>
-                    <p>Calculate module/pathway profiles from two <a href="http://www.genome.jp/kegg/ko.html" target="_blank">KO (KEGG Orthology)</a> abundance tables and then perform Mann-Whitney U test:<p>
-                    <ul>
-                        <li><b>Input file #1:</b> Tab-separeted KO abundance table</li>
-                        <li><b>Input file #2:</b> Tab-separeted KO abundance table</li>
-                        <li><b>Color file:</b> Tab-separeted {entry|column}-color list</li>
-                        <li><b>Database:</b> Source of definitions of module/pathways</li>
-                        <li><b>Description:</b> Statement that represents the result</li>
-                    </ul>
-                    {% elif mode == 'direct_mapping' %}
-                    <legend>Direct mapping</legend>
-                    <p>Input and map your data directly:<p>
-                    <ul>
-                        <li><b>Input file:</b> Tab-separeted abundance table</li>
-                        <li><b>Color file:</b> Tab-separeted {entry|column}-color list</li>
-                        <li><b>Database:</b> Source of definitions of module/pathways</li>
-                        <li><b>Description:</b> Statement that represents the result</li>
-                    </ul>
-                    {% elif mode == 'json_upload' %}
-                    <legend>JSON upload</legend>
-                    <p>Upload and register your profile JSON:</p>
-                    <ul>
-                        <li><b>Input file:</b> Profile JSON</li>
-                        <li><b>Database:</b> Source of definitions of module/pathways</li>
-                        <li><b>Description:</b> Statement that represents the result</li>
-                    </ul>
-                    {% endif %}
-                    <p><i class="fa fa-info-circle" aria-hidden="true"></i> The result will expire <b>{{config['FUNCTREE_PROFILE_TTL_DAYS']}} days</b> after the submission. For more detail, see <a href="{{ url_for('route_docs') }}">documentation</a>.</p>
-                </div>
-                <div class="panel-body">
-                    {% if mode != 'comparison' %}
-                    <div class="form-group{% if form.input_file.errors %} has-error{% endif %}">
-                        {{ form.input_file.label(class='col-sm-2 control-label') }}
-                        <div class="col-sm-10">
-                            {{ form.input_file(class_='form-control-file') }}
-                            {% if mode == 'basic_mapping' or mode == 'module_coverage' or mode == 'direct_mapping' %}
-                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
-                            {% elif mode == 'json_upload' %}
-                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.json') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
-                            {% endif %}
-                            {% if form.input_file.errors %}
-                            <span class="help-block">
-                                {% for message in form.input_file.errors %}
-                                    {{ message }}
-                                {% endfor %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="form-group{% if form.input_file1.errors %} has-error{% endif %}">
-                        {{ form.input_file1.label(class='col-sm-2 control-label') }}
-                        <div class="col-sm-10">
-                            {{ form.input_file1(class_='form-control-file') }}
-                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
-                            {% if form.input_file1.errors %}
-                            <span class="help-block">
-                                {% for message in form.input_file1.errors %}
-                                    {{ message }}
-                                {% endfor %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="form-group{% if form.input_file2.errors %} has-error{% endif %}">
-                        {{ form.input_file2.label(class='col-sm-2 control-label') }}
-                        <div class="col-sm-10">
-                            {{ form.input_file2(class_='form-control-file') }}
-                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
-                            {% if form.input_file2.errors %}
-                            <span class="help-block">
-                                {% for message in form.input_file2.errors %}
-                                    {{ message }}
-                                {% endfor %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% if form.color_file %}
-                    <div class="form-group{% if form.color_file.errors %} has-error{% endif %}">
-                        {{ form.color_file.label(class='col-sm-2 control-label') }}
-                        <div class="col-sm-10">
-                            {{ form.color_file(class_='form-control-file') }}
-                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/colors.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
-                            {% if form.color_file.errors %}
-                            <span class="help-block">
-                                {% for message in form.color_file.errors %}
-                                    {{ message }}
-                                {% endfor %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="form-group{% if form.target.errors %} has-error{% endif %}">
-                        {{ form.target.label(class='col-sm-2 control-label') }}
-                        <div class="col-sm-10">
-                            {{ form.target(class_='form-control') }}
-                            {% if form.target.errors %}
-                            <span class="help-block">
-                                {% for message in form.target.errors %}
-                                    {{ message }}
-                                {% endfor %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="form-group{% if form.description.errors %} has-error{% endif %}">
-                        {{ form.description.label(class='col-sm-2 control-label') }}
-                        <div class="col-sm-10">
-                            {{ form.description(class_='form-control', placeholder='Description') }}
-                            {% if form.description.errors %}
-                            <span class="help-block">
-                                {% for message in form.description.errors %}
-                                    {{ message }}
-                                {% endfor %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="form-group{% if form.private.errors %} has-error{% endif %}">
-                        <div class="col-sm-offset-2 col-sm-10">
-                            <div class="checkbox">
-                                <label>
-                                    {{ form.private }} {{ form.private.label.text }}
-                                </label>
-                            </div>
-                            {% if form.private.errors %}
-                            <span class="help-block">
-                                {% for message in form.private.errors %}
-                                    {{ message }}
-                                {% endfor %}
-                            </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-10 col-sm-offset-2">
-                            {{ form.submit(class_='btn btn-primary', **{'data-loading-text': 'Submitting...'}) }}
-                            <input type="reset" class="btn btn-default" value="Reset">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-    </form>
-</div>
-{% endblock %}
+    <div class="panel-body">
+     <div class="form-group{% if form.input_file.errors %} has-error{% endif %}">
+      {{ form.input_file.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-3">
+       {{ form.input_file(class_='form-control-file') }} 
+        <span class="help-block">Example: 
+        <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank">
+        <i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
+        {% if form.input_file.errors %} 
+         <span class="help-block"> 
+         {% for message in form.input_file.errors %} {{ message }} {% endfor %}
+         </span> {% endif %}
+      </div>
+      <div class="col-sm-7">
+       <span> Tab-separated KO abundance table</span>
+      </div>
+     </div>
 
-{% block script %}
-{{super()}}
+     <div class="form-group{% if form.color_file.errors %} has-error{% endif %}">
+      {{ form.color_file.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-3">
+       {{ form.color_file(class_='form-control-file') }} <span
+        class="help-block">Example: <a
+        href="{{ url_for('static', filename='data/example/colors.tsv') }}"
+        target="_blank"><i
+         class="fa fa-download"
+         aria-hidden="true"></i> Download</a></span> {% if form.color_file.errors
+       %} <span class="help-block"> {% for message in
+        form.color_file.errors %} {{ message }} {% endfor %} </span> {% endif
+       %}
+      </div>
+      <div class="col-sm-7">
+       <span> Tab-separeted {entry|column}-color list</span>
+      </div>
+     </div>
+     <div class="form-group{% if form.target.errors %} has-error{% endif %}">
+      {{ form.target.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-10">
+       {{ form.target(class_='form-control') }} {% if form.target.errors
+       %} <span class="help-block"> {% for message in
+        form.target.errors %} {{ message }} {% endfor %} </span> {% endif %}
+      </div>
+     </div>
+     <div class="form-group{% if form.description.errors %} has-error{% endif %}">
+      {{ form.description.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-10">
+       {{ form.description(class_='form-control', placeholder='A useful description for the result') }} 
+       {% if form.description.errors %}
+        <span class="help-block"> {% for message in form.description.errors %} {{ message }} {% endfor %} </span> 
+       {% endif %}
+      </div>
+     </div>
+     
+     <div class="form-group{% if form.modulecoverage.errors %} has-error{% endif %}">
+      <div class="col-sm-offset-2 col-sm-10">
+       <div class="checkbox">
+        <label> {{ form.modulecoverage }} {{ form.modulecoverage.label.text }}
+        </label>
+       </div>
+       {% if form.modulecoverage.errors %} 
+       <span class="help-block"> {% for message in form.modulecoverage.errors %} {{ message }} {% endfor %} </span> 
+       {% endif %}
+      </div>
+     </div>
+     
+     
+     <div class="form-group{% if form.private.errors %} has-error{% endif %}">
+      <div class="col-sm-offset-2 col-sm-10">
+       <div class="checkbox">
+        <label> {{ form.private }} {{ form.private.label.text }}
+        </label>
+       </div>
+       {% if form.private.errors %} 
+       <span class="help-block"> {% for message in form.private.errors %} {{ message }} {% endfor %} </span> 
+       {% endif %}
+      </div>
+     </div>
+     <div class="form-group">
+      <div class="col-sm-10 col-sm-offset-2">
+       <p>
+        <i class="fa fa-info-circle" aria-hidden="true"></i> The result will expire <b>{{config['FUNCTREE_PROFILE_TTL_DAYS']}} days</b>
+         after the submission. For more detail, see <a href="{{ url_for('route_docs') }}">documentation</a>.
+       </p>
+       {{ form.submit(class_='btn btn-primary', **{'data-loading-text': 'Submitting...'}) }} 
+       <input type="reset" class="btn btn-default" value="Reset">
+      </div>
+     </div>
+    </div>
+   </div>
+  </fieldset>
+ </form>
+</div>
+{% endblock %} {% block script %} {{super()}}
 <script>
-    $('input[type="submit"]').on('click', function() {
-        $(this).button('loading');
-        setTimeout(function() {
-            $(this).button('reset');
-        }, 600000);
-    });
+	$('input[type="submit"]').on('click', function() {
+		$(this).button('loading');
+		setTimeout(function() {
+			$(this).button('reset');
+		}, 600000);
+	});
 </script>
 {% endblock %}
