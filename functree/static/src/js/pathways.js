@@ -25,6 +25,7 @@ const visualize = (profile, columns, column) => {
             'default_width': 3,
             'default_radius': 7,
             'default_color': '#aaaaaa',
+            'background_color':'#ffffff',
             'tax_filter': '',
             'map': 'metabolic',
             'export_type': 'svg',
