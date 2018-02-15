@@ -1,62 +1,86 @@
-{% extends 'layout.html' %}
-
-{% block head %}
-{{super()}}
+{% extends 'layout.html' %} {% block head %} {{super()}}
 <style>
-    .jumbotron {
-        position: relative;
-        color: #fff;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 30px rgba(0,0,0,0.075);
-    }
-    .jumbotron #particles-js {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background: linear-gradient(to right, #2b5876, #4e4376);
-    }
-    .jumbotron .container {
-        position: relative;
-    }
-</style>
-{% endblock %}
+.jumbotron {
+	position: relative;
+	color: #fff;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+}
 
-{% block content %}
+.jumbotron #particles-js {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: linear-gradient(to right, #2b5876, #4e4376);
+}
+
+.jumbotron .container {
+	position: relative;
+}
+</style>
+{% endblock %} {% block content %}
 <div class="jumbotron">
-    <div id="particles-js"></div>
-    <div class="container">
-        <h1>FuncTree 2</h1>
-        <p>Visualization and analysis tool for omics data based on biological functional tree</p>
-        <p><a class="btn btn-danger" href="{{ url_for('route_analysis', mode='basic_mapping') }}" role="button">Get started <i class="fa fa-caret-right" aria-hidden="true"></i></a></p>
-    </div>
+	<div id="particles-js"></div>
+	<div class="container">
+		<h1>FuncTree 2</h1>
+		<p>Multilevel omics data visualization on a bio-functional tree</p>
+		<p>
+			<a class="btn btn-danger"
+				href="{{ url_for('route_analysis', mode='basic_mapping') }}"
+				role="button">Get started <i class="fa fa-caret-right"
+				aria-hidden="true"></i></a>
+		</p>
+	</div>
 </div>
 <div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="page-header">
-                <h2>What is FuncTree?</h2>
-            </div>
-            <p>FuncTree is a web based application, which allows user to visualize, customize, and compute statistical test to understand the biological functionality of their omics data.
-            FuncTree allows user to map their omics data on to a pre-defined treemap, which is based on the <a href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg" target="_blank">KEGG brite functional hierarchy</a>.
-            This allows user to quickly and comprehensively understand the functional potential of their data, and to develop further hypothesis and scientific insights.</p>
-            <p><a class="btn btn-default" href="{{ url_for('route_docs') }}" role="button">View details »</a></p>
-            <div class="page-header">
-                <h2>Data Visualization</h2>
-            </div>
-            <p>FuncTree creates hierarchical visualization. In the treemap nodes represent particular biological functions and edges represent hierarchical relationships between the functions.</p>
-            <p><a class="btn btn-default" href="{{ url_for('route_docs') }}" role="button">View details »</a></p>
-        </div>
-        <div class="col-md-4">
-            <img src="{{ url_for('static', filename='images/functree.png') }}" class="img-responsive img-thumbnail center-block" alt="Data Visualization">
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-md-8">
+			<div class="page-header">
+				<h2>What is FuncTree?</h2>
+			</div>
+			<p>
+				FuncTree helps you visualize and explore omics data onto functional
+				hierarchies like <a
+					href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
+					target="_blank">KEGG Brite</a>. Its interactive Tree Viewer
+				highlights trends at multiple functional levels simultaneously to
+				help you formulate scientific hypothesis. Statistical tests, module
+				pathway reconstruction, and different customization controls are
+				built-in to assist you in your quest.
+			</p>
+			<p>
+				<a class="btn btn-default" href="{{ url_for('route_docs') }}"
+					role="button">More info »</a> <a class="btn btn-danger"
+					href="{{ url_for('route_analysis', mode='basic_mapping') }}"
+					role="button">Get started <i class="fa fa-caret-right"
+					aria-hidden="true"></i></a>
+			</p>
+			<div class="page-header">
+				<h2>Data Visualization</h2>
+			</div>
+			<p>FuncTree displays functional hierarchies as a radial tree
+				where nodes represent a biological function (e.g. KEGG KO, KEGG
+				Module) and are layered nicely to reflect the different functional
+				levels</p>
+			<p>
+				<a class="btn btn-default" href="{{ url_for('route_docs') }}"
+					role="button">View details »</a> <a class="btn btn-danger"
+					href="{{ url_for('route_analysis', mode='basic_mapping') }}"
+					role="button">Get started <i class="fa fa-caret-right"
+					aria-hidden="true"></i></a>
+			</p>
+		</div>
+		<div class="col-md-4">
+			<img src="{{ url_for('static', filename='images/functree.png') }}"
+				class="img-responsive img-thumbnail center-block"
+				alt="Data Visualization">
+		</div>
+	</div>
 </div>
-{% endblock %}
-
-{% block script %}
-{{super()}}
-<script src="{{ url_for('static', filename='bower_components/particles.js/particles.min.js') }}"></script>
+{% endblock %} {% block script %} {{super()}}
+<script
+	src="{{ url_for('static', filename='bower_components/particles.js/particles.min.js') }}"></script>
 <script>
     particlesJS.load('particles-js', '{{ url_for('static', filename='particles.json') }}');
 </script>
