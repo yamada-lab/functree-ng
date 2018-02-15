@@ -107,18 +107,13 @@
 						Modules</li>
 					<li class="list-group-item list-group-item-info">NCBI gene ids</li>
 				</ul>
-
-				<span class="label label-danger"> What else?</span> <span
-					class="label label-danger"> Scaled or not scaled?</span>
-
-				<p>In addition a Tab separated color list is also required.</p>
+				<p>In addition an optional Tab separated color list could be uploaded to color associated annotations in circle mode .</p>
 				<span><a data-toggle="collapse" href="#color-list"><i
 						class="fa fa-eye" aria-hidden="true"></i> Display color list
 						snippet</a></span>&nbsp <span><a
 					href="{{ url_for('static', filename='data/example/color.tsv') }}"
 					target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
-						Download full example</a></span> <span class="label label-danger">
-					can;t wer make this optional? and generate colors on the fly?</span>
+						Download full example</a></span>
 				<table id="color-list"
 					class="table table-hover table-striped dataTable no-footer collapse">
 					<thead>
@@ -198,6 +193,7 @@
 						<li>Zoom and pan
 						<li>Clicking on a node will collapse it.
 						<li>Tree could be rerooted
+						<li> search with autocomplete & highlight elements
 					</ol>
 				</div>
 				<div class="col-sm-9">
