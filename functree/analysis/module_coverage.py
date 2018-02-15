@@ -26,7 +26,7 @@ def from_table(form):
     ).save().profile_id
 
 
-def calc_coverages(f, target, shared_object, method='mean'):
+def calc_coverages(f, target, result_holder, method='mean'):
     root = models.Tree.objects().get(source=target)['tree']
     definition = models.Definition.objects().get(source=target)['definition']
     df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
@@ -46,4 +46,4 @@ def calc_coverages(f, target, shared_object, method='mean'):
     analysis.calc_abundances(df_crckm, nodes_no_ko, method, results)
 
     df_out = df.applymap(lambda x: int(bool(x))).append(results[method])    # Concatenate user's input and results
-    shared_object["modulecoverage"] = df_out
+    result_holder["modulecoverage"] = df_out
