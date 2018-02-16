@@ -11,20 +11,13 @@ def route_index():
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
-    if mode == 'basic_mapping':
-        form = forms.BasicMappingForm()
+    if mode == 'mapping':
+        form = forms.MappingForm()
         if form.validate_on_submit():
             profile_id = analysis.basic_mapping.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'module_coverage':
-        form = forms.ModuleCoverageForm()
-        if form.validate_on_submit():
-            profile_id = analysis.module_coverage.from_table(form)
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
-        else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
+            return flask.render_template('mapping.html', form=form, mode=mode)
     elif mode == 'comparison':
         form = forms.ComparisonForm()
         if form.validate_on_submit():

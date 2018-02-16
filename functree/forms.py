@@ -2,7 +2,7 @@ import wtforms, flask_wtf, flask_wtf.file
 from functree import models
 
 
-class BasicMappingForm(flask_wtf.FlaskForm):
+class MappingForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired(),
     ])
@@ -12,13 +12,13 @@ class BasicMappingForm(flask_wtf.FlaskForm):
         wtforms.validators.DataRequired(),
         wtforms.validators.Length(max=50)
     ])
-    
+
     modulecoverage = wtforms.BooleanField('Compute module coverage', default=True)
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
     submit = wtforms.SubmitField('Submit')
 
     def __init__(self, *args, **kwargs):
-        super(BasicMappingForm, self).__init__(*args, **kwargs)
+        super(MappingForm, self).__init__(*args, **kwargs)
         targets = models.Tree.objects.aggregate(
             {'$group': {'_id': '$source'}}
         )
