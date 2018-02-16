@@ -24,21 +24,22 @@ def route_analysis(mode):
             profile_id = analysis.comparison.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'direct_mapping':
-        form = forms.DirectMappingForm()
+            return flask.render_template('comparison.html', form=form, mode=mode)
+    elif mode == 'display':
+        import mimetypes
+        form = forms.DisplayForm()
         if form.validate_on_submit():
-            profile_id = analysis.direct_mapping.from_table(form)
+            file_type = mimetypes.MimeTypes().guess_type(form.input_file.data.filename)[0]
+            if file_type == "application/json":
+                profile_id = analysis.display.from_json(form)
+            elif file_type == 'text/tab-separated-values':
+                profile_id = analysis.display.from_table(form)
+            else:
+                # TODO add error message | or hadnle this at validation with custom validators
+                return flask.render_template('display.html', form=form, mode=mode)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'json_upload':
-        form = forms.JSONUploadForm()
-        if form.validate_on_submit():
-            profile_id = analysis.direct_mapping.from_json(form)
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
-        else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
+            return flask.render_template('display.html', form=form, mode=mode)
     else:
         flask.abort(404)
 

@@ -1,0 +1,136 @@
+{% set title = 'Submit' %}
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>Display</h2>
+    </div>
+    <br>
+    <form class="form-horizontal" action="{{ url_for('route_analysis', mode=mode) }}" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <fieldset>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <p>Upload pre-calculated customizations in TSV or JSON format <p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group{% if form.input_file.errors %} has-error{% endif %}">
+                        {{ form.input_file.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-3">
+                            {{ form.input_file(class_='form-control-file') }} 
+                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> TSV</a> <a href="{{ url_for('static', filename='data/example/profile.json') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> JSON</a></span>
+    						<span id="incompatible-format" class="text-danger"></span>
+                            {% if form.input_file.errors %}
+                            <span class="help-block">
+                                {% for message in form.input_file.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm-7"> <span> Tab-separated KO abundance table or a FuncTree compliant JSON file</span></div>
+                    </div>
+<div id="tsv-options" class="collapse">
+                    {% if form.color_file %}
+                       {{tags.color_input(form)}}
+                    {% endif %}
+                    <div class="form-group{% if form.target.errors %} has-error{% endif %}">
+                        {{ form.target.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-10">
+                            {{ form.target(class_='form-control') }}
+                            {% if form.target.errors %}
+                            <span class="help-block">
+                                {% for message in form.target.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group{% if form.description.errors %} has-error{% endif %}">
+                        {{ form.description.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-10">
+                            {{ form.description(class_='form-control', placeholder='A useful description for the result') }}
+                            {% if form.description.errors %}
+                            <span class="help-block">
+                                {% for message in form.description.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+</div>
+                    <div class="form-group{% if form.private.errors %} has-error{% endif %}">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    {{ form.private }} {{ form.private.label.text }}
+                                </label>
+                            </div>
+                            {% if form.private.errors %}
+                            <span class="help-block">
+                                {% for message in form.private.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            {{ tags.expiry_notice()}}
+                            {{ form.submit(class_='btn btn-primary', **{'data-loading-text': 'Submitting...'}) }}
+                            <input type="reset" class="btn btn-default" value="Reset">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script>
+    $('input[type="submit"]').on('click', function() {
+        $(this).button('loading');
+        setTimeout(function() {
+            $(this).button('reset');
+        }, 600000);
+    });
+    // Handle file upload
+    $('#input_file').on('change', function(event){
+    	// clear errors
+    	$("#incompatible-format").text("")
+    	// get on change event data 
+    	var files = event.target.files
+    	// if a file was selected 
+    	if(files.length > 0 ){
+    		var fileType = files[0].type;
+    		// update the form according to file format
+    		switch(fileType) {
+	    		case "text/tab-separated-values":
+	    			// show additional options for tsv
+	    			$("#tsv-options").collapse("show")
+	    			break;
+	    		case "application/json":
+	    			// no additaionl options are required for JSON
+	    			$("#tsv-options").collapse("hide")
+	    			break;
+	    		case "":
+	    			$("#incompatible-format").text("Failed to detect file format for '" + files[0].name + "''")
+	    			break;
+	    		default:
+	    			// Warn about incompatible file format
+	    			$("#incompatible-format").text("File '" + files[0].name + "' in '" + fileType + "' format is not compatible")
+    		}
+    	} else {
+    		// no files, then reset view
+    		$("#tsv-options").collapse("hide")
+    	}
+    })
+</script>
+{% endblock %}

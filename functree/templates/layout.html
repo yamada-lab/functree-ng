@@ -1,3 +1,4 @@
+{% import "tags.html" as tags %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -40,8 +41,7 @@
                                 <li><a href="{{ url_for('route_analysis', mode='mapping') }}">- Mapping</a></li>
                                 <li><a href="{{ url_for('route_analysis', mode='comparison') }}">- Comparison</a></li>
                                 <li class="dropdown-header">Upload</li>
-                                <li><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">- Display</a></li>
-                                <li><a href="{{ url_for('route_analysis', mode='json_upload') }}">- JSON upload</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='display') }}">- Display</a></li>
                             </ul>
                         </li>
                         <li{% if request.endpoint == 'route_list' %} class="active"{% endif %}><a href="{{ url_for('route_list') }}"><i class="fa fa-list" aria-hidden="true"></i> Profiles</a></li>

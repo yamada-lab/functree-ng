@@ -9,3 +9,4 @@ docs/_build/
 npm-debug.log
 node_modules/
 bower_components/
+/.project
