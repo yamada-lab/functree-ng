@@ -22,8 +22,9 @@ const DEFAULT_CONFIG = {
 }
 
 const FuncTree = class {
-    constructor(root, config={}) {
+	constructor(root, infoServiceURL, config={}) {
         this.root = root;
+        this.infoServiceURL = infoServiceURL;
         this.root.x0 = 0;
         this.root.y0 = 0;
         this.nodes = this.getNodes();
@@ -266,6 +267,7 @@ const FuncTree = class {
             });
         node.enter()
             .append('circle')
+            .attr('id', (d) => {return d.entry})
             .attr('transform', () => {
                 return 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + ')';
             })
@@ -285,9 +287,6 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.external.entry) {
-                    eval(this.config.external.entry + ' = d.entry');
-                }
                 d3.select(d3.event.target)
                     .style('r', 10)
                     .style('fill', '#000')
@@ -303,6 +302,42 @@ const FuncTree = class {
                 d3.select('#links')
                     .selectAll('path')
                     .attr('style', null);
+            }).on('contextmenu', (d) => {
+            	if (this.config.external.entry) {
+            		eval(this.config.external.entry + ' = d.entry');
+            	}
+            	//"#"+d3.event.target.id.replace(" ", "\\ ")
+            	const menu = new BootstrapMenu("#nodes circle", {
+            		actions: [{
+            			name: 'Copy',
+            			onClick: function(){
+            				$('#form-entry-detail input[name=root]')[0].select();
+            				document.execCommand('copy');  
+            			}
+            		},
+            		{
+            			name: 'View detail',
+            			onClick: function() {
+            				axios.get(this.infoServiceURL + d.entry)
+            				.then(function(res) {
+            					console.log(res.data);
+            				})
+            				.catch(function(error) {
+            					if (error.response.status === 404) {
+            						alert('No information available');
+            					} else {
+            						console.log('Ajax error');
+            					}
+            				});
+            			}
+            		}, {
+            			name: 'Set as root',
+            			onClick: function() {
+            				$("#form-entry-detail").submit();
+            			}
+            		}]
+            	});
+            	return false; 
             });
         node
             .transition()

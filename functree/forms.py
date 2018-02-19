@@ -64,21 +64,3 @@ class DisplayForm(flask_wtf.FlaskForm):
             {'$group': {'_id': '$source'}}
         )
         self.target.choices = [(target['_id'],) * 2 for target in targets]
-
-
-#
-#     if input_file.mimeType is 'TSV':
-#         color_file = flask_wtf.file.FileField('Color file (Optional)')
-#         def __init__(self, *args, **kwargs):
-#         super(DirectMappingForm, self).__init__(*args, **kwargs)
-#         targets = models.Tree.objects.aggregate(
-#             {'$group': {'_id': '$source'}}
-#         )
-#         self.target.choices = [(target['_id'],) * 2 for target in targets]
-#     else:
-#         def __init__(self, *args, **kwargs):
-#         super(JSONUploadForm, self).__init__(*args, **kwargs)
-#         targets = models.Tree.objects.aggregate(
-#             {'$group': {'_id': '$source'}}
-#         )
-#         self.target.choices = [(target['_id'],) * 2 for target in targets]

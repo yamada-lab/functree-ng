@@ -2,11 +2,10 @@
 
 {% block sidebar %}
 {{super()}}
-<h5><i class="fa fa-search" aria-hidden="true"></i> Search <a href="#form-search" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
     <div class="form-group">
         <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="Entry name" v-model.lazy.trim="searchWord">
+            <input type="text" class="form-control input-sm" placeholder="Search map elements" v-model.lazy.trim="searchWord">
             <span class="input-group-btn">
                 <button class="btn btn-primary btn-sm" type="submit">
                     <i class='fa fa-search fa-fw'></i>
@@ -17,7 +16,7 @@
 </form>
 <hr>
 <h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-options" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
-<form id="form-options" class="collapse in" v-on:submit.prevent="submit" v-on:reset="reset">
+<form id="form-options" class="collapse" v-on:submit.prevent="submit" v-on:reset="reset">
     <div class="form-group">
         <label class="control-label">Data series</label>
         <select class="form-control input-sm" v-on:change="clickOptionSeries" v-model="series">
@@ -73,15 +72,15 @@
     </div>
 </form>
 <hr>
-<h5><i class="fa fa-info-circle" aria-hidden="true"></i> Information <a href="#form-entry-detail" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
-<form id="form-entry-detail" class="collapse in">
+<form id="form-entry-detail" class="hidden">
     <div class="form-group">
         <label class="control-label">Selected entry</label>
         <div class="input-group">
             <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
             <input type="hidden" name="mode" value="functree">
             <input type="text" name="root" class="form-control input-sm" placeholder="No entry selected" v-bind:value="entry">
-            <div class="input-group-addon" role="button" onclick="$('#form-entry-detail input[name=root]')[0].select(); document.execCommand('copy');"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+            <div class="input-group-addon" role="button" onclick="$('#form-entry-detail input[name=root]')[0].select(); document.execCommand('copy');">
+            <i class="fa fa-clipboard" aria-hidden="true"></i></div>
         </div>
     </div>
     <div class="form-group text-center">
@@ -105,13 +104,11 @@
         </div>
     </div>
 </form>
-<hr>
-<h5><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image <a href="#form-save-image" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
 <form id="form-save-image" class="collapse in" action="{{ url_for('route_save_image') }}" method="POST" target="_blank">
     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
     <input type="hidden" name="svg" value="">
     <div class="form-group">
-        <label class="control-label">Format</label>
+        <label class="control-label"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save image </label>
         <select name="format" class="form-control">
             <option value="pdf">PDF</option>
             <option value="png">PNG</option>
@@ -138,6 +135,7 @@
 {% block script %}
 {{super()}}
 <script src="{{ url_for('static', filename='bower_components/d3/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/boostrap-menu/dist/BootstrapMenu.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/functree.js') }}"></script>
 <script>var rootEntry = {% if root %}'{{root}}'{% else %}undefined{% endif %};</script>
 <script>
@@ -170,32 +168,18 @@
         }
     });
 
-    $('#form-entry-detail .modal').on('show.bs.modal', function(event) {
-        axios.get('{{ url_for('route_get_entry') }}' + vmEntryDetail.entry)
-            .then(function(res) {
-                vmEntryDetail.detail = res.data;
-            })
-            .catch(function(error) {
-                if (error.response.status === 404) {
-                    vmEntryDetail.detail = 'No information available';
-                } else {
-                    vmEntryDetail.detail = 'Ajax error';
-                }
-            });
-    });
-
     $(window).on('beforeunload', function() {
         return null;
     });
 
     function visualize(tree, profile) {
-        var funcTree = new FuncTree(tree.tree);
+    	var funcTree = new FuncTree(tree.tree, {{ url_for('route_get_entry') }});
         if (rootEntry) {
             var roots = funcTree.nodes.filter(function(x) {
                 return x.entry === rootEntry;
             });
             if (roots.length) {
-                funcTree = new FuncTree(roots[0]);
+                funcTree = new FuncTree(roots[0], {{ url_for('route_get_entry') }});
             } else {
                 alert('No entry found: ' + rootEntry);
             }
