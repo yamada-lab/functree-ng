@@ -325,10 +325,10 @@ const FuncTree = class {
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
         const self = this;
         const data = nodes
-            .filter((d) => {
-                const excludes = ['root'];
-                return !~excludes.indexOf(d.layer);
-            })
+            // .filter((d) => {
+            //     const excludes = ['root'];
+            //     return !~excludes.indexOf(d.layer);
+            // })
             .filter((d) => {
                 return d.depth > 0;
             });
@@ -457,10 +457,10 @@ const FuncTree = class {
 
     _updateRounds(nodes, source, depth, max) {
         const data = nodes
-            .filter((d) => {
-                const excludes = ['root'];
-                return !~excludes.indexOf(d.layer);
-            })
+            // .filter((d) => {
+            //     const excludes = ['root'];
+            //     return !~excludes.indexOf(d.layer);
+            // })
             .filter((d) => {
                 return d.depth > 0;
             });

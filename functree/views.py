@@ -214,7 +214,7 @@ def route_update_trees():
     models.Tree(
         tree=tree.get_tree(),
         source='KEGG',
-        description='KEGG version of Functional Tree',
+        description='KEGG BRITE Functional Hierarchies',
         added_at=datetime.datetime.utcnow()
     ).save()
     cache.clear()
