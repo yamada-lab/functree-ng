@@ -2,10 +2,10 @@
 
 const DEFAULT_CONFIG = {
     'elementId': 'functree',
-    'width': 1800,
-    'height': 1800,
-    'viewBoxWidth': 1200,
-    'viewBoxHeight': 1200,
+    'width': '100%',
+    'height': '100%',
+    'viewBoxWidth': 800,
+    'viewBoxHeight': 800,
     'diameter': 800,
     'duration': 1000,
     'normalize': true,
@@ -69,7 +69,8 @@ const FuncTree = class {
             .attr('version', '1.1')
             .attr('width', width)
             .attr('height', height)
-            .attr('viewBox', '0 0 ' + this.config.viewBoxWidth + ' ' + this.config.viewBoxHeight);
+            .attr('viewBox', '0 0 ' + this.config.viewBoxWidth + ' ' + this.config.viewBoxHeight)
+            .attr('preserveAspectRatio', 'xMidYMid meet');
         const buffer = svg.append('g')
             .attr('id', 'buffer')
             .attr('transform', 'translate(' + this.config.viewBoxWidth / 2 + ',' + this.config.viewBoxHeight / 2 + '),scale(1)');

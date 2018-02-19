@@ -99,14 +99,6 @@ body {
     background-color: #fff;
     overflow: hidden;
 
-    svg {
-        position: relative;
-        top: 50%;
-        left: 50%;
-        margin-top: -($svg_width / 2);
-        margin-left: -($svg_height / 2);
-    }
-
     .breadcrumb {
         position: absolute;
         top: 5px;
