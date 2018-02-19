@@ -1,7 +1,7 @@
 $navbar_height: 50px;
 $svg_width: 1800px;     /* Refer to functree.js */
 $svg_height: 1800px;    /* Refer to functree.js */
-$footer_height: 40px;
+$footer_height: 20px;
 
 
 body {
@@ -30,7 +30,7 @@ body {
     top: 0;
     bottom: 0;
     width: 100%;
-    margin-top: 60px;
+    margin-top: 13px;
     display: flex;
 }
 
@@ -143,7 +143,7 @@ body {
 
     .container {
          .text-muted {
-             margin: 10px 0;
+             margin: 0;
          }
      }
 }
