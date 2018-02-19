@@ -1,6 +1,7 @@
 {% extends 'viewer.html' %}
 
 {% block sidebar %}
+{{super()}}
 <h5><i class="fa fa-search" aria-hidden="true"></i> Search <a href="#form-search" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
     <div class="form-group">

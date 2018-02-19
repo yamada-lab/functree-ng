@@ -1,15 +1,9 @@
 $navbar_height: 50px;
-$svg_width: 1800px;     /* Refer to functree.js */
-$svg_height: 1800px;    /* Refer to functree.js */
 $footer_height: 20px;
 
 
 body {
     margin-bottom: 40px;
-}
-
-#page-wrapper {
-    min-height: 600px;
 }
 
 #content-wrapper {
@@ -18,7 +12,7 @@ body {
     right: 0;
     bottom: 0;
     left: 0;
-    margin: $navbar_height 15px $footer_height 15px;
+    margin: $navbar_height 0 $footer_height 0;
 
     h3 {
         white-space: nowrap;
@@ -30,25 +24,22 @@ body {
     top: 0;
     bottom: 0;
     width: 100%;
-    margin-top: 13px;
     display: flex;
 }
 
 #sidebar {
-    width: 250px;
-    min-width: 250px;
+    width: 300px;
+    min-width: 300px;
     height: auto;
-    margin-bottom: 15px;
-    padding-right: 15px;
+    padding: 15px 15px 0 15px;
     border-right: solid thin #ddd;
     overflow-y: scroll;
 }
 
 .sidebar-closed {
-    width: 0px !important;
-    min-width: 0px !important;
-    margin-bottom: 0px !important;
-    padding-right: 0px !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
 }
 
 #sidebar-button {
@@ -61,41 +52,20 @@ body {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     font-size: 0.5em;
+    z-index: 10;
 }
 
 #maincontent {
     width: 100%;
-    min-width: 600px;
     height: auto;
-    margin-bottom: 15px;
     position: relative;
-}
-
-#mainpane-wrapper {
-    position: relative;
-    height: 100%;
-    margin-left: 15px;
-}
-
-#mainpane {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin-top: 55px;
 }
 
 #functree {
     width: 100%;
-    max-width: $svg_width;
     height: 100%;
-    max-height: $svg_height;
     position: absolute;
-    border: 1px solid transparent;
-    border-color: #ddd;
-    border-radius: 4px;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    box-shadow: 0 0 5px 3px rgba(0,0,0,0.25) inset;
     background-color: #fff;
     overflow: hidden;
 
@@ -130,7 +100,7 @@ body {
 
 .footer {
     height: $footer_height;
-    min-width: 880px;
+    overflow: hidden;
     z-index: -10;
 
     .container {

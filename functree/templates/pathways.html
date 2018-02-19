@@ -1,6 +1,7 @@
 {% extends 'viewer.html' %}
 
 {% block sidebar %}
+{{super()}}
 <h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-charts" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
 <form id="form-charts" class="collapse in">
     <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
