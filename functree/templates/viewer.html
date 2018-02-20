@@ -13,11 +13,11 @@
             <div id="sidebar">
                 {% block sidebar %}
                 <ul class="nav nav-tabs">
-                    <li role="presentation"{% if mode == 'functree' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={}&mode=functree'.format(profile.profile_id) }}"><i class="fa fa-tree" aria-hidden="true"></i></a></li>
-                    <li role="presenation"{% if mode == 'charts' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=charts'.format(profile.profile_id) }}"><i class="fa fa-bar-chart" aria-hidden="true"></i></a></li>
-                    <li role="presentation"{% if mode == 'pathways' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=pathways'.format(profile.profile_id) }}"><i class="fa fa-map-o" aria-hidden="true"></i></a></li>
-                    <li role="presentation"{% if mode == 'tables' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=tables'.format(profile.profile_id) }}"><i class="fa fa-table" aria-hidden="true"></i></a></li>
-                    <li role="presentation"{% if mode == 'summary' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=summary'.format(profile.profile_id) }}"><i class="fa fa-file-text-o" aria-hidden="true"></i></a></li>
+                    <li title="FuncTree" role="presentation"{% if mode == 'functree' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={}&mode=functree'.format(profile.profile_id) }}"><i class="fa fa-tree" aria-hidden="true"></i></a></li>
+                    <li title="Bar Charts" role="presenation"{% if mode == 'charts' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=charts'.format(profile.profile_id) }}"><i class="fa fa-bar-chart" aria-hidden="true"></i></a></li>
+                    <li title="View in iPath" role="presentation"{% if mode == 'pathways' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=pathways'.format(profile.profile_id) }}"><i class="fa fa-map-o" aria-hidden="true"></i></a></li>
+                    <li title="Tables" role="presentation"{% if mode == 'tables' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=tables'.format(profile.profile_id) }}"><i class="fa fa-table" aria-hidden="true"></i></a></li>
+                    <li title="Summary" role="presentation"{% if mode == 'summary' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=summary'.format(profile.profile_id) }}"><i class="fa fa-file-text-o" aria-hidden="true"></i></a></li>
                 </ul>
                 {% endblock %}
             </div>

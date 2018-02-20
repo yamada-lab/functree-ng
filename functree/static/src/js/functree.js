@@ -306,17 +306,18 @@ const FuncTree = class {
             	if (this.config.external.entry) {
             		eval(this.config.external.entry + ' = d.entry');
             	}
-            	//"#"+d3.event.target.id.replace(" ", "\\ ")
-            	const menu = new BootstrapMenu("#nodes circle", {
+            	//escape space in the selector 
+            	const menu = new BootstrapMenu("#"+d3.event.target.id.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
             		actions: [{
             			name: 'Copy',
+            			iconClass: 'fa-clipboard',
             			onClick: function(){
-            				$('#form-entry-detail input[name=root]')[0].select();
-            				document.execCommand('copy');  
+            				setClipboard($('#form-entry-detail input[name=root]').val());
             			}
             		},
             		{
-            			name: 'View detail',
+            			name: 'View details',
+            			iconClass: 'fa-info',
             			onClick: function() {
             				axios.get(this.infoServiceURL + d.entry)
             				.then(function(res) {
@@ -324,7 +325,7 @@ const FuncTree = class {
             				})
             				.catch(function(error) {
             					if (error.response.status === 404) {
-            						alert('No information available');
+            						alert('No information available for ' + d.entry);
             					} else {
             						console.log('Ajax error');
             					}
@@ -332,6 +333,7 @@ const FuncTree = class {
             			}
             		}, {
             			name: 'Set as root',
+            			iconClass: 'fa-undo',
             			onClick: function() {
             				$("#form-entry-detail").submit();
             			}
@@ -725,6 +727,15 @@ const FuncTree = class {
     }
 }
 
+function setClipboard(value) {
+    var tempInput = document.createElement("input");
+    tempInput.style = "position: absolute; left: -1000px; top: -1000px";
+    tempInput.value = value;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+}
 
 function mergeRecursive(obj1, obj2) {
     for (var p in obj2) {
