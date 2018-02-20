@@ -306,6 +306,7 @@ const FuncTree = class {
             	if (this.config.external.entry) {
             		eval(this.config.external.entry + ' = d.entry');
             	}
+            	const self = this
             	//escape space in the selector 
             	const menu = new BootstrapMenu("#"+d3.event.target.id.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
             		actions: [{
@@ -319,7 +320,7 @@ const FuncTree = class {
             			name: 'View details',
             			iconClass: 'fa-info',
             			onClick: function() {
-            				axios.get(this.infoServiceURL + d.entry)
+            				axios.get(self.infoServiceURL + d.entry)
             				.then(function(res) {
             					console.log(res.data);
             				})
@@ -725,16 +726,6 @@ const FuncTree = class {
             this._highlightLinks(node.parent);
         }
     }
-}
-
-function setClipboard(value) {
-    var tempInput = document.createElement("input");
-    tempInput.style = "position: absolute; left: -1000px; top: -1000px";
-    tempInput.value = value;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempInput);
 }
 
 function mergeRecursive(obj1, obj2) {

@@ -199,6 +199,15 @@
 				<div class="col-sm-9">
 					<img alt="" class="img-responsive" style="width: 100%;"
 						src="{{ url_for('static', filename='images/mapping-stacked-100.png') }}">
+						<div>
+						<ul>
+						<li>Each node abundance is calculated as the mean of its mapped KOs normalized by its KO size.
+						<li>In case sum only a sum is applied 
+						<li>In case of modules the module coverage is visualized, then on parent levels the mean of module coverage is used (without normalization) 
+						<li>
+						</ul>
+						
+						</div>
 				</div>
 			</div>
 			<div class="row" style="padding-top: 20px;">
@@ -216,7 +225,7 @@
 				<li>Layer: Automatically genrated colors for Ontology layers
 					e.g. Brite L1, L2, Pathway, Module
 				<li>Column: use the color code associated with a sample
-				<li>Entry: Reflect user prederfined colors for each entry
+				<li>Entry: Reflect user predefined colors for each entry
 			</ul>
 		</section>
 		<section>

@@ -40,6 +40,7 @@
                             <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                             <div class="btn-group" role="group" aria-label="...">
                                 <a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-download" aria-hidden="true"> Download</i></a>
+                                <button id="share-profile" class="btn btn-info btn-xs" type="button"><i class="fa fa-share" aria-hidden="true"></i> Share</button>
                                 {% if not profile.locked %}<button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>{% endif %}
                             </div>
                         </form>
@@ -49,4 +50,20 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script>
+$(document).ready(function(){
+	$("#share-profile").click(function(e) {
+		e.preventDefault();
+		var link = "{{ url_for('route_viewer', _external=True, profile_id = profile.profile_id) }}"
+		setClipboard(link)
+		alert("Link copied to clipboard " + link)
+		
+		}
+	)
+})
+</script>
 {% endblock %}

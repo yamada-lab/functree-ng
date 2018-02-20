@@ -23,7 +23,8 @@ def calc_abundances(df, nodes, method, results):
             except KeyError:
                 pass
         else:
-            targets = [child_node['entry'] for child_node in tree.get_nodes(node) if 'children' not in child_node]
+            # filter out module unknown nodes
+            targets = [child_node['entry'] for child_node in tree.get_nodes(node) if 'children' not in child_node and not child_node['entry'].startswith('*')]
             try:
                 # loc is row names of data frame
                 loc = df.loc[targets]
