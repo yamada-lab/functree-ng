@@ -1,0 +1,12 @@
+$autocomplete_height: 120px;
+
+.ui-autocomplete {
+    max-height: $autocomplete_height;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}
+
+* html .ui-autocomplete {
+    height: $autocomplete_height;
+}

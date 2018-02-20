@@ -1,5 +1,10 @@
 {% extends 'viewer.html' %}
 
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/functree.css') }}">
+{% endblock %}
+
 {% block sidebar %}
 {{super()}}
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
