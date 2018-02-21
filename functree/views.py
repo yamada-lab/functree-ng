@@ -59,6 +59,16 @@ def route_data():
     return flask.render_template('data.html', trees=trees, definitions=definitions)
 
 
+@app.context_processor
+def utility_processor():
+    def json_schema():
+        schema = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/data-schema.json'), 'r')
+        return schema.read()
+    def json_example():
+        data = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/data-example.json'), 'r')
+        return data.read()
+    return dict(json_schema=json_schema, json_example=json_example)
+
 @app.route('/docs/', defaults={'filename': 'index.html'})
 @app.route('/docs/<path:filename>')
 def route_docs(filename):

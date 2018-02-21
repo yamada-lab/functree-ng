@@ -1,0 +1,10 @@
+*[id]:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -50px; // Set the Appropriate Height
+  height: 50px; // Set the Appropriate Height
+  visibility: hidden; 
+}
+
+// Added to avoid table resize on collapse
+.collapse.in {display:table}

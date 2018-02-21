@@ -1,18 +1,26 @@
-{% set title = 'About' %} {% extends 'layout.html' %} {% block content
-%}
+{% set title = 'Help' %} 
+{% extends 'layout.html' %} 
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/help.css') }}">
+{% endblock %}
+
+
+{% block content %}
 <div class="container">
 	<div class="page-header">
 		<h1>FuncTree2 Documentation</h1>
 	</div>
-	<section class="page-header">
+	<section id="introduction" class="page-header">
 		<div class="row">
 			<div class="col-sm-6">
 				<p class="lead justify">
 					FuncTree2 allows you to visualize and explore omics data in the
-					hierarchical context of biological ontologies. By mapping omics
-					data onto a pre-defined interactive treemap, based on the <a
-						href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
-						target="_blank">KEGG brite functional hierarchy</a>, you can
+					hierarchical context of biological ontologies. Mapping omics
+					data onto a pre-defined interactive treemap, based on the
+					<a href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
+						target="_blank">KEGG brite functional hierarchy</a>, lets you
 					quickly and comprehensively understand the functional potential of
 					your data, which will help you develop further hypothesis and
 					scientific insights. Statistical tests, module pathway
@@ -21,9 +29,9 @@
 				</p>
 				<p class="justify">
 					Here you will learn about the different types of analysis available
-					in FuncTree2 and the accepted data formats (Anchor). We also give
-					you some usage tips and a sneak preview of what your <a
-						href="#example">output</a> will look like.
+					in FuncTree2 and the accepted <a href="#data-format">data formats</a>.
+					We also give you some usage tips and a sneak preview of what your 
+					<a href="#example">output</a> will look like.
 				</p>
 			</div>
 			<div class="col-sm-6">
@@ -33,16 +41,18 @@
 			</div>
 		</div>
 	</section>
-	<section class="page-header">
+	<section id="data-format" class="page-header">
 		<h2>Data format</h2>
+		<h3>Tab separated matrices</h3>
 		<div class="row">
 			<div class="col-sm-6">
 				<table id="omics-matrix" class="table">
 					<caption style="caption-side: bottom; text-align: left;">
-						Snippet of input data matrix. <span><a
-							href="{{ url_for('static', filename='data/example/profile.tsv') }}"
+						Snippet of input data matrix.
+						 <span>
+						 	<a href="{{ url_for('static', filename='data/example/profile.tsv') }}"
 							target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
-								Download full example</a></span>
+								Full example</a></span>
 					</caption>
 					<thead>
 						<tr role="row">
@@ -113,9 +123,8 @@
 						snippet</a></span>&nbsp <span><a
 					href="{{ url_for('static', filename='data/example/color.tsv') }}"
 					target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
-						Download full example</a></span>
-				<table id="color-list"
-					class="table table-hover table-striped dataTable no-footer collapse">
+						Full example</a></span>
+				<table id="color-list" class="table table-hover table-striped dataTable no-footer collapse">
 					<thead>
 						<tr role="row">
 							<th>Annotation</th>
@@ -142,19 +151,66 @@
 					</tbody>
 				</table>
 			</div>
+		</div>
+		<h3>JSON</h3>
+		<div class="row">
 			<div class="col-sm-12">
 				<br />
-				<p class="justify">
-					Processed datasets could be exported in JSON <span><a
-						href="{{ url_for('static', filename='data/example/profile.json') }}"
-						target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
-							format</a></span> and re-uploaded later to FuncTree2. <span
-						class="label label-danger"> Add some specs</span>
+				<p class="justify">Processed datasets could be exported in JSON 
+				<span><a href="{{ url_for('static', filename='data/example/profile.json') }}"
+						target="_blank"> <i class="fa fa-download" aria-hidden="true"></i> format
+					</a></span> and <a href="{{ url_for('route_analysis', mode='display') }}">re-uploaded</a> later to FuncTree2.
+					Below is an example of a valid JSON file and its schema definition.   
 				</p>
+			</div>
+			<div class="col-sm-12">
+				<div>
+					<!-- Nav tabs -->
+					<ul
+						class="nav nav-tabs"
+						role="tablist">
+						<li
+							role="presentation"
+							class="active"><a
+							href="#json-data-snippet"
+							aria-controls="json-data-snippet"
+							role="tab"
+							data-toggle="tab">Example</a></li>
+						<li role="presentation"><a
+							href="#json-data-schema"
+							aria-controls="json-data-schema"
+							role="tab"
+							data-toggle="tab">Schema</a></li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div
+							role="tabpanel"
+							class="tab-pane active"
+							id="json-data-snippet">
+<pre class="pre-scrollable"><code>{{ json_example() }}</code></pre>
+						</div>
+						<div
+							role="tabpanel"
+							class="tab-pane"
+							id="json-data-schema">
+<pre class="pre-scrollable"><code>{{ json_schema() }}</code>
+							</pre>
+						</div>
+					</div>
+				</div>
+				<span>
+					<a href="{{ url_for('static', filename='data/example/data-example.json') }}" target="_blank">
+					<i class="fa fa-download" aria-hidden="true"></i> Example</a>
+				</span>&nbsp
+				<span>
+					<a href="{{ url_for('static', filename='data/example/data-schema.json') }}" target="_blank">
+					<i class="fa fa-download" aria-hidden="true"></i> Schema</a>
+				</span>
 			</div>
 		</div>
 	</section>
-	<section class="page-header">
+	<section id="workflow" class="page-header">
 
 		<h2>Workflow</h2>
 
@@ -179,9 +235,9 @@
 			<li>FDR?
 		</ul>
 	</section>
-	<section class="page-header">
+	<section id="Viewer" class="page-header">
 		<h2>Viewer</h2>
-		<section>
+		<section id="ontology-explorer">
 			<h3>Ontology explorer</h3>
 			<div class="row">
 				<div class="col-sm-3">
