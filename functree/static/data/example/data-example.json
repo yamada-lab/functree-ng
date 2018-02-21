@@ -10,7 +10,6 @@
     "expire_at": {
       "$date": 1517584108907
     },
-    "locked": false,
     "private": true,
     "target": "KEGG",
     "series": [

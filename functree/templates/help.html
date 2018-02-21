@@ -27,17 +27,22 @@
 					reconstruction, and different customization controls are built-in
 					to help you in your quest.
 				</p>
-				<p class="justify">
-					Here you will learn about the different types of analysis available
-					in FuncTree2 and the accepted <a href="#data-format">data formats</a>.
-					We also give you some usage tips and a sneak preview of what your 
-					<a href="#example">output</a> will look like.
-				</p>
 			</div>
 			<div class="col-sm-6">
 				<img alt=""
 					src="{{ url_for('static', filename='images/functree-kegg-overview.png') }}"
 					width="300px">
+			</div>
+		</div>
+		<hr />
+		<div class="row">
+			<div class="col-sm-offset-3 col-sm-6">
+				<p style="text-align: center; font-size: 16px; font-style: italic; color: grey;">
+					Here you will learn about the different types of analysis available
+					in FuncTree2 and the accepted <a href="#data-format">data formats</a>.
+					We also give you some usage tips and a sneak preview of what your 
+					<a href="#example">output</a> will look like.
+				</p>
 			</div>
 		</div>
 	</section>
@@ -120,7 +125,7 @@
 				<p>In addition an optional Tab separated color list could be uploaded to color associated annotations in circle mode .</p>
 				<span><a data-toggle="collapse" href="#color-list"><i
 						class="fa fa-eye" aria-hidden="true"></i> Display color list
-						snippet</a></span>&nbsp <span><a
+						snippet</a></span>&nbsp; <span><a
 					href="{{ url_for('static', filename='data/example/color.tsv') }}"
 					target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
 						Full example</a></span>
@@ -188,13 +193,13 @@
 							role="tabpanel"
 							class="tab-pane active"
 							id="json-data-snippet">
-<pre class="pre-scrollable"><code>{{ json_example() }}</code></pre>
+<pre class="pre-scrollable"><code data-language="json">{{ json_example() }}</code></pre>
 						</div>
 						<div
 							role="tabpanel"
 							class="tab-pane"
 							id="json-data-schema">
-<pre class="pre-scrollable"><code>{{ json_schema() }}</code>
+<pre class="pre-scrollable"><code data-language="json">{{ json_schema() }}</code>
 							</pre>
 						</div>
 					</div>
@@ -202,7 +207,7 @@
 				<span>
 					<a href="{{ url_for('static', filename='data/example/data-example.json') }}" target="_blank">
 					<i class="fa fa-download" aria-hidden="true"></i> Example</a>
-				</span>&nbsp
+				</span>&nbsp;
 				<span>
 					<a href="{{ url_for('static', filename='data/example/data-schema.json') }}" target="_blank">
 					<i class="fa fa-download" aria-hidden="true"></i> Schema</a>
@@ -237,34 +242,73 @@
 	</section>
 	<section id="Viewer" class="page-header">
 		<h2>Viewer</h2>
-		<section id="ontology-explorer">
-			<h3>Ontology explorer</h3>
+		<section id="functree">
+			<h3>FuncTree</h3>
 			<div class="row">
-				<div class="col-sm-3">
-					<p class="lead" style="text-align: center;">Summarized omics
-						data are used to customize the Ontology explorer. Leaf values are
-						summed or averaged to give the parent nodes a value, which is then
-						reflected by a custom color.</p>
+				<div class="col-sm-6">
+					<p class="lead justify">
+						FuncTree explorer turns an ontology database into an interactive
+						<a href="https://github.com/d3/d3-hierarchy#tree">Radial Tidy Tree</a> where each layer of nodes is mapped
+						to a level of the ontology. The outermost layer is always the lowest level visualized, while the innermost layer 
+						is the highest level, and nodes represent biological entries (e.g. KO, Modules, pathways, ...).
+						The four highest levels are shown by default, but more or less levels could be shown by modifying the depth of the tree
+						in the option pane. Clicking on a node will collapse or reveals its children nodes, while right-clicking opens a context menu
+						that offers rerooting of the tree by visualizing the selection as a Radial Tidy Tree in a new Viewer window. The context menu
+						can display more details about the selection or copy it to clipboard. Mouse gestures enable zooming 
+						(<kbd>middle&nbsp;button</kbd>) and panning (<kbd><kbd>click</kbd> + <kbd>drag</kbd></kbd>). A search with auto-complete is available
+						to help quickly locating a biological entry of interest on the tree.
+					</p>
+					<span>Summary of features:</span>
 					<ol>
-						<li>Zoom and pan
-						<li>Clicking on a node will collapse it.
-						<li>Tree could be rerooted
-						<li> search with autocomplete & highlight elements
+						<li>Interactive Radial Tidy Tree
+						<li>Tree re-rooting.
+						<li>Zooming and panning
+						<li>Search & highlight of biological entries
 					</ol>
 				</div>
-				<div class="col-sm-9">
-					<img alt="" class="img-responsive" style="width: 100%;"
-						src="{{ url_for('static', filename='images/mapping-stacked-100.png') }}">
-						<div>
+				<div class="col-sm-6">
+					<p>
+						FuncTree viewer is highly customizable to reflect user data. For
+						example KEGG KO abundance from one or multiple samples is
+						visualized on the KO layer in the form of stacked bars or colored
+						circles. Values for higher layers are also derived and visualized in
+						the same fashion.
+					</p>
+					<h4>Data series selection</h4>
+					<p>Data series are profiles that FuncTree can customize and
+						project onto the reference tree. Series generated by FuncTree will
+						always include an Average and a Sum based series. After series
+						selection, you can chose which samples to highlight as stacked
+						bars (optionally normalized aka 100% stacking) on the tree.
+						Additionally, a sample of choice could also be mapped to the
+						radius of each node.</p>
+					<h4>Coloring options for circle mapping of one sample</h4>
+					<ul>
+						<li>Layer: Automatically genrated colors for Ontology layers
+							e.g. Brite L1, L2, Pathway, Module
+						<li>Column: use the color code associated with a sample in
+							the input data
+						<li>Entry: Reflect user predefined colors for each entry.
+							Defaults to grey.
+					</ul>
+					<h4>Data series generation</h4>
+					<p>
+						FuncTree summarizes KO abundances on higher layers by taking the
+						mean or the sum of the KOs mapped to an entity on the layer.
+					</p> 
+					<div>
 						<ul>
-						<li>Each node abundance is calculated as the mean of its mapped KOs normalized by its KO size.
-						<li>In case sum only a sum is applied 
-						<li>In case of modules the module coverage is visualized, then on parent levels the mean of module coverage is used (without normalization) 
-						<li>
+							<li>Each node abundance is calculated as the mean of its mapped KOs normalized by its KO size.
+							<li>In case sum only a sum is applied 
+							<li>In case of modules the module coverage is visualized, then on parent levels the mean of module coverage is used (without normalization) 
 						</ul>
-						
-						</div>
-				</div>
+					</div>
+					<img
+							alt=""
+							class="img-responsive"
+							style="width: 100%;"
+							src="{{ url_for('static', filename='images/mapping-stacked-100.png') }}">
+					</div>
 			</div>
 			<div class="row" style="padding-top: 20px;">
 				<div class="col-sm-6">
@@ -276,13 +320,8 @@
 						src="{{ url_for('static', filename='images/explorer-rerooted.png') }}">
 				</div>
 			</div>
-			<h3>Different coloring options</h3>
-			<ul>
-				<li>Layer: Automatically genrated colors for Ontology layers
-					e.g. Brite L1, L2, Pathway, Module
-				<li>Column: use the color code associated with a sample
-				<li>Entry: Reflect user predefined colors for each entry
-			</ul>
+			<h4>Tree export</h4>
+			<p>FuncTrees could be exported into SVG, PDF, PostScript, and PNG</p>
 		</section>
 		<section>
 			<h3>Summary charts</h3>
@@ -303,6 +342,53 @@
 				<div class="col-md-6">
 					<img class="img-thumbnail img-fluid" alt=""
 						src="{{ url_for('static', filename='images/chart-heatmap.png') }}">
+				</div>
+			</div>
+			
+			<h4>Charts export</h4>
+			<p>Charts could be exported into SVG, PDF, PNG, and JPEG</p>
+		</section>
+		<section>
+			<h3>iPath integration</h3>
+			<div class="row">
+				<div class="col-sm-6">
+					<img class="img-thumbnail img-fluid" alt=""
+						src="{{ url_for('static', filename='images/chart-sample-barplot-100.png') }}">
+				</div>
+				<div class="col-sm-6">
+					<p>Input data could be also visualized in iPath</p>
+					
+					<p>TODO add different coloring options as well as level selection (KO, Module, Map)</p>
+				</div>
+			</div>
+		</section>
+		
+		<section>
+			<div class="row" style="display: flex;">
+				<div class="col-sm-6">
+					<img class="img-thumbnail img-fluid" alt=""
+						src="{{ url_for('static', filename='images/table.png') }}">
+				</div>
+				<div class="col-sm-6 col-sm-offset-1" style="display: flex;  align-items: center;">
+					<p class="lead"><b>Summary Table</b><br /> Data series could be viewed in table format. FuncTree nodes are presented in the Entry column, given a layer value and a numerical 
+					value for all samples in the series. Tables could be downloaded in TSV format for further exploration and manipulation offline.</p>
+				</div>
+			</div>
+		</section>
+		
+		<hr>
+		
+		<section>
+			<div class="row">
+				<div class="col-sm-5">
+					<h3>Profile download and sharing</h3>
+					<p class="lead">Profiles could be dowloaded in JSON format for storage or sharing. The <a href="{{ url_for('route_analysis', mode='display') }}">display</a>
+					function allows re-upload and display of the JSON profiles in FuncTree. Alternatively, profiles could be shared by a link. Clicking the share icon
+					copies the link to clipboard and displays it on screen.</p>
+				</div>
+				<div class="col-sm-offset-1 col-sm-6">
+					<img class="img-thumbnail img-fluid" alt=""
+						src="{{ url_for('static', filename='images/summary.png') }}">
 				</div>
 			</div>
 		</section>
