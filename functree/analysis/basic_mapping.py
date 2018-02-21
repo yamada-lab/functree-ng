@@ -49,11 +49,12 @@ def calc_abundances(f, target, methods):
     results = dict(shared_data)
 
     profile = []
-    # load KO based entries 
+    # load KO based entries
     entries=list(list(results.values())[0].index)
     if "modulecoverage" in methods:
         entries += list(list(results.values())[2].index)
-    
+        entries = list(set(entries))
+
     for entry in entries:
         #values = [results[method].ix[entry].tolist() for method in methods]
         values = []
