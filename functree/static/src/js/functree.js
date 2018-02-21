@@ -306,17 +306,26 @@ const FuncTree = class {
             	if (this.config.external.entry) {
             		eval(this.config.external.entry + ' = d.entry');
             	}
+            	// get a pointer to the FuncTree instance
             	const self = this
-            	//escape space in the selector 
-            	const menu = new BootstrapMenu("#"+d3.event.target.id.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
-            		actions: [{
-            			name: 'Copy',
-            			iconClass: 'fa-clipboard',
-            			onClick: function(){
-            				setClipboard($('#form-entry-detail input[name=root]').val());
-            			}
-            		},
-            		{
+            	// create an array of actions for the context menu
+            	const actions = [{
+        			name: 'Copy',
+        			iconClass: 'fa-clipboard',
+        			onClick: function(){
+        				setClipboard($('#form-entry-detail input[name=root]').val());
+        			}
+        		}, {
+        			name: 'Set as root',
+        			iconClass: 'fa-undo',
+        			onClick: function() {
+        				$("#form-entry-detail").submit();
+        			}
+        		}]
+            	const nodeId = d3.event.target.id
+            	// check node id eligible for View Details actions
+            	if(hasMoreDetails(nodeId, "KEGG")){
+            		actions.push({
             			name: 'View details',
             			iconClass: 'fa-info',
             			onClick: function() {
@@ -332,13 +341,11 @@ const FuncTree = class {
             					}
             				});
             			}
-            		}, {
-            			name: 'Set as root',
-            			iconClass: 'fa-undo',
-            			onClick: function() {
-            				$("#form-entry-detail").submit();
-            			}
-            		}]
+            		})
+            	}
+            	//escape space in the selector 
+            	const menu = new BootstrapMenu("#"+nodeId.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
+            		actions: actions
             	});
             	return false; 
             });
@@ -726,6 +733,23 @@ const FuncTree = class {
             this._highlightLinks(node.parent);
         }
     }
+}
+
+/**
+ * A function to check if a node has more details.
+ * For KEGG only K, Module, and map elements have more details
+ * @param nodeId
+ * @param referenceDatabase
+ * @returns
+ */
+function hasMoreDetails(nodeId, referenceDatabase){
+	let hasMoreDetails = false;
+	if (referenceDatabase == "KEGG") {
+		if (nodeId.match(/(K|M|map)[0-9]{5}/)) {
+			hasMoreDetails = true
+		}
+	}
+	return hasMoreDetails
 }
 
 function mergeRecursive(obj1, obj2) {
