@@ -6,6 +6,7 @@
         Data summary
     </div>
     <div class="panel-body">
+
         <div class="table-responsive">
             <table class="table table-bordered">
                 <tr>
@@ -40,7 +41,7 @@
                             <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
                             <div class="btn-group" role="group" aria-label="...">
                                 <a href="{{ url_for('route_profile', profile_id = profile.profile_id) }}" target="_blank" class="btn btn-default btn-xs"><i class="fa fa-download" aria-hidden="true"> Download</i></a>
-                                <button id="share-profile" class="btn btn-info btn-xs" type="button"><i class="fa fa-share" aria-hidden="true"></i> Share</button>
+                                <button id="btn-copy-url" class="btn btn-info btn-xs" type="button" data-title="Link copied to clipboard"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy URL</button>
                                 {% if not profile.locked %}<button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure that you want to parmanently delete this profile?:\n{{profile.profile_id}}');"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</button>{% endif %}
                             </div>
                         </form>
@@ -56,14 +57,17 @@
 {{super()}}
 <script>
 $(document).ready(function(){
-	$("#share-profile").click(function(e) {
-		e.preventDefault();
-		var link = "{{ url_for('route_viewer', _external=True, profile_id = profile.profile_id) }}"
-		setClipboard(link)
-		alert("Link copied to clipboard " + link)
-		
-		}
-	)
-})
+    $('#btn-copy-url')
+        .tooltip({'trigger': 'manual'})
+        .click(function() {
+            setClipboard(window.location.href);
+            $(this).tooltip('show');
+        })
+        .on('shown.bs.tooltip', function() {
+            setTimeout((function() {
+                $(this).tooltip('hide');
+            }).bind(this), 1000);
+        });
+});
 </script>
 {% endblock %}
