@@ -23,6 +23,15 @@
 	align-items: center;
 }
 
+hr {
+	border-top: 1px solid #FFFFFF	
+}
+
+.pointer {
+	text-decoration: none !important; 
+	cursor: pointer;
+}
+
 .row-flex {
   display: flex;
 }

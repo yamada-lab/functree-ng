@@ -248,33 +248,87 @@
 				<div class="col-sm-6">
 					<h3>FuncTree</h3>
 					<p class="lead">
-						FuncTree explorer turns an ontology database into an interactive
-						<a href="https://github.com/d3/d3-hierarchy#tree">Radial Tidy Tree</a> where each layer of nodes is mapped
-						to a level of the ontology. The outermost layer is always the lowest level visualized, while the innermost layer 
-						is the highest level, and nodes represent biological entries (e.g. KO, Modules, pathways, ...).
+						<a data-target="#functree-carousel" data-slide-to="0" class="pointer">FuncTree explorer</a> turns an ontology database
+						into an interactive <a href="https://github.com/d3/d3-hierarchy#tree" target="_blank">Radial Tidy Tree</a> where each 
+						layer of nodes is mapped to a level of the ontology. The outermost layer is always the lowest level visualized, while 
+						the innermost layer is the highest level, and nodes represent biological entries (e.g. KO, Modules, pathways, ...).
 						<br /><br />
 						
 						The four highest levels are shown by default, but more or less levels could be shown by modifying the depth of the tree
-						in the option pane.
-						Clicking on a node collapses or reveals its children nodes, while right-clicking opens a context menu
-						that offers re-rooting of the tree by visualizing the selection as a Radial Tidy Tree in a new Viewer window. The menu
-						can display more details about the selection or copy it to clipboard. Mouse gestures enable zooming 
-						(middle&nbsp;button) and panning (click&nbsp;+&nbsp;drag). 
+						in the option pane.	Clicking on a node collapses or reveals its children nodes, while right-clicking opens a context menu
+						that offers <a data-target="#functree-carousel" data-slide-to="1" class="pointer">re-rooting</a> of the tree by visualizing the selection as a Radial Tidy Tree in a new Viewer window. The menu
+						can display more details about the selection or copy it to clipboard. Mouse gestures enable 
+						<a data-target="#functree-carousel" data-slide-to="2" class="pointer">zooming (middle&nbsp;button) and panning (click&nbsp;+&nbsp;drag)</a>. 
 						<br /><br />
-						A search with auto-complete is available to help quickly locating a biological entry of interest on the tree.
+						A search with auto-complete is available to help quickly 
+						<a data-target="#functree-carousel" data-slide-to="3" class="pointer">locating</a>
+						a biological entry of interest on the tree.
 					</p>
-					<span>Summary of features:</span>
-					<ol>
-						<li>Interactive Radial Tidy Tree
-						<li>Tree re-rooting.
-						<li>Zooming and panning
-						<li>Search & highlight of biological entries
-					</ol>
 				</div>
 				<hr />
 				<div class="col-sm-6">
-					<img alt="" class="img-thumbnail img-fluid"
-						src="{{ url_for('static', filename='images/functree-brite.png') }}">
+					<div
+						id="functree-carousel"
+						class="carousel slide"
+						data-ride="carousel">
+						<!-- Indicators -->
+						<ol class="carousel-indicators">
+							<li
+								data-target="#functree-carousel"
+								data-slide-to="0"
+								class="active"></li>
+							<li
+								data-target="#functree-carousel"
+								data-slide-to="1"></li>
+							<li
+								data-target="#functree-carousel"
+								data-slide-to="2"></li>
+							<li
+								data-target="#functree-carousel"
+								data-slide-to="3"></li>
+						</ol>
+						<!-- Wrapper for slides -->
+						<div
+							class="carousel-inner"
+							role="listbox">
+							<div class="item active">
+								<img
+									class="img-thumbnail img-fluid"
+									src="{{ url_for('static', filename='images/functree-brite.png') }}"
+									alt="...">
+								<div class="carousel-caption">
+									<h4>Interactive Radial Tidy Tree</h4>
+								</div>
+							</div>
+							<div class="item">
+								<img
+									class="img-thumbnail img-fluid"
+									src="{{ url_for('static', filename='images/metabo-root.png') }}"
+									alt="...">
+								<div class="carousel-caption">
+									<h4>Tree re-rooting</h4>
+								</div>
+							</div>
+							<div class="item">
+								<img
+									class="img-thumbnail img-fluid"
+									src="{{ url_for('static', filename='images/zoom-pan.png') }}"
+									alt="...">
+								<div class="carousel-caption">
+									<h4>Zooming and panning</h4>
+								</div>
+							</div>
+							<div class="item">
+								<img
+									class="img-thumbnail img-fluid"
+									src="{{ url_for('static', filename='images/search-highlight.png') }}"
+									alt="...">
+								<div class="carousel-caption">
+									<h4>Search & highlight of biological entries</h4>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<hr />
@@ -345,18 +399,17 @@
 				<div class="col-md-4 col-center">
 					<div>
 					<h3>Summary charts</h3>
-					<ol>
-						<li data-target="#summary-charts-carousel" data-slide-to="0" class="active" style="cursor: pointer;">Stacked barplots</li>
-						<li	data-target="#summary-charts-carousel" data-slide-to="1" style="cursor: pointer;">Stacked barplots</li>
-						<li	data-target="#summary-charts-carousel" data-slide-to="2" style="cursor: pointer;">Pie charts</li>
-						<li	data-target="#summary-charts-carousel" data-slide-to="3" style="cursor: pointer;">Heatmaps</li>
+					<ol class="lead">
+						<li data-target="#summary-charts-carousel" data-slide-to="0" class="active" style="cursor: pointer;">Stacked barplot</li>
+						<li	data-target="#summary-charts-carousel" data-slide-to="1" style="cursor: pointer;">Normalized Stacked barplot</li>
+						<li	data-target="#summary-charts-carousel" data-slide-to="2" style="cursor: pointer;">Pie chart</li>
+						<li	data-target="#summary-charts-carousel" data-slide-to="3" style="cursor: pointer;">Heatmap</li>
 					</ol>
-					<p>Charts could be exported into SVG, PDF, PNG, and JPEG</p>
+					<p class="lead">Charts could be exported into SVG, PDF, PNG, and JPEG</p>
 					</div>
 				</div>
 				<div class="col-sm-8">
-					<div
-						id="summary-charts-carousel"
+					<div id="summary-charts-carousel"
 						class="carousel slide"
 						data-ride="carousel">
 						<!-- Indicators -->
@@ -373,21 +426,21 @@
 							<div class="item active">
 								<img
 									class="img-thumbnail img-fluid"
-									src="{{ url_for('static', filename='images/chart-sample-barplot-100.png') }}"
+									src="{{ url_for('static', filename='images/chart-sample-barplot.png') }}"
 									alt="...">
 								<div class="carousel-caption">
-									<h3>Stacked barplot 100%</h3>
-									<p>normalized to 100</p>
+									<h4>Stacked barplot</h4>
+									<p>Data series samples</p>
 								</div>
 							</div>
 							<div class="item">
 								<img
 									class="img-thumbnail img-fluid"
-									src="{{ url_for('static', filename='images/chart-sample-barplot.png') }}"
+									src="{{ url_for('static', filename='images/chart-sample-barplot-100.png') }}"
 									alt="...">
 								<div class="carousel-caption">
-									<h3>Traditional stacked barplot</h3>
-									<p>Tradition 100</p>
+									<h4>Stacked barplot 100%</h4>
+									<p>Normalized Data series samples</p>
 								</div>
 							</div>
 							<div class="item">
@@ -396,8 +449,8 @@
 									src="{{ url_for('static', filename='images/chart-pie.png') }}"
 									alt="...">
 								<div class="carousel-caption">
-									<h3>Pie chart</h3>
-									<p>Tradition 100</p>
+									<h4>Pie chart</h4>
+									<p>One sample in a data series</p>
 								</div>
 							</div>
 							<div class="item">
@@ -406,8 +459,8 @@
 									src="{{ url_for('static', filename='images/chart-heatmap.png') }}"
 									alt="...">
 								<div class="carousel-caption">
-									<h3>Heat map</h3>
-									<p>Tradition 100</p>
+									<h4>Heat map</h4>
+									<p>Ontology layer vs. Samples of a data series</p>
 								</div>
 							</div>
 						</div>
