@@ -8,3 +8,21 @@
 
 // Added to avoid table resize on collapse
 .collapse.in {display:table}
+
+.carousel-caption {
+	color: #111111;
+}
+
+.carousel-indicators li {
+	border-color: #FF5722;
+	background-color: #FF5722;
+}
+
+.col-center {
+	display: flex;
+	align-items: center;
+}
+
+.row-flex {
+  display: flex;
+}
