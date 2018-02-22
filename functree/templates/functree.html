@@ -85,22 +85,6 @@
             <input type="text" name="root" class="form-control input-sm" placeholder="No entry selected" v-bind:value="entry">
         </div>
     </div>
-    <div class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Entry detail: <code v-if="entry">{% raw %}{{entry}}{% endraw %}</code></h4>
-                </div>
-                <div class="modal-body">
-                    <pre>{% raw %}{{detail}}{% endraw %}</pre>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </form>
 <form id="form-save-image" class="collapse in" action="{{ url_for('route_save_image') }}" method="POST" target="_blank">
     <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
@@ -119,6 +103,22 @@
         <button type="button" class="btn btn-primary btn-sm" onclick="$('#form-save-image input[name=svg]').val((new XMLSerializer).serializeToString($('#functree > svg')[0])); $('#form-save-image').submit();"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
     </div>
 </form>
+<div id="modal-entry-detail" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Entry detail: <code v-if="entry">{% raw %}{{entry}}{% endraw %}</code></h4>
+            </div>
+            <div class="modal-body">
+                <pre>{% raw %}{{detail}}{% endraw %}</pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block mainpane %}
@@ -152,7 +152,7 @@
     });
 
     var vmEntryDetail = new Vue({
-        'el': '#form-entry-detail',
+        'el': '#modal-entry-detail',
         'data': {
             'entry': '',
             'detail': ''

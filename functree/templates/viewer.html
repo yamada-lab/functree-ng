@@ -21,7 +21,7 @@
                 </ul>
                 {% endblock %}
             </div>
-            <div id="maincontent">
+            <div id="maincontent"{% if mode not in ['functree', 'pathways'] %} style="padding: 15px"{% endif %}>
                 <button id="sidebar-button" class="btn btn-xs btn-default" type="button"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
                 {% block mainpane %}{% endblock %}
             </div>

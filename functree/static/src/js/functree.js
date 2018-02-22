@@ -324,30 +324,31 @@ const FuncTree = class {
         		}]
             	const nodeId = d3.event.target.id
             	// check node id eligible for View Details actions
-            	if(hasMoreDetails(nodeId, "KEGG")){
+            	if (hasMoreDetails(nodeId, "KEGG")) {
             		actions.push({
             			name: 'View details',
             			iconClass: 'fa-info',
             			onClick: function() {
             				axios.get(self.infoServiceURL + d.entry)
-            				.then(function(res) {
-            					console.log(res.data);
-            				})
-            				.catch(function(error) {
-            					if (error.response.status === 404) {
-            						alert('No information available for ' + d.entry);
-            					} else {
-            						console.log('Ajax error');
-            					}
-            				});
-            			}
+                                .then(function(res) {
+                                    vmEntryDetail.detail = res.data;
+                                })
+                                .catch(function(error) {
+                                    if (error.response.status === 404) {
+                                        vmEntryDetail.detail = 'No information available';
+                                    } else {
+                                        vmEntryDetail.detail = 'Ajax error';
+                                    }
+                                });
+                                $('#modal-entry-detail').modal('show');
+            			    }
             		})
             	}
-            	//escape space in the selector 
+            	//escape space in the selector
             	const menu = new BootstrapMenu("#"+nodeId.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
             		actions: actions
             	});
-            	return false; 
+            	return false;
             });
         node
             .transition()
