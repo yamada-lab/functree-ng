@@ -313,12 +313,13 @@ const FuncTree = class {
         			name: 'Copy',
         			iconClass: 'fa-clipboard',
         			onClick: function(){
-        				setClipboard($('#form-entry-detail input[name=root]').val());
+        				setClipboard(d.entry);
         			}
         		}, {
         			name: 'Set as root',
         			iconClass: 'fa-undo',
         			onClick: function() {
+                        $("#form-entry-detail input[name=root]").val(d.entry);
         				$("#form-entry-detail").submit();
         			}
         		}]
