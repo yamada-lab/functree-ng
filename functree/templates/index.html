@@ -1,4 +1,6 @@
-{% extends 'layout.html' %} {% block head %} {{super()}}
+{% extends 'layout.html' %} 
+{% block head %} 
+{{super()}}
 <style>
 .jumbotron {
 	position: relative;
@@ -19,66 +21,66 @@
 	position: relative;
 }
 </style>
-{% endblock %} {% block content %}
+{% endblock %} 
+{% block content %}
+
+<div class="container">
+	<div class="row">
+		<div class="col-xs-12">
+			<img src="{{ url_for('static', filename='images/home.png') }}"
+				class="img-responsive center-block" alt="Data Visualization">
+		</div>
+	</div>
+</div>
 <div class="jumbotron">
 	<div id="particles-js"></div>
 	<div class="container">
 		<h1>FuncTree 2</h1>
-		<p>Multilevel omics data visualization on a bio-functional tree</p>
-		<p>
-			<a class="btn btn-danger"
-				href="{{ url_for('route_analysis', mode='basic_mapping') }}"
-				role="button">Get started <i class="fa fa-caret-right"
-				aria-hidden="true"></i></a>
-		</p>
+		<p>Biologically relevant visualization of omics profiles</p>
 	</div>
-</div>
+	</div>
 <div class="container">
 	<div class="row">
-		<div class="col-md-8">
-			<div class="page-header">
-				<h2>What is FuncTree?</h2>
-			</div>
-			<p>
-				FuncTree helps you visualize and explore omics data onto functional
-				hierarchies like <a
-					href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
-					target="_blank">KEGG Brite</a>. Its interactive Tree Viewer
-				highlights trends at multiple functional levels simultaneously to
-				help you formulate scientific hypothesis. Statistical tests, module
-				pathway reconstruction, and different customization controls are
-				built-in to assist you in your quest.
-			</p>
-			<p>
-				<a class="btn btn-default" href="{{ url_for('route_docs') }}"
-					role="button">More info »</a> <a class="btn btn-danger"
-					href="{{ url_for('route_analysis', mode='basic_mapping') }}"
-					role="button">Get started <i class="fa fa-caret-right"
-					aria-hidden="true"></i></a>
-			</p>
-			<div class="page-header">
-				<h2>Data Visualization</h2>
-			</div>
-			<p>FuncTree displays functional hierarchies as a radial tree
-				where nodes represent a biological function (e.g. KEGG KO, KEGG
-				Module) and are layered nicely to reflect the different functional
-				levels</p>
-			<p>
-				<a class="btn btn-default" href="{{ url_for('route_docs') }}"
-					role="button">View details »</a> <a class="btn btn-danger"
-					href="{{ url_for('route_analysis', mode='basic_mapping') }}"
-					role="button">Get started <i class="fa fa-caret-right"
-					aria-hidden="true"></i></a>
-			</p>
+		<div class="col-xs-3">
+			<a class="btn btn-default btn-block"
+				style="color: #6b8ed6; border-color: #6b8ed6;"
+				href="{{ url_for('route_analysis', mode='mapping') }}"
+				role="button">Map</a>
+				<p class="lead" style="text-align: center">
+					KEGG Orthology abundance tables.
+				</p>
 		</div>
-		<div class="col-md-4">
-			<img src="{{ url_for('static', filename='images/functree.png') }}"
-				class="img-responsive img-thumbnail center-block"
-				alt="Data Visualization">
+		<div class="col-xs-3">
+			<a class="btn btn-default btn-block"
+				style="color: #6b8ed6; border-color: #6b8ed6;"
+				href="{{ url_for('route_analysis', mode='comparison') }}"
+				role="button">Compare</a>
+				<p class="lead" style="text-align: center">
+					two KEGG Orthology abundance tables
+				</p>
+		</div>
+		<div class="col-xs-3">
+			<a class="btn btn-default btn-block"
+				style="color: #6b8ed6; border-color: #6b8ed6;"
+				href="{{ url_for('route_analysis', mode='display') }}"
+				role="button">Display</a>
+				<p class="lead" style="text-align: center">
+					tree customizations in TSV or JSON format
+				</p>
+		</div>
+		<div class="col-xs-3">
+			<a class="btn btn-default btn-block"
+				style="color: #6b8ed6; border-color: #6b8ed6;"
+				href="{{ url_for('route_list') }}"
+				role="button">Browse</a>
+				<p class="lead" style="text-align: center">
+					the available list of trees
+				</p>
 		</div>
 	</div>
 </div>
-{% endblock %} {% block script %} {{super()}}
+{% endblock %}
+{% block script %} {{super()}}
 <script
 	src="{{ url_for('static', filename='bower_components/particles.js/particles.min.js') }}"></script>
 <script>

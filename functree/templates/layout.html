@@ -20,6 +20,8 @@
         {% endblock %}
     </head>
     <body>
+    
+    	{% if request.endpoint != 'route_index' %}
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -55,10 +57,28 @@
                 </div>
             </div>
         </nav>
+        {% endif %}
         {% block content %}{% endblock %}
         <footer class="footer">
             <div class="container">
-                <p class="text-muted">Copyright &copy; 2014-2018 <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.</p>
+            {% if request.endpoint == 'route_index' %}
+            <div class="row">
+            	<div class="col-xs-9">
+            		<span class="pull-left text-muted">Copyright &copy; 2014-2018
+            			<a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.
+            		</span>
+            	</div>
+            	<div class="col-xs-3">            	
+					<span class="pull-right text-muted">
+						<a class="text-muted" href="{{ url_for('route_docs') }}">Help</a>&nbsp;&nbsp;
+			            <a class="text-muted" href="{{ url_for('route_about') }}">About</a>&nbsp;&nbsp;
+						<a class="text-muted" href="{{ url_for('route_contact') }}">Contact</a>
+					</span>
+            	</div>
+            </div>
+            {% else %}
+              	<p class="text-muted">Copyright &copy; 2014-2018 <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.</p>
+            {% endif %}
             </div>
         </footer>
         {% block script %}
