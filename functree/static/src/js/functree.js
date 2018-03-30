@@ -2,10 +2,10 @@
 
 const DEFAULT_CONFIG = {
     'elementId': 'functree',
-    'width': 1800,
-    'height': 1800,
-    'viewBoxWidth': 1200,
-    'viewBoxHeight': 1200,
+    'width': '100%',
+    'height': '100%',
+    'viewBoxWidth': 800,
+    'viewBoxHeight': 800,
     'diameter': 800,
     'duration': 1000,
     'normalize': true,
@@ -22,8 +22,9 @@ const DEFAULT_CONFIG = {
 }
 
 const FuncTree = class {
-    constructor(root, config={}) {
+	constructor(root, infoServiceURL, config={}) {
         this.root = root;
+        this.infoServiceURL = infoServiceURL;
         this.root.x0 = 0;
         this.root.y0 = 0;
         this.nodes = this.getNodes();
@@ -69,7 +70,8 @@ const FuncTree = class {
             .attr('version', '1.1')
             .attr('width', width)
             .attr('height', height)
-            .attr('viewBox', '0 0 ' + this.config.viewBoxWidth + ' ' + this.config.viewBoxHeight);
+            .attr('viewBox', '0 0 ' + this.config.viewBoxWidth + ' ' + this.config.viewBoxHeight)
+            .attr('preserveAspectRatio', 'xMidYMid meet');
         const buffer = svg.append('g')
             .attr('id', 'buffer')
             .attr('transform', 'translate(' + this.config.viewBoxWidth / 2 + ',' + this.config.viewBoxHeight / 2 + '),scale(1)');
@@ -265,6 +267,7 @@ const FuncTree = class {
             });
         node.enter()
             .append('circle')
+            .attr('id', (d) => {return d.entry})
             .attr('transform', () => {
                 return 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + ')';
             })
@@ -284,9 +287,6 @@ const FuncTree = class {
                 this.update(d);
             })
             .on('mouseover', (d) => {
-                if (this.config.external.entry) {
-                    eval(this.config.external.entry + ' = d.entry');
-                }
                 d3.select(d3.event.target)
                     .style('r', 10)
                     .style('fill', '#000')
@@ -302,6 +302,54 @@ const FuncTree = class {
                 d3.select('#links')
                     .selectAll('path')
                     .attr('style', null);
+            }).on('contextmenu', (d) => {
+            	if (this.config.external.entry) {
+            		eval(this.config.external.entry + ' = d.entry');
+            	}
+            	// get a pointer to the FuncTree instance
+            	const self = this
+            	// create an array of actions for the context menu
+            	const actions = [{
+        			name: 'Copy',
+        			iconClass: 'fa-clipboard',
+        			onClick: function(){
+        				setClipboard(d.entry);
+        			}
+        		}, {
+        			name: 'Set as root',
+        			iconClass: 'fa-undo',
+        			onClick: function() {
+                        $("#form-entry-detail input[name=root]").val(d.entry);
+        				$("#form-entry-detail").submit();
+        			}
+        		}]
+            	const nodeId = d3.event.target.id
+            	// check node id eligible for View Details actions
+            	if (hasMoreDetails(nodeId, "KEGG")) {
+            		actions.push({
+            			name: 'View details',
+            			iconClass: 'fa-info',
+            			onClick: function() {
+            				axios.get(self.infoServiceURL + d.entry)
+                                .then(function(res) {
+                                    vmEntryDetail.detail = res.data;
+                                })
+                                .catch(function(error) {
+                                    if (error.response.status === 404) {
+                                        vmEntryDetail.detail = 'No information available';
+                                    } else {
+                                        vmEntryDetail.detail = 'Ajax error';
+                                    }
+                                });
+                                $('#modal-entry-detail').modal('show');
+            			    }
+            		})
+            	}
+            	//escape space in the selector
+            	const menu = new BootstrapMenu("#"+nodeId.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
+            		actions: actions
+            	});
+            	return false;
             });
         node
             .transition()
@@ -325,10 +373,10 @@ const FuncTree = class {
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
         const self = this;
         const data = nodes
-            .filter((d) => {
-                const excludes = ['root'];
-                return !~excludes.indexOf(d.layer);
-            })
+            // .filter((d) => {
+            //     const excludes = ['root'];
+            //     return !~excludes.indexOf(d.layer);
+            // })
             .filter((d) => {
                 return d.depth > 0;
             });
@@ -457,10 +505,10 @@ const FuncTree = class {
 
     _updateRounds(nodes, source, depth, max) {
         const data = nodes
-            .filter((d) => {
-                const excludes = ['root'];
-                return !~excludes.indexOf(d.layer);
-            })
+            // .filter((d) => {
+            //     const excludes = ['root'];
+            //     return !~excludes.indexOf(d.layer);
+            // })
             .filter((d) => {
                 return d.depth > 0;
             });
@@ -689,6 +737,22 @@ const FuncTree = class {
     }
 }
 
+/**
+ * A function to check if a node has more details.
+ * For KEGG only K, Module, and map elements have more details
+ * @param nodeId
+ * @param referenceDatabase
+ * @returns
+ */
+function hasMoreDetails(nodeId, referenceDatabase){
+	let hasMoreDetails = false;
+	if (referenceDatabase == "KEGG") {
+		if (nodeId.match(/(K|M|map)[0-9]{5}/)) {
+			hasMoreDetails = true
+		}
+	}
+	return hasMoreDetails
+}
 
 function mergeRecursive(obj1, obj2) {
     for (var p in obj2) {

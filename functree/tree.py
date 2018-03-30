@@ -25,9 +25,9 @@ class Node(dict):
 
 
 def get_tree():
-    nodes_layer = {key: [] for key in ['root', 'brite1', 'brite2', 'pathway', 'module', 'ko']}
-    root = Node(entry='Root', name='Functional Tree root', layer='root')
-    nodes_layer['root'].append(root)
+    nodes_layer = {key: [] for key in ['brite0', 'brite1', 'brite2', 'pathway', 'module', 'ko']}
+    root = Node(entry='KEGG BRITE Functional Hierarchies', name='KEGG BRITE Functional Hierarchies', layer='brite0')
+    nodes_layer['brite0'].append(root)
 
     with download_htext(htext='br08901.keg') as f:
         for line in f.read().decode('utf-8').split('\n'):
@@ -36,7 +36,7 @@ def get_tree():
                 line = line.lstrip('A').lstrip()
                 entry = name = re.sub(r'<[^>]*?>', '', line)
                 node = Node(entry=entry, name=name, layer=layer)
-                nodes_layer['root'][-1].add_child(node)
+                nodes_layer['brite0'][-1].add_child(node)
                 nodes_layer[layer].append(node)
                 continue
             if line.startswith('B'):

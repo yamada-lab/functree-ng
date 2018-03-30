@@ -7,25 +7,23 @@
 {% endblock %}
 
 {% block content %}
-<div id="page-wrapper" class="container-fluid">
+<div class="container-fluid">
     <div id="content-wrapper">
-        <h3>Profile ID: <b><a href="{{ url_for('route_viewer') + '?profile_id={}'.format(profile.profile_id) }}">{{profile.profile_id}}</a></b>&nbsp;&nbsp;<small><i class="fa fa-database" aria-hidden="true"></i> {{profile.target}}&nbsp;&nbsp;<i class="fa fa-clock-o" aria-hidden="true"></i> {{profile.added_at|localtime|strftime('%Y-%m-%d %H:%M:%S %Z')}}{% if profile.private %}&nbsp;&nbsp;<span class="label label-warning">Private</span>{% endif %}</small></h3>
         <div id="content">
             <div id="sidebar">
-                {% block sidebar %}{% endblock %}
+                {% block sidebar %}
+                <ul class="nav nav-tabs">
+                    <li title="FuncTree" role="presentation"{% if mode == 'functree' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={}&mode=functree'.format(profile.profile_id) }}"><i class="fa fa-tree" aria-hidden="true"></i></a></li>
+                    <li title="Bar Charts" role="presenation"{% if mode == 'charts' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=charts'.format(profile.profile_id) }}"><i class="fa fa-bar-chart" aria-hidden="true"></i></a></li>
+                    <li title="View in iPath" role="presentation"{% if mode == 'pathways' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=pathways'.format(profile.profile_id) }}"><i class="fa fa-map-o" aria-hidden="true"></i></a></li>
+                    <li title="Tables" role="presentation"{% if mode == 'tables' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=tables'.format(profile.profile_id) }}"><i class="fa fa-table" aria-hidden="true"></i></a></li>
+                    <li title="Summary" role="presentation"{% if mode == 'summary' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=summary'.format(profile.profile_id) }}"><i class="fa fa-file-text-o" aria-hidden="true"></i></a></li>
+                </ul>
+                {% endblock %}
             </div>
-            <div id="maincontent">
-                <div id="mainpane-wrapper">
-                    <ul class="nav nav-tabs">
-                        <li role="presentation"{% if mode == 'functree' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={}&mode=functree'.format(profile.profile_id) }}"><i class="fa fa-tree" aria-hidden="true"></i> FuncTree</a></li>
-                        <li role="presentation"{% if mode == 'charts' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=charts'.format(profile.profile_id) }}"><i class="fa fa-bar-chart" aria-hidden="true"></i> Charts</a></li>
-                        <li role="presentation"{% if mode == 'tables' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=tables'.format(profile.profile_id) }}"><i class="fa fa-table" aria-hidden="true"></i> Tables</a></li>
-                        <li role="presentation"{% if mode == 'summary' %} class="active"{% endif %}><a href="{{ url_for('route_viewer') + '?profile_id={0}&mode=summary'.format(profile.profile_id) }}"><i class="fa fa-file-text-o" aria-hidden="true"></i> Summary</a></li>
-                    </ul>
-                    <div id="mainpane">
-                        {% block mainpane %}{% endblock %}
-                    </div>
-                </div>
+            <div id="maincontent"{% if mode not in ['functree', 'pathways'] %} style="padding: 15px"{% endif %}>
+                <button id="sidebar-button" class="btn btn-xs btn-default" type="button"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+                {% block mainpane %}{% endblock %}
             </div>
         </div>
     </div>
@@ -38,4 +36,15 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script src="{{ url_for('static', filename='dist/js/utils.js') }}"></script>
+<script>
+    $('#sidebar-button').on('click', function() {
+        $('#sidebar').toggleClass('sidebar-closed');
+        $('#sidebar-button i').toggleClass('fa-chevron-left fa-chevron-right')
+    });
+</script>
 {% endblock %}

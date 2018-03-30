@@ -1,3 +1,4 @@
+{% import "tags.html" as tags %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -19,6 +20,8 @@
         {% endblock %}
     </head>
     <body>
+    
+    	{% if request.endpoint != 'route_index' %}
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -37,12 +40,10 @@
                             <a href="{{ url_for('route_analysis', mode='basic_mapping') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Analysis</li>
-                                <li><a href="{{ url_for('route_analysis', mode='basic_mapping') }}">- Basic mapping</a></li>
-                                <li><a href="{{ url_for('route_analysis', mode='module_coverage') }}">- Module coverage</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='mapping') }}">- Mapping</a></li>
                                 <li><a href="{{ url_for('route_analysis', mode='comparison') }}">- Comparison</a></li>
                                 <li class="dropdown-header">Upload</li>
-                                <li><a href="{{ url_for('route_analysis', mode='direct_mapping') }}">- Direct mapping</a></li>
-                                <li><a href="{{ url_for('route_analysis', mode='json_upload') }}">- JSON upload</a></li>
+                                <li><a href="{{ url_for('route_analysis', mode='display') }}">- Display</a></li>
                             </ul>
                         </li>
                         <li{% if request.endpoint == 'route_list' %} class="active"{% endif %}><a href="{{ url_for('route_list') }}"><i class="fa fa-list" aria-hidden="true"></i> Profiles</a></li>
@@ -56,10 +57,28 @@
                 </div>
             </div>
         </nav>
+        {% endif %}
         {% block content %}{% endblock %}
         <footer class="footer">
             <div class="container">
-                <p class="text-muted">Copyright &copy; 2014-2018 <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.</p>
+            {% if request.endpoint == 'route_index' %}
+            <div class="row">
+            	<div class="col-xs-9">
+            		<span class="pull-left text-muted">Copyright &copy; 2014-2018
+            			<a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.
+            		</span>
+            	</div>
+            	<div class="col-xs-3">            	
+					<span class="pull-right text-muted">
+						<a class="text-muted" href="{{ url_for('route_docs') }}">Help</a>&nbsp;&nbsp;
+			            <a class="text-muted" href="{{ url_for('route_about') }}">About</a>&nbsp;&nbsp;
+						<a class="text-muted" href="{{ url_for('route_contact') }}">Contact</a>
+					</span>
+            	</div>
+            </div>
+            {% else %}
+              	<p class="text-muted">Copyright &copy; 2014-2018 <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology.</p>
+            {% endif %}
             </div>
         </footer>
         {% block script %}

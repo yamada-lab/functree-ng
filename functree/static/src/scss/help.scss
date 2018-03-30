@@ -1,0 +1,37 @@
+*[id]:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -50px; // Set the Appropriate Height
+  height: 50px; // Set the Appropriate Height
+  visibility: hidden; 
+}
+
+// Added to avoid table resize on collapse
+.collapse.in {display:table}
+
+.carousel-caption {
+	color: #111111;
+}
+
+.carousel-indicators li {
+	border-color: #FF5722;
+	background-color: #FF5722;
+}
+
+.col-center {
+	display: flex;
+	align-items: center;
+}
+
+hr {
+	border-top: 1px solid #FFFFFF	
+}
+
+.pointer {
+	text-decoration: none !important; 
+	cursor: pointer;
+}
+
+.row-flex {
+  display: flex;
+}

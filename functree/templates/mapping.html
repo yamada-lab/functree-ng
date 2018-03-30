@@ -1,0 +1,107 @@
+{% set title = 'Submit' %}
+{% extends 'layout.html' %} 
+{% block content %}
+<div class="container">
+ <div class="page-header">
+  <h2>Mapping</h2>
+ </div>
+ <br />
+ <form class="form-horizontal"
+  action="{{ url_for('route_analysis', mode=mode) }}"
+  method="POST"
+  enctype="multipart/form-data">
+  {{ form.csrf_token }}
+  <fieldset>
+   <div class="panel panel-default">
+    <div class="panel-heading">
+     <p>
+      Calculate module/pathway profile by a direct mapping from a 
+      <a href="http://www.genome.jp/kegg/ko.html" target="_blank">KO (KEGG Orthology)</a>
+      abundance table. Module abundance will be equal to the sum or mean of mapped KOs and will
+      be used to customize the Tree. Module coverage could also be calculated for additional customizations. 
+     </p>
+    </div>
+    <div class="panel-body">
+     <div class="form-group{% if form.input_file.errors %} has-error{% endif %}">
+      {{ form.input_file.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-3">
+       {{ form.input_file(class_='form-control-file') }} 
+        <span class="help-block">Example: 
+        <a href="{{ url_for('static', filename='data/example/profile.tsv') }}" target="_blank">
+        <i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
+        {% if form.input_file.errors %} 
+         <span class="help-block"> 
+         {% for message in form.input_file.errors %} {{ message }} {% endfor %}
+         </span> {% endif %}
+      </div>
+      <div class="col-sm-7">
+       <span> Tab-separated KO abundance table</span>
+      </div>
+     </div>
+
+     {{tags.color_input(form)}}
+
+     <div class="form-group{% if form.target.errors %} has-error{% endif %}">
+      {{ form.target.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-10">
+       {{ form.target(class_='form-control') }} {% if form.target.errors
+       %} <span class="help-block"> {% for message in
+        form.target.errors %} {{ message }} {% endfor %} </span> {% endif %}
+      </div>
+     </div>
+     <div class="form-group{% if form.description.errors %} has-error{% endif %}">
+      {{ form.description.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-10">
+       {{ form.description(class_='form-control', placeholder='A useful description for the result') }} 
+       {% if form.description.errors %}
+        <span class="help-block"> {% for message in form.description.errors %} {{ message }} {% endfor %} </span> 
+       {% endif %}
+      </div>
+     </div>
+     
+     <div class="form-group{% if form.modulecoverage.errors %} has-error{% endif %}">
+      <div class="col-sm-offset-2 col-sm-10">
+       <div class="checkbox">
+        <label> {{ form.modulecoverage }} {{ form.modulecoverage.label.text }}
+        </label>
+       </div>
+       {% if form.modulecoverage.errors %} 
+       <span class="help-block"> {% for message in form.modulecoverage.errors %} {{ message }} {% endfor %} </span> 
+       {% endif %}
+      </div>
+     </div>
+     
+     
+     <div class="form-group{% if form.private.errors %} has-error{% endif %}">
+      <div class="col-sm-offset-2 col-sm-10">
+       <div class="checkbox">
+        <label> {{ form.private }} {{ form.private.label.text }}
+        </label>
+       </div>
+       {% if form.private.errors %} 
+       <span class="help-block"> {% for message in form.private.errors %} {{ message }} {% endfor %} </span> 
+       {% endif %}
+      </div>
+     </div>
+     <div class="form-group">
+      <div class="col-sm-10 col-sm-offset-2">
+       {{ tags.expiry_notice()}}
+       {{ form.submit(class_='btn btn-primary', **{'data-loading-text': 'Submitting...'}) }} 
+       <input type="reset" class="btn btn-default" value="Reset">
+      </div>
+     </div>
+    </div>
+   </div>
+  </fieldset>
+ </form>
+</div>
+{% endblock %} {% block script %} {{super()}}
+<script>
+	$('input[type="submit"]').on('click', function() {
+		$(this).button('loading');
+		setTimeout(function() {
+			$(this).button('reset');
+		}, 600000);
+	});
+</script>
+{% endblock %}

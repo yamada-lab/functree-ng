@@ -11,41 +11,35 @@ def route_index():
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
-    if mode == 'basic_mapping':
-        form = forms.BasicMappingForm()
+    if mode == 'mapping':
+        form = forms.MappingForm()
         if form.validate_on_submit():
             profile_id = analysis.basic_mapping.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'module_coverage':
-        form = forms.ModuleCoverageForm()
-        if form.validate_on_submit():
-            profile_id = analysis.module_coverage.from_table(form)
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
-        else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
+            return flask.render_template('mapping.html', form=form, mode=mode)
     elif mode == 'comparison':
         form = forms.ComparisonForm()
         if form.validate_on_submit():
             profile_id = analysis.comparison.from_table(form)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'direct_mapping':
-        form = forms.DirectMappingForm()
+            return flask.render_template('comparison.html', form=form, mode=mode)
+    elif mode == 'display':
+        import mimetypes
+        form = forms.DisplayForm()
         if form.validate_on_submit():
-            profile_id = analysis.direct_mapping.from_table(form)
+            file_type = mimetypes.MimeTypes().guess_type(form.input_file.data.filename)[0]
+            if file_type == "application/json":
+                profile_id = analysis.display.from_json(form)
+            elif file_type == 'text/tab-separated-values':
+                profile_id = analysis.display.from_table(form)
+            else:
+                # TODO add error message | or hadnle this at validation with custom validators
+                return flask.render_template('display.html', form=form, mode=mode)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
-    elif mode == 'json_upload':
-        form = forms.JSONUploadForm()
-        if form.validate_on_submit():
-            profile_id = analysis.direct_mapping.from_json(form)
-            return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
-        else:
-            return flask.render_template('analysis.html', form=form, mode=mode)
+            return flask.render_template('display.html', form=form, mode=mode)
     else:
         flask.abort(404)
 
@@ -65,10 +59,20 @@ def route_data():
     return flask.render_template('data.html', trees=trees, definitions=definitions)
 
 
+@app.context_processor
+def utility_processor():
+    def json_schema():
+        schema = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/data-schema.json'), 'r')
+        return schema.read()
+    def json_example():
+        data = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/data-example.json'), 'r')
+        return data.read()
+    return dict(json_schema=json_schema, json_example=json_example)
+
 @app.route('/docs/', defaults={'filename': 'index.html'})
 @app.route('/docs/<path:filename>')
 def route_docs(filename):
-    return flask.send_from_directory('../docs/_build/html', filename)
+    return flask.render_template('help.html')
 
 
 @app.route('/about/')
@@ -93,6 +97,9 @@ def route_viewer():
     elif mode == 'charts':
         series = flask.request.args.get('series', default=0, type=int)
         return flask.render_template('charts.html', profile=profile, mode=mode, series=series)
+    elif mode == 'pathways':
+        series = flask.request.args.get('series', default=0, type=int)
+        return flask.render_template('pathways.html', profile=profile, mode=mode, series=series)
     elif mode == 'tables':
         series = flask.request.args.get('series', default=0, type=int)
         return flask.render_template('tables.html', profile=profile, mode=mode, series=series)
@@ -217,7 +224,7 @@ def route_update_trees():
     models.Tree(
         tree=tree.get_tree(),
         source='KEGG',
-        description='KEGG version of Functional Tree',
+        description='KEGG BRITE Functional Hierarchies',
         added_at=datetime.datetime.utcnow()
     ).save()
     cache.clear()

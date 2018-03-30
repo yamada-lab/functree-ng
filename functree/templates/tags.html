@@ -1,0 +1,33 @@
+{% macro expiry_notice() %}
+<p>
+ <i class="fa fa-info-circle" aria-hidden="true"></i>
+  The result will expire <b>{{ config['FUNCTREE_PROFILE_TTL_DAYS'] }}
+  days</b> after the submission. For more detail, see <a
+  href="{{ url_for('route_docs') }}#data-sharing">documentation</a>.
+</p>
+{% endmacro%}
+
+{% macro color_input(form) %}
+     <div class="form-group{% if form.color_file.errors %} has-error{% endif %}">
+      {{ form.color_file.label(class='col-sm-2 control-label') }}
+      <div class="col-sm-3">
+       {{ form.color_file(class_='form-control-file') }} 
+       <span class="help-block">Example:
+        <a href="{{ url_for('static', filename='data/example/colors.tsv') }}"
+         target="_blank">
+         <i class="fa fa-download" aria-hidden="true"></i> Download</a></span> 
+         {% if form.color_file.errors %} 
+          <span class="help-block"> 
+           {% for message in form.color_file.errors %}
+            {{ message }}
+           {% endfor %}
+          </span>
+        {% endif %}
+      </div>
+      <div class="col-sm-7">
+       <span> Tab-separeted {entry|column}-color list</span>
+      </div>
+     </div>
+{% endmacro%}
+
+

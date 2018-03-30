@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Profile",
+  "description": "A FuncTree customization profile",
+  "type": "object",
+  "properties": {
+    "profile_id": {
+      "description": "A unique identifier for the profile",
+      "type": "object",
+      "properties": {
+        "$uuid": {
+          "description": "A unique identifier for the profile",
+          "type": "integer"
+        }
+      }
+    },
+    "added_at": {
+      "description": "Creation date of the profile",
+      "type": "object",
+      "properties": {
+        "$date": {
+          "description": "Creation date of the profile",
+          "type": "integer"
+        }
+      }
+    },
+    "expire_at": {
+      "description": "Scheduled deletion of the profile from FuncTrees storage",
+      "type": "object",
+      "properties": {
+        "$date": {
+          "description": "Scheduled deletion of the profile from FuncTrees storage",
+          "type": "integer"
+        }
+      }
+    },
+    "description": {
+      "description": "Description of the profile",
+      "type": "string"
+    },
+    "private": {
+      "description": "Keep the profile private",
+      "type": "boolean"
+    },
+    "target": {
+      "description": "Target database hierarchy",
+      "type": "string"
+    },
+    "series": {
+      "description": "Type of the matrices summarized in the profile:values arrays",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "profile": {
+      "description": "The customization values for a FuncTree instance",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entry": {
+            "description": "Entry id for example K number or Module ids...",
+            "type": "string"
+          },
+          "layer": {
+            "description": "Layer of the object e.g. KO, Module or Pathway",
+            "type": "string"
+          },
+          "values": {
+            "description": "Series customization numeric values",
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "columns": {
+      "description": "Series column names",
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "colors": {
+      "description": "Colors for series",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "profile",
+    "series",
+    "columns",
+    "private",
+    "target"
+  ]
+}
