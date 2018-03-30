@@ -1,0 +1,46 @@
+@media screen and (min-width : 768px) {
+	/*     .cover{
+		content: url({{ url_for('static', filename='images/home-md.png') }})
+    } */
+	.jumbotron {
+		padding-top: 30px;
+		padding-bottom: 30px;
+	}
+}
+@media screen and (min-width : 1280px) {
+	.jumbotron {
+		padding-top: 48px;
+		padding-bottom: 48px;
+	}
+}
+
+body {
+	padding-top: 10px;
+}
+
+.action {
+	color: #6b8ed6;
+	border-color: #6b8ed6;
+	font-weight: bold;
+}
+.jumbotron {
+	position: relative;
+	color: #fff;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+}
+
+.jumbotron #particles-js {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: linear-gradient(to right, #2b5876, #4e4376);
+}
+
+.jumbotron .container {
+	position: relative;
+}
+/* .cover {
+	content: url({{ url_for('static', filename = 'images/home.png')}})
+} */

@@ -1,25 +1,8 @@
 {% extends 'layout.html' %} 
 {% block head %} 
 {{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/index.css') }}">
 <style>
-.jumbotron {
-	position: relative;
-	color: #fff;
-	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
-}
-
-.jumbotron #particles-js {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	background: linear-gradient(to right, #2b5876, #4e4376);
-}
-
-.jumbotron .container {
-	position: relative;
-}
 </style>
 {% endblock %} 
 {% block content %}
@@ -27,53 +10,48 @@
 <div class="container">
 	<div class="row">
 		<div class="col-xs-12">
-			<img src="{{ url_for('static', filename='images/home.png') }}"
-				class="img-responsive center-block" alt="Data Visualization">
+			<img src="{{ url_for('static', filename = 'images/home.png')}}" class="img-responsive center-block" alt="Data Visualization">
 		</div>
 	</div>
 </div>
-<div class="jumbotron">
+<div class="jumbotron jumbotron-fluid">
 	<div id="particles-js"></div>
-	<div class="container">
+	<div class="container responsive">
 		<h1>FuncTree 2</h1>
 		<p>Biologically relevant visualization of omics profiles</p>
 	</div>
-	</div>
+</div>
 <div class="container">
 	<div class="row">
 		<div class="col-xs-3">
-			<a class="btn btn-default btn-block"
-				style="color: #6b8ed6; border-color: #6b8ed6;"
+			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_analysis', mode='mapping') }}"
-				role="button">Map</a>
-				<p class="lead" style="text-align: center">
-					KEGG Orthology abundance tables.
+				role="button" data-toggle="tooltip" data-placement="top" title="KEGG Orthology abundance tables">Map</a>
+				<p class="lead text-muted" style="text-align: center">
+					KEGG Orthology abundance tables
 				</p>
 		</div>
 		<div class="col-xs-3">
-			<a class="btn btn-default btn-block"
-				style="color: #6b8ed6; border-color: #6b8ed6;"
+			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_analysis', mode='comparison') }}"
-				role="button">Compare</a>
-				<p class="lead" style="text-align: center">
-					two KEGG Orthology abundance tables
+				role="button" data-toggle="tooltip" data-placement="top" title="2 KEGG Orthology abundance tables">Compare</a>
+				<p class="lead text-muted" style="text-align: center">
+					2 KEGG Orthology abundance tables
 				</p>
 		</div>
 		<div class="col-xs-3">
-			<a class="btn btn-default btn-block"
-				style="color: #6b8ed6; border-color: #6b8ed6;"
+			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_analysis', mode='display') }}"
-				role="button">Display</a>
-				<p class="lead" style="text-align: center">
+				role="button" data-toggle="tooltip" data-placement="top" title="tree customizations in TSV or JSON format">Display</a>
+				<p class="lead text-muted" style="text-align: center">
 					tree customizations in TSV or JSON format
 				</p>
 		</div>
 		<div class="col-xs-3">
-			<a class="btn btn-default btn-block"
-				style="color: #6b8ed6; border-color: #6b8ed6;"
+			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_list') }}"
-				role="button">Browse</a>
-				<p class="lead" style="text-align: center">
+				role="button" data-toggle="tooltip" data-placement="top" title="the available list of trees">Browse</a>
+				<p class="lead text-muted" style="text-align: center">
 					the available list of trees
 				</p>
 		</div>
@@ -85,5 +63,6 @@
 	src="{{ url_for('static', filename='bower_components/particles.js/particles.min.js') }}"></script>
 <script>
     particlesJS.load('particles-js', '{{ url_for('static', filename='particles.json') }}');
+    $('[data-toggle="tooltip"]').tooltip()
 </script>
 {% endblock %}
