@@ -20,7 +20,7 @@
 					hierarchical context of biological ontologies. Mapping omics
 					data onto a pre-defined interactive treemap, based on the
 					<a href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
-						target="_blank">KEGG brite functional hierarchy</a>, lets you
+						target="_blank">KEGG Brite functional hierarchy</a>, lets you
 					quickly and comprehensively understand the functional potential of
 					your data, which will help you develop further hypothesis and
 					scientific insights. Statistical tests, module pathway
@@ -118,9 +118,8 @@
 					one of the following ontology databases is accepted:</p>
 				<ul class="list-group">
 					<li class="list-group-item list-group-item-success">KEGG KO</li>
-					<li class="list-group-item list-group-item-success">KEGG
-						Modules</li>
-					<li class="list-group-item list-group-item-info">NCBI gene ids</li>
+					<li class="list-group-item list-group-item-success">KEGG Modules</li>
+				{#	<li class="list-group-item list-group-item-info">NCBI gene ids</li>  #}
 				</ul>
 				<p>In addition an optional Tab separated color list could be uploaded to color associated annotations in circle mode .</p>
 				<span>
@@ -216,6 +215,9 @@
 			</div>
 		</div>
 	</section>
+	
+	{#
+	
 	<section id="workflow" class="page-header">
 
 		<h2>Workflow</h2>
@@ -228,19 +230,22 @@
 			</div>
 		</div>
 		<ul>
-			<li>Mapping: [Rename: to Ontology preocessing and mapping] =>
-				maps KOs onto modules, pathways and brite hierarchies...
+			<li>Mapping: [Rename: to Ontology processing and mapping] =>
+				maps KOs onto modules, pathways and Brite hierarchies...
 			<li>Module coverage: Module based mapping, where each module is
 				given a coverage and abundance and then used for the pathway and
-				brite abundance
-			<li>Comparison: Two KO matrices, are used separatly for basinc
+				Brite abundance
+			<li>Comparison: Two KO matrices, are used separately for basic
 				mapping and the output is compared using Mann-Whitney U test
 			<li>Display: Mapping without any processing. Lets the user take
-				compltete control of generating his abundance data (Examnple)
+				complete control of generating his abundance data (Example)
 			<li>0 size is log to penalize high p-values
 			<li>FDR?
 		</ul>
 	</section>
+	
+	#}
+	
 	<section id="Viewer" class="page-header">
 		<h2>Viewer</h2>
 		<section id="functree">
@@ -362,7 +367,7 @@
 				<div class="col-sm-6">
 					<h4>Coloring options for circle mapping of one sample</h4>
 					<ul>
-						<li>Layer: Automatically genrated colors for Ontology layers
+						<li>Layer: Automatically generated colors for Ontology layers
 							e.g. Brite L1, L2, Pathway, Module
 						<li>Column: use the color code associated with a sample in
 							the input data
@@ -495,30 +500,31 @@
 			</div>
 		</section>
 		<hr>
-		<section>
+		<section id="data-sharing">
 			<div class="row row-flex">
 				<div class="col-sm-6">
 					<img class="img-thumbnail img-fluid" alt=""
 						src="{{ url_for('static', filename='images/summary.png') }}">
 				</div>
 				<div class="col-sm-offset-1 col-sm-5 col-center">
-					<p class="lead"><b>Profile download and sharing</b><br /> Profiles could be dowloaded in JSON format for storage or sharing. The <a href="{{ url_for('route_analysis', mode='display') }}">display</a>
-					function allows re-upload and display of the JSON profiles in FuncTree. Alternatively, profiles could be shared by a link. Clicking the share icon
-					copies the link to clipboard and displays it on screen.</p>
+					<p class="lead"><b>Profile storage, download, and sharing</b><br /> Profiles are optionally stored in FuncTree for a period of 7 days and could be shared by clicking the share icon
+					which copies the share link to the clipboard and displays it on screen. Alternatively, profiles could be downloaded in JSON format for permanent storage or sharing.
+					The <a href="{{ url_for('route_analysis', mode='display') }}">display</a> function allows re-upload and display of the JSON profiles in FuncTree.</p>
 				</div>
 			</div>
 		</section>
 	</section>
 	<section class="page-header">
 		<h2 id="example">Batch Access</h2>
-		<p>A REST API is available for automated interaction with FuncTree2. All available interactions on the web client are also available in the API.</p>
+		A REST API is under development...
+		{#<p>A REST API is available for automated interaction with FuncTree2. All available interactions on the web client are also available in the API.</p>
 		<p>For large scale processing it is recommended to use <a href="https://github.com/yyuuta88/functree-cli" target="_blank">functree-cli</a>, a command line 
-		utility to generate FuncTrees locally</p>
-		
+		utility to generate FuncTrees locally</p>#}
 	</section>
 	<section class="page-header">
 		<h2 id="example">Examples</h2>
-		Add metagenomics, multiomics and pangenomics examples, in a carousel
+		Coming soon..
+		{#Add metagenomics, multiomics and pangenomics examples, in a carousel #}
 	</section>
 </div>
 {% endblock %}
