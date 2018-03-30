@@ -26,7 +26,7 @@
 		<div class="col-xs-3">
 			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_analysis', mode='mapping') }}"
-				role="button" data-toggle="tooltip" data-placement="top" title="KEGG Orthology abundance tables">Map</a>
+				role="button">Map</a>
 				<p class="lead text-muted" style="text-align: center">
 					KEGG Orthology abundance tables
 				</p>
@@ -34,7 +34,7 @@
 		<div class="col-xs-3">
 			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_analysis', mode='comparison') }}"
-				role="button" data-toggle="tooltip" data-placement="top" title="2 KEGG Orthology abundance tables">Compare</a>
+				role="button">Compare</a>
 				<p class="lead text-muted" style="text-align: center">
 					2 KEGG Orthology abundance tables
 				</p>
@@ -42,7 +42,7 @@
 		<div class="col-xs-3">
 			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_analysis', mode='display') }}"
-				role="button" data-toggle="tooltip" data-placement="top" title="tree customizations in TSV or JSON format">Display</a>
+				role="button">Display</a>
 				<p class="lead text-muted" style="text-align: center">
 					tree customizations in TSV or JSON format
 				</p>
@@ -50,7 +50,7 @@
 		<div class="col-xs-3">
 			<a class="btn btn-default btn-block action"
 				href="{{ url_for('route_list') }}"
-				role="button" data-toggle="tooltip" data-placement="top" title="the available list of trees">Browse</a>
+				role="button">Browse</a>
 				<p class="lead text-muted" style="text-align: center">
 					the available list of trees
 				</p>
@@ -63,6 +63,5 @@
 	src="{{ url_for('static', filename='bower_components/particles.js/particles.min.js') }}"></script>
 <script>
     particlesJS.load('particles-js', '{{ url_for('static', filename='particles.json') }}');
-    $('[data-toggle="tooltip"]').tooltip()
 </script>
 {% endblock %}
