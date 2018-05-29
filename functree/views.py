@@ -1,12 +1,32 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
-from functree import __version__, app, auth, filters, forms, models, tree, analysis, cache
+from flask import jsonify, request
+from functree import __version__, app, auth, csrf, filters, forms, models, tree, analysis, cache
 from functree.crckm.src import download as crckm
-
 
 @app.route('/')
 def route_index():
     return flask.render_template('index.html')
+
+@app.route('/api/mapping/', methods=['POST'])
+@csrf.exempt
+def mapping():
+    form = forms.MappingForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        profile_id = analysis.basic_mapping.from_table(form)
+        return jsonify({'profile_id': profile_id})
+    else:
+        return jsonify({'errors': form.errors})
+
+@app.route('/api/comparison/', methods=['POST'])
+@csrf.exempt
+def comparison():
+    form = form = forms.MappingForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        profile_id = analysis.basic_mapping.from_table(form)
+        return jsonify({'profile_id': profile_id})
+    else:
+        return jsonify({'errors': form.errors})
 
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
