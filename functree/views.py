@@ -1,6 +1,12 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
 from flask import jsonify, request
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 from functree import __version__, app, auth, csrf, filters, forms, models, tree, analysis, cache
 from functree.crckm.src import download as crckm
 
@@ -28,6 +34,24 @@ def comparison():
     else:
         return jsonify({'errors': form.errors})
 
+@app.route('/api/viewer/', methods=['GET'])
+def api_viewer():
+    profile_id = request.args.get('profile_id', type=uuid.UUID)
+    mode = request.args.get('mode', default='functree', type=str)
+    if mode == 'functree':
+        chrome_options = Options()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--disable-gpu')
+        chrome_options.add_argument('--disable-extensions')
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        page=flask.url_for('route_viewer', _external=True) + '?profile_id={}'.format(profile_id)
+        browser = driver.get(page)
+        driver.implicitly_wait(10)
+        svg = driver.find_element_by_tag_name("svg")
+        svgEl = svg.get_attribute('outerHTML')
+        driver.quit()
+        return str(svgEl)
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
