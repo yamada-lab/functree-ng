@@ -1,14 +1,43 @@
 import re
 import pandas as pd
-from functree import tree
+from functree import tree, models
 from functree.analysis import module_coverage, display, basic_mapping, comparison
 
 
+def map_external_annotations(df):
+    '''
+    Find KO annotation for the entries of df then create and new df with K Numbers and rows divided by the number of matched KNumbers 
+    '''
+    df_keggified = pd.DataFrame(columns=df.columns)
+    for annotation in df.index:
+        #if annotation has a kegg mapping
+        try:
+            kegg = models.AnnotationMapping.objects().get(annotation=annotation)
+            kegg_annotations=kegg['ko_map']
+        except models.AnnotationMapping.DoesNotExist:
+            kegg_annotations=None
+        
+        if kegg_annotations:
+            # divide by the number of matched kegg annotations to show all KO values
+            # On one level up the value will be summed and reflect the original, and thus avoids overcounting
+            distributed_abundance = df.loc[annotation] / len(kegg_annotations)
+            for kegg_annotation in kegg_annotations:
+                if kegg_annotation in df_keggified.index:
+                    df_keggified.loc[kegg_annotation] = distributed_abundance + df_keggified.loc[kegg_annotation]
+                else:
+                    df_keggified.loc[kegg_annotation] = distributed_abundance
+        # if no kegg mapping => it is a Knumber or simply unmapped => Append it to the new df
+        else:
+            df_keggified.loc[annotation] = df.loc[annotation]
+            
+    return df_keggified
 
 def calc_abundances(df, nodes, method, results):
     """
     Generates mean or sum for all levels of functional Tree
     """
+    # transform external annotations to kegg KOs
+    df = map_external_annotations(df)
     df_out = pd.DataFrame(columns=df.columns)
     for node in nodes:
         entry_profile = None

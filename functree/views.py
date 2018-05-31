@@ -291,6 +291,26 @@ def route_update_definitions():
     ).save()
     return flask.redirect(flask.url_for('route_admin'))
 
+@app.route('/action/update_annotation_mapping/')
+@auth.login_required
+def route_update_annotation_mapping():
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/ortholog_mapping/external_annotation.map')
+    orto_mapping = {}
+    with open(f, 'rU') as mapping_file:
+        for line in mapping_file:
+            tokens = line.rstrip().split('\t', 1)
+            if tokens[0] not in orto_mapping:
+                orto_mapping[tokens[0]] = set()
+            orto_mapping[tokens[0]].add(tokens[1])
+    
+    models.AnnotationMapping.objects.all().delete()
+
+    for x in orto_mapping:
+        models.AnnotationMapping(
+            annotation=x,
+            ko_map=orto_mapping[x]
+        ).save()
+    return flask.redirect(flask.url_for('route_admin'))
 
 @auth.get_password
 def auth_get_password(username):

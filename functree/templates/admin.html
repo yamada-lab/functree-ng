@@ -13,6 +13,7 @@
         <li><a href="{{ url_for('route_list') }}">Registered profiles</a> (including private profiles): <span class="badge">{{counts.profile}}</span></li>
         <li><a href="{{ url_for('route_data') + '#table-tree' }}">Functional Trees</a>: <span class="badge">{{counts.tree}}</span></li>
         <li><a href="{{ url_for('route_data') + '#table-definition' }}">Module definitions</a>: <span class="badge">{{counts.definition}}</span></li>
+        <!-- <li><a href="{{ url_for('route_data') + '#table-definition' }}">Annotation mapping</a>: <span class="badge">{{counts.annotation_mapping}}</span></li>  -->
     </ul>
     <div class="page-header">
         <h3>Operations</h3>
@@ -21,6 +22,7 @@
         <li><a href="{{ url_for('route_init_profiles') }}" onclick="return confirm('Are you sure that you want to initialize profile collection?');">Initialize profile collection</a></li>
         <li><a href="{{ url_for('route_update_trees') }}" onclick="return confirm('Are you sure that you want to update Functional Trees?');">Update Functional Trees</a></li>
         <li><a href="{{ url_for('route_update_definitions') }}" onclick="return confirm('Are you sure that you want to update module definitions?');">Update module definitions</a></li>
+        <li><a href="{{ url_for('route_update_annotation_mapping') }}" onclick="return confirm('Are you sure that you want to update annotation mapping?');">Update annotation mapping</a></li>
     </ul>
 </div>
 {% endblock %}
