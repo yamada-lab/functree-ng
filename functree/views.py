@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
 from selenium.common.exceptions import TimeoutException
 from functree import __version__, app, auth, csrf, filters, forms, models, tree, analysis, cache
 from functree.crckm.src import download as crckm
@@ -27,7 +28,7 @@ def mapping():
 @app.route('/api/comparison/', methods=['POST'])
 @csrf.exempt
 def comparison():
-    form = form = forms.MappingForm(csrf_enabled=False)
+    form = forms.MappingForm(csrf_enabled=False)
     if form.validate_on_submit():
         profile_id = analysis.basic_mapping.from_table(form)
         return jsonify({'profile_id': profile_id})
@@ -44,10 +45,24 @@ def api_viewer():
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--disable-extensions')
+        chrome_options.add_argument("window-size=1980,1200");
         driver = webdriver.Chrome(chrome_options=chrome_options)
         page=flask.url_for('route_viewer', _external=True) + '?profile_id={}'.format(profile_id)
         browser = driver.get(page)
         driver.implicitly_wait(10)
+        # Add the editing in place
+        options = driver.find_element_by_id("options").click()
+        driver.implicitly_wait(1)
+        series = Select(driver.find_element_by_id("series"))
+        series.select_by_value("0")
+        driver.implicitly_wait(1)
+        columns = Select(driver.find_element_by_id("columns"))
+        columns.select_by_value("0");
+        driver.implicitly_wait(1)
+        driver.save_screenshot('screenie0.png')
+        driver.find_element_by_id("update").click()
+        driver.implicitly_wait(10)
+        driver.save_screenshot('screenie.png')
         svg = driver.find_element_by_tag_name("svg")
         svgEl = svg.get_attribute('outerHTML')
         driver.quit()
@@ -102,6 +117,19 @@ def route_data():
     definitions = models.Definition.objects().all().only(*only)
     return flask.render_template('data.html', trees=trees, definitions=definitions)
 
+@app.route('/data/upload/', methods=['GET', 'POST'])
+def route_data_upload():
+    form = forms.UploadForm()
+    if form.validate_on_submit():
+        models.Tree(
+            tree=tree.from_json(form.input_file.data),
+            source=form.target.data,
+            description=form.description.data,
+            added_at=datetime.datetime.utcnow()).save()
+        cache.clear()
+        return flask.redirect(flask.url_for('route_data'))
+    else:
+        return flask.render_template('upload.html', form=form)    
 
 @app.context_processor
 def utility_processor():

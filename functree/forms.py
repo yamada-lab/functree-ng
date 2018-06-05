@@ -64,3 +64,20 @@ class DisplayForm(flask_wtf.FlaskForm):
             {'$group': {'_id': '$source'}}
         )
         self.target.choices = [(target['_id'],) * 2 for target in targets]
+        
+class UploadForm(flask_wtf.FlaskForm):
+    input_file = flask_wtf.file.FileField('Input file', validators=[
+        flask_wtf.file.FileRequired()
+    ])
+    target = wtforms.TextField('Database', validators=[
+        wtforms.validators.Length(max=50)
+    ])
+    description = wtforms.TextField('Description', validators=[
+        wtforms.validators.Length(max=50)
+    ])
+
+    private = wtforms.BooleanField('Keep the reference private (Hide from "List of Trees")', default=True)
+    submit = wtforms.SubmitField('Submit')
+
+    def __init__(self, *args, **kwargs):
+        super(UploadForm, self).__init__(*args, **kwargs)

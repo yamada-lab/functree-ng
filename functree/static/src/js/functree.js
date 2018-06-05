@@ -647,6 +647,14 @@ const FuncTree = class {
             .text((d) => {
                 return d.name.replace(/ \[.*\]/, '');
             });
+        /*
+        node.append("text")
+        .attr("dy", "0.31em")
+        .attr("x", function(d) { return d.x < Math.PI === !d.children ? 6 : -6; })
+        .attr("text-anchor", function(d) { return d.x < Math.PI === !d.children ? "start" : "end"; })
+        .attr("transform", function(d) { return "rotate(" + (d.x < Math.PI ? d.x - Math.PI / 2 : d.x + Math.PI / 2) * 180 / Math.PI + ")"; })
+        .text(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1); });*/
+        
         label
             .transition()
             .duration(this.config.duration)
