@@ -19,9 +19,6 @@ RUN wget https://chromedriver.storage.googleapis.com/2.39/chromedriver_linux64.z
 	mv chromedriver /usr/local/bin/ \
 	rm chromedriver_linux64.zip
 
-RUN  \
-
-
 ADD . /app/
 WORKDIR /app/
 
