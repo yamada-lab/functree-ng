@@ -37,36 +37,71 @@ def comparison():
 
 @app.route('/api/viewer/', methods=['GET'])
 def api_viewer():
+    # process args 
     profile_id = request.args.get('profile_id', type=uuid.UUID)
-    mode = request.args.get('mode', default='functree', type=str)
-    if mode == 'functree':
-        chrome_options = Options()
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument('--disable-extensions')
-        chrome_options.add_argument("window-size=1980,1200");
+    series_value = request.args.get('series')
+    column_values = request.args.get("columns").split(",")
+    circle_column_value = request.args.get("circle-column")
+    is_stack = request.args.get("stack")
+    is_disable_normalization = request.args.get("disable-normalization")
+    color_code=request.args.get("color-code")
+    depth_value=request.args.get("depth")
+    # initialize a headless chrome
+    chrome_options = Options()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--auto-open-devtools-for-tabs')
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument("window-size=1980,1200");
+    svg = None
+    driver = None
+    try:
         driver = webdriver.Chrome(chrome_options=chrome_options)
+        # locate the page
         page=flask.url_for('route_viewer', _external=True) + '?profile_id={}'.format(profile_id)
         browser = driver.get(page)
-        driver.implicitly_wait(10)
-        # Add the editing in place
+        wait = WebDriverWait(driver, 60)
+        # Wait for page to load
+        wait.until(EC.invisibility_of_element_located((By.ID, 'loading')))
+        # open the options
         options = driver.find_element_by_id("options").click()
-        driver.implicitly_wait(1)
+        driver.implicitly_wait(0.5)
+        # select a series to visualize
         series = Select(driver.find_element_by_id("series"))
-        series.select_by_value("0")
-        driver.implicitly_wait(1)
+        series.select_by_visible_text(series_value)
+        driver.implicitly_wait(0.5)
+        # select samples
         columns = Select(driver.find_element_by_id("columns"))
-        columns.select_by_value("0");
-        driver.implicitly_wait(1)
-        driver.save_screenshot('screenie0.png')
+        for column in column_values:
+            columns.select_by_visible_text(column)
+        if circle_column_value:
+            circle_map = Select(driver.find_element_by_id("circle-map"))
+            circle_map.select_by_visible_text(circle_column_value)
+        
+        driver.implicitly_wait(0.5)
+        if is_stack == "":
+            driver.find_element_by_id("stacking").click()
+        if is_disable_normalization == "":
+            driver.find_element_by_id("normalize").click()
+        if color_code:
+            color_coding = Select(driver.find_element_by_id("color-coding"))
+            color_coding.select_by_visible_text(color_code)
+        if depth_value:
+            depth = Select(driver.find_element_by_id("depth"))
+            depth.select_by_visible_text(depth_value)
+        # update
         driver.find_element_by_id("update").click()
-        driver.implicitly_wait(10)
-        driver.save_screenshot('screenie.png')
-        svg = driver.find_element_by_tag_name("svg")
-        svgEl = svg.get_attribute('outerHTML')
+        # Giuve a couple of seconds to let the SVG update 
+        driver.implicitly_wait(2)
+        # locate the svg element
+        svgEl = driver.find_element_by_tag_name("svg")
+        # copy it
+        svg = svgEl.get_attribute('outerHTML')
+    finally:
         driver.quit()
-        return str(svgEl)
+    # return the raw SVG file
+    return str(svg)
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
@@ -108,7 +143,6 @@ def route_list():
     only = ('profile_id', 'description', 'added_at', 'target', 'locked')
     profiles = models.Profile.objects().filter(private=False).only(*only)
     return flask.render_template('list.html', profiles=profiles)
-
 
 @app.route('/data/')
 def route_data():

@@ -127,11 +127,11 @@
 					<li class="list-group-item list-group-item-success">KEGG Genes</li>
 					<li class="list-group-item list-group-item-success">STRING proteins</li>
 					<li class="list-group-item list-group-item-success">COGs/eggNOGGs</li>
-					<li class="list-group-item list-group-item-success">EC numbers (ec:1.1.1.1)</li>
-					<li class="list-group-item list-group-item-success">Carbohydrate-Active enZYmes (cazy:GT35)</li>
-					<li class="list-group-item list-group-item-success">Gene Ontology terms (go:0004022)</li>
-					<li class="list-group-item list-group-item-success">Uniprot IDs</li>
-					<li class="list-group-item list-group-item-success">NCBI GI IDs</li>
+					<li class="list-group-item list-group-item-success">EC numbers (EC:1.1.1.1)</li>
+					<li class="list-group-item list-group-item-success">Carbohydrate-Active enZYmes (CAZY:GT35)</li>
+					<li class="list-group-item list-group-item-success">Gene Ontology terms (GO:0004022)</li>
+					<li class="list-group-item list-group-item-success">Uniprot IDs (UNIPROT:C1MSP6)</li>
+					<li class="list-group-item list-group-item-success">NCBI Gene IDs (NCBI-GI:100000006)</li>
 				</ul>
 				<p>In addition an optional Tab separated color list could be
 					uploaded to color associated annotations in circle mode .</p>
@@ -631,7 +631,7 @@ curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data
  	https://bioviz.tokyo/functree2/api/mapping/
  </pre>
 					<p>
-						After a successful upload an id like <b>b7152e3a-80df-44a8-a02d-36cef54ce927</b>
+						After a successful upload an id like <b>668e8427-cdef-49cb-9698-7687f431a495</b>
 						will be returned and should be used for further interaction.
 					</p>
 					<h4>Download of a profile</h4>
@@ -639,8 +639,20 @@ curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data
 						command below to match your data. In its current form it will
 						download the tree to '/tmp/functree.svg'</p>
 					<pre>
-curl -X GET -H "Accept: text/svg" https://bioviz.tokyo/functree2/api/viewer/?profile_id=<b>b7152e3a-80df-44a8-a02d-36cef54ce927</b> > <b>/tmp/functree.svg</b>
+curl -X GET -H "Accept: text/svg" "https://bioviz.tokyo/functree2/api/viewer/?profile_id=<b>668e8427-cdef-49cb-9698-7687f431a495</b>&series=<b>Abundance%20(Mean)</b>&columns=<b>sample1,sample2</b>" > <b>/tmp/functree.svg</b>
 </pre>
+					<p>Arguments that could be used in the query string are the
+						following:</p>
+					<ul>
+						<li>profile_id <b>(required)</b>: the profile id to visualize
+						<li>series <b>(required)</b>: the series to visualize. Possible values are Abundance%20(Mean) or Abundance%20(Summation)
+						<li>columns: a comma separated list of columns to visualize (e.g. sample1,sample2)
+						<li>circle-column: Name of one sample to map as circle on top of the nodes. (e.g. sample3)
+						<li>color-code: Only used if circle-column has a value. [Layer, Column, Entry]. Defaults to Layer.
+						<li>stack: should 100% stacking be enabled? Should be appended without a value (e.g. &stack)
+						<li>disable-normalization: should normalization be disabled? Should be appended without a value (e.g. &disable-normalization)
+						<li>depth: depth of tree. Possible values for KEGG hierarchy are [brite0, brite1, brite2, pathway, module, ko]. Defaults to module. 
+					</ul>
 				</div>
 			</div>
 		</section>

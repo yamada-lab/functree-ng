@@ -38,7 +38,7 @@
         <h6>Stacking</h6>
         <div class="checkbox">
             <label>
-                <input type="checkbox" v-model="percentage">
+                <input id="stacking" type="checkbox" v-model="percentage">
                 Enable 100% stacking
             </label>
         </div>
@@ -46,12 +46,12 @@
     <div class="form-group">
         <label class="control-label">Data mapping: Circle for one sample</label>
         <h6>Choose a column to map</h6>
-        <select class="form-control input-sm" v-model.number="columnsSingle">
+        <select id="circle-map" class="form-control input-sm" v-model.number="columnsSingle">
             <option value="">None</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
         <h6>Color coding</h6>
-        <select class="form-control input-sm" v-model="colorizeBy">
+        <select id="color-coding" class="form-control input-sm" v-model="colorizeBy">
             <option title="Layer: Gives the same color to nodes of the samle layer (e.g. by Pathway, by Module, ...)" value="layer">Layer</option>
             <option value="column">Column</option>
             <option value="entry">Entry</option>
@@ -61,12 +61,12 @@
         <label class="control-label">Other settings</label>
         <div class="checkbox">
             <label>
-                <input type="checkbox" checked="checked" v-model="normalize">
+                <input id="normalize" type="checkbox" checked="checked" v-model="normalize">
                 Enable normalization
             </label>
         </div>
         <h6>Max depth of tree</h6>
-        <select class="form-control input-sm" v-model="layer">
+        <select id="depth" class="form-control input-sm" v-model="layer">
             <option v-for="(l, i) in layers" v-bind:value="i">{% raw %}{{l}}{% endraw %}</option>
         </select>
     </div>
