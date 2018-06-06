@@ -656,7 +656,7 @@ curl -X GET -H "Accept: text/svg" "https://bioviz.tokyo/functree2/api/viewer/?pr
 						following:</p>
 					<ul>
 						<li>profile_id <b>(required)</b>: the profile id to visualize
-						<li>series <b>(required)</b>: the series to visualize. Possible values are Abundance%20(Mean) or Abundance%20(Summation)
+						<li>series <b>(required)</b>: the series to visualize. Possible values are mean, sum, or modulecoverage unless a json file was uploaded with different names for data series.
 						<li>columns: a comma separated list of columns to visualize (e.g. sample1,sample2)
 						<li>circle-column: Name of one sample to map as circle on top of the nodes. (e.g. sample3)
 						<li>color-code: Only used if circle-column has a value. [Layer, Column, Entry]. Defaults to Layer.
