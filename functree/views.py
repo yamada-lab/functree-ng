@@ -1,5 +1,6 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
+import mimetypes
 from flask import jsonify, request
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -31,6 +32,16 @@ def comparison():
     form = forms.MappingForm(csrf_enabled=False)
     if form.validate_on_submit():
         profile_id = analysis.basic_mapping.from_table(form)
+        return jsonify({'profile_id': profile_id})
+    else:
+        return jsonify({'errors': form.errors})
+
+@app.route('/api/display/', methods=['POST'])
+@csrf.exempt
+def api_display():
+    form = forms.DisplayForm(csrf_enabled=False)
+    if form.validate_on_submit():
+        profile_id = profile_for_display(form)
         return jsonify({'profile_id': profile_id})
     else:
         return jsonify({'errors': form.errors})
@@ -120,15 +131,10 @@ def route_analysis(mode):
         else:
             return flask.render_template('comparison.html', form=form, mode=mode)
     elif mode == 'display':
-        import mimetypes
         form = forms.DisplayForm()
         if form.validate_on_submit():
-            file_type = mimetypes.MimeTypes().guess_type(form.input_file.data.filename)[0]
-            if file_type == "application/json":
-                profile_id = analysis.display.from_json(form)
-            elif file_type == 'text/tab-separated-values':
-                profile_id = analysis.display.from_table(form)
-            else:
+            profile_id = profile_for_display(form)
+            if not profile_id:
                 # TODO add error message | or hadnle this at validation with custom validators
                 return flask.render_template('display.html', form=form, mode=mode)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
@@ -137,6 +143,14 @@ def route_analysis(mode):
     else:
         flask.abort(404)
 
+def profile_for_display(form):
+    profile_id = None
+    file_type = mimetypes.MimeTypes().guess_type(form.input_file.data.filename)[0]
+    if file_type == "application/json":
+        profile_id = analysis.display.from_json(form)
+    elif file_type == 'text/tab-separated-values':
+        profile_id = analysis.display.from_table(form)
+    return profile_id
 
 @app.route('/list/')
 def route_list():

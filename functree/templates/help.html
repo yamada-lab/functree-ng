@@ -619,8 +619,8 @@
 					<p class="lead">A REST API is available for automated
 						interaction with FuncTree2. All available interactions on the web
 						client are also available in the API.</p>
-					<h4>Upload of a profile</h4>
-					<p>To upload a profile please edit the bold parts in the
+					<h4>Map, Compare or Display profiles</h4>
+					<p>To map a profile please edit the bold parts in the
 						command below to match your data. In its current form it will
 						upload the file '/tmp/profile.tsv' and map it to the KEGG tree.
 						The resulting profile descirption will be "Description of maximum
@@ -630,10 +630,20 @@ curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data
  	-F 'target=<b>KEGG</b>' -F 'description="<b>Description of maximum 50 letters</b>"' -F 'input_file=@<b>/tmp/profile.tsv</b>' \
  	https://bioviz.tokyo/functree2/api/mapping/
  </pre>
-					<p>
+ 					<p>
 						After a successful upload an id like <b>668e8427-cdef-49cb-9698-7687f431a495</b>
 						will be returned and should be used for further interaction.
 					</p>
+					<p>
+						The same logic applies for comparison and display, only the URL is different
+					</p>
+					<div>
+					<ul> 
+						<li>https://bioviz.tokyo/functree2/api/<b>display</b>/
+						<li>https://bioviz.tokyo/functree2/api/<b>comparison</b>/
+					</ul>
+					</div>
+					<br />
 					<h4>Download of a profile</h4>
 					<p>To download a profile please edit the bold parts in the
 						command below to match your data. In its current form it will
@@ -663,7 +673,7 @@ curl -X GET -H "Accept: text/svg" "https://bioviz.tokyo/functree2/api/viewer/?pr
 					<p class="lead">
 						For large scale processing the <a
 							href="https://github.com/yyuuta88/functree-cli"
-							target="_blank">functree-cli</a>, could be used to generate
+							target="_blank">functree-cli</a> could be used to generate
 						FuncTrees locally.
 					</p>
 				</div>
