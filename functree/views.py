@@ -378,14 +378,23 @@ def route_update_annotation_mapping():
             if tokens[0] not in orto_mapping:
                 orto_mapping[tokens[0]] = set()
             orto_mapping[tokens[0]].add(tokens[1])
-    
-    models.AnnotationMapping.objects.all().delete()
-
+    # drop current collection
+    models.AnnotationMapping.drop_collection()
+    # upload in batches
+    batch = []
+    target_size = 5000
     for x in orto_mapping:
-        models.AnnotationMapping(
+        batch.append(models.AnnotationMapping(
             annotation=x,
             ko_map=orto_mapping[x]
-        ).save()
+        ))
+        if len(batch) == target_size:
+            models.AnnotationMapping.objects.insert(batch, load_bulk=False, signal_kwargs={'ordered': False} )
+            batch.clear()
+    # insert the remaning annotations
+    models.AnnotationMapping.objects.insert(batch, load_bulk=False, signal_kwargs={'ordered': False} )
+    models.AnnotationMapping.create_index('annotation')
+
     return flask.redirect(flask.url_for('route_admin'))
 
 @auth.get_password
