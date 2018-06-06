@@ -20,6 +20,13 @@ def route_index():
 @csrf.exempt
 def mapping():
     form = forms.MappingForm(csrf_enabled=False)
+    if 'private' not in request.form:
+        form.private.data = True
+    else:
+        if request.form['private'] == "0":
+            form.private.data = False
+        else:
+            form.private.data = True
     if form.validate_on_submit():
         profile_id = analysis.basic_mapping.from_table(form)
         return jsonify({'profile_id': profile_id})
@@ -30,6 +37,13 @@ def mapping():
 @csrf.exempt
 def comparison():
     form = forms.MappingForm(csrf_enabled=False)
+    if 'private' not in request.form:
+        form.private.data = True
+    else:
+        if request.form['private'] == "0":
+            form.private.data = False
+        else:
+            form.private.data = True
     if form.validate_on_submit():
         profile_id = analysis.basic_mapping.from_table(form)
         return jsonify({'profile_id': profile_id})
@@ -40,6 +54,13 @@ def comparison():
 @csrf.exempt
 def api_display():
     form = forms.DisplayForm(csrf_enabled=False)
+    if 'private' not in request.form:
+        form.private.data = True
+    else:
+        if request.form['private'] == "0":
+            form.private.data = False
+        else:
+            form.private.data = True
     if form.validate_on_submit():
         profile_id = profile_for_display(form)
         return jsonify({'profile_id': profile_id})
