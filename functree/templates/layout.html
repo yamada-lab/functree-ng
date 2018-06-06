@@ -87,6 +87,16 @@
         <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
         <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-44952254-2"></script>
+		<script>
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){dataLayer.push(arguments);}
+		  gtag('js', new Date());
+		
+		  gtag('config', 'UA-44952254-2');
+		</script>
+		<!-- End Google Analytics -->
         {% endblock %}
     </body>
 </html>
