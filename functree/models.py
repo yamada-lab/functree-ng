@@ -36,8 +36,3 @@ class Profile(db.Document):
 class AnnotationMapping(db.Document):
     annotation = db.StringField(required=True, max_length=100)
     ko_map = db.ListField(default=[])
-    meta = {
-        'indexes': [
-            {'fields': ['annotation']}
-        ]
-    }
