@@ -11,7 +11,7 @@ FuncTree is a web based application, which allows user to visualize, customize, 
 ## Installation
 Clone this repository and change directory to `functree-ng`:
 ```bash
-$ git clone --recursive https://github.com/yyuuta88/functree-ng.git
+$ git clone --recursive http://kiku.bio.titech.ac.jp/yyamate/functree-ng.git
 $ cd functree-ng
 ```
 Install dependencies and build the application:
