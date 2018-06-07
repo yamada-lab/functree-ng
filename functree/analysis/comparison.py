@@ -30,6 +30,11 @@ def calc_abundances(f1, f2, target):
     nodes = tree.get_nodes(root)
     entry_to_layer = dict(map(lambda x: (x['entry'], x['layer']), nodes))
 
+    # transform external annotations to kegg KOs
+    if target.lower() in ["kegg", "foam", "enteropathway"]:
+        df1 = analysis.map_external_annotations(df1)
+        df2 = analysis.map_external_annotations(df2)
+
     results1 = {}
     analysis.calc_abundances(df1, nodes, 'mean', results1)
     results2 = {}

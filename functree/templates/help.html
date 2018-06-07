@@ -624,11 +624,15 @@
 						command below to match your data. In its current form it will
 						upload the file '/tmp/profile.tsv' and map it to the KEGG tree.
 						The resulting profile will be public with a description that reads "Description of maximum
-						50 letters". The private switch could be omitted to keep the profile private (default behavior).</p>
+						50 letters". The private and modulecoverage switches could be omitted to keep the profile private 
+						and to generate a module coverage entry in the data series (default behavior).</p>
 					<pre>
 curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data" \ 
- 	-F 'target=<b>KEGG</b>' -F 'description="<b>Description of maximum 50 letters</b>"' \
- 	-F 'private=<b>0</b>' -F 'input_file=@<b>/tmp/profile.tsv</b>' \
+ 	-F 'target=<b>KEGG</b>' \
+ 	-F 'description="<b>Description of maximum 50 letters</b>"' \
+ 	-F 'modulecoverage=<b>0</b>' \
+ 	-F 'private=<b>0</b>' \
+ 	-F 'input_file=@<b>/tmp/profile.tsv</b>' \
  	https://bioviz.tokyo/functree2/api/mapping/
  </pre>
  					<p>
@@ -650,7 +654,9 @@ curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data
 						command below to match your data. In its current form it will
 						download the tree to '/tmp/functree.svg'</p>
 					<pre>
-curl -X GET -H "Accept: text/svg" "https://bioviz.tokyo/functree2/api/viewer/?profile_id=<b>668e8427-cdef-49cb-9698-7687f431a495</b>&series=<b>Abundance%20(Mean)</b>&columns=<b>sample1,sample2</b>" > <b>/tmp/functree.svg</b>
+curl -X GET -H "Accept: text/svg" \
+"https://bioviz.tokyo/functree2/api/viewer/?profile_id=<b>668e8427-cdef-49cb-9698-7687f431a495</b>&series=<b>Abundance%20(Mean)</b>&columns=<b>sample1,sample2</b>" \
+> <b>/tmp/functree.svg</b>
 </pre>
 					<p>Arguments that could be used in the query string are the
 						following:</p>

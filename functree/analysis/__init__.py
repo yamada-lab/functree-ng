@@ -36,8 +36,6 @@ def calc_abundances(df, nodes, method, results):
     """
     Generates mean or sum for all levels of functional Tree
     """
-    # transform external annotations to kegg KOs
-    df = map_external_annotations(df)
     df_out = pd.DataFrame(columns=df.columns)
     for node in nodes:
         entry_profile = None

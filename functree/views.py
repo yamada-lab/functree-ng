@@ -27,6 +27,15 @@ def mapping():
             form.private.data = False
         else:
             form.private.data = True
+    
+    if 'modulecoverage' not in request.form:
+        form.modulecoverage.data = True
+    else:
+        if request.form['modulecoverage'] == "0":
+            form.modulecoverage.data = False
+        else:
+            form.modulecoverage.data = True
+    
     if form.validate_on_submit():
         profile_id = analysis.basic_mapping.from_table(form)
         return jsonify({'profile_id': profile_id})

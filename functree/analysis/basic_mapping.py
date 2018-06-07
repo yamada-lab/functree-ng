@@ -28,6 +28,9 @@ def from_table(form):
 
 def calc_abundances(f, target, methods):
     df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
+    # transform external annotations to kegg KOs
+    if target.lower() in ["kegg", "foam", "enteropathway"]:
+        df = analysis.map_external_annotations(df)
     root = models.Tree.objects().get(source=target)['tree']
     nodes = tree.get_nodes(root)
     entry_to_layer = dict(map(lambda x: (x['entry'], x['layer']), nodes))
