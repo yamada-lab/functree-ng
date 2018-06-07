@@ -1,4 +1,4 @@
-{% set title = 'List of Profiles' %}
+{% set title = 'List of public Profiles' %}
 {% extends 'layout.html' %}
 
 {% block head %}
@@ -42,7 +42,28 @@
         </tr>
         {% endfor %}
     </table>
+
+	<div class="page-header">
+	 <h3>View private Profiles</h3>
     </div>
+	<form class="form-inline" action="{{ url_for('route_viewer') }}" method="GET">
+		<div class="form-group form-group-lg">
+			<label
+				class="sr-only"
+				for="profile_id">View private profile</label>
+			<div class="input-group">
+				<div class="input-group-addon">View private profile</div>
+				<input
+					type="text"
+					class="form-control"
+					id="profile_id"
+					name="profile_id"
+					size="37"
+					placeholder="668e8427-cdef-49cb-9698-7687f431a495">
+			</div>
+		</div>
+		<button type="submit" class="btn btn-primary btn-lg">View</button>
+	</form>
 </div>
 {% endblock %}
 

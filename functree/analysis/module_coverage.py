@@ -30,6 +30,9 @@ def calc_coverages(f, target, result_holder, method='mean'):
     root = models.Tree.objects().get(source=target)['tree']
     definition = models.Definition.objects().get(source=target)['definition']
     df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
+    # map annotation to KO first
+    if target.lower() in ["kegg", "foam", "enteropathway"]:
+        df = analysis.map_external_annotations(df)
 
     root = copy.deepcopy(root)
     nodes = tree.get_nodes(root)

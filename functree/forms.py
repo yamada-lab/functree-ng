@@ -1,6 +1,13 @@
 import wtforms, flask_wtf, flask_wtf.file
 from functree import models
 
+def get_targets():
+    '''
+    Returns the db targets with KEGG at the top 
+    '''
+    targets = models.Tree.objects.aggregate({'$group': {'_id': '$source'}})
+    targets_choices = [(target['_id'],) * 2 for target in targets]
+    return list(filter(lambda x: x[0] == "KEGG", targets_choices)) +  list(filter(lambda x: x[0] != "KEGG", targets_choices))
 
 class MappingForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
@@ -18,10 +25,7 @@ class MappingForm(flask_wtf.FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(MappingForm, self).__init__(*args, **kwargs)
-        targets = models.Tree.objects.aggregate(
-            {'$group': {'_id': '$source'}}
-        )
-        self.target.choices = [(target['_id'],) * 2 for target in targets]
+        self.target.choices = get_targets()
 
 class ComparisonForm(flask_wtf.FlaskForm):
     input_file1 = flask_wtf.file.FileField('Input file #1', validators=[
@@ -60,7 +64,21 @@ class DisplayForm(flask_wtf.FlaskForm):
  
     def __init__(self, *args, **kwargs):
         super(DisplayForm, self).__init__(*args, **kwargs)
-        targets = models.Tree.objects.aggregate(
-            {'$group': {'_id': '$source'}}
-        )
-        self.target.choices = [(target['_id'],) * 2 for target in targets]
+        self.target.choices = get_targets()
+        
+class UploadForm(flask_wtf.FlaskForm):
+    input_file = flask_wtf.file.FileField('Input file', validators=[
+        flask_wtf.file.FileRequired()
+    ])
+    target = wtforms.TextField('Database', validators=[
+        wtforms.validators.Length(max=50)
+    ])
+    description = wtforms.TextField('Description', validators=[
+        wtforms.validators.Length(max=50)
+    ])
+
+    private = wtforms.BooleanField('Keep the reference private (Hide from "List of Trees")', default=True)
+    submit = wtforms.SubmitField('Submit')
+
+    def __init__(self, *args, **kwargs):
+        super(UploadForm, self).__init__(*args, **kwargs)

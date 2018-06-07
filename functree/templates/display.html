@@ -29,9 +29,9 @@
                             </span>
                             {% endif %}
                         </div>
-                        <div class="col-sm-7"> <span> Tab-separated KO abundance table or a FuncTree compliant JSON file</span></div>
+                        <div class="col-sm-7"> <span>FuncTree compliant JSON file or a Tab-separated KO abundance table. 
+                        	<br />For the latter the color file below is required to customize the colors) </span></div>
                     </div>
-<div id="tsv-options" class="collapse">
                     {% if form.color_file %}
                        {{tags.color_input(form)}}
                     {% endif %}
@@ -61,7 +61,8 @@
                             {% endif %}
                         </div>
                     </div>
-</div>
+
+
                     <div class="form-group{% if form.private.errors %} has-error{% endif %}">
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="checkbox">

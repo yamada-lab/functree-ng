@@ -1,11 +1,11 @@
 import uuid, datetime, multiprocessing
 import pandas as pd
-from functree import app, models, tree, analysis
+from functree import app, models, tree, analysis, services
 
 
 def from_table(form):
     methods=['mean', 'sum']
-    if form.modulecoverage.data:
+    if form.modulecoverage.data and services.DefinitionService.has_definition(form.target.data):
         methods.append('modulecoverage')
     result = calc_abundances(f=form.input_file.data, target=form.target.data, methods=methods)
     colors = []
@@ -28,6 +28,9 @@ def from_table(form):
 
 def calc_abundances(f, target, methods):
     df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
+    # transform external annotations to kegg KOs
+    if target.lower() in ["kegg", "foam", "enteropathway"]:
+        df = analysis.map_external_annotations(df)
     root = models.Tree.objects().get(source=target)['tree']
     nodes = tree.get_nodes(root)
     entry_to_layer = dict(map(lambda x: (x['entry'], x['layer']), nodes))
@@ -51,6 +54,7 @@ def calc_abundances(f, target, methods):
     profile = []
     # load KO based entries
     entries=list(list(results.values())[0].index)
+    
     if "modulecoverage" in methods:
         entries += list(list(results.values())[2].index)
         entries = list(set(entries))

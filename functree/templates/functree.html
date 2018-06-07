@@ -20,11 +20,15 @@
     </div>
 </form>
 <hr>
-<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-options" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
+<div id="customization-alert" class="alert alert-info alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>The initial tree is empty!</strong> Please use the options below to customize it.
+</div>
+<h5><i class="fa fa-cog" aria-hidden="true"></i> Customization options <a id="options" href="#form-options" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
 <form id="form-options" class="collapse" v-on:submit.prevent="submit" v-on:reset="reset">
     <div class="form-group">
         <label class="control-label">Data series</label>
-        <select class="form-control input-sm" v-on:change="clickOptionSeries" v-model="series">
+        <select id="series" class="form-control input-sm" v-on:change="clickOptionSeries" v-model="series">
             <option disabled value="">- Select data series -</option>
             <option v-for="(option, index) in options[0]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
@@ -32,13 +36,13 @@
     <div class="form-group">
         <label class="control-label">Data mapping: Stacked bars of multiple columns</label>
         <h6>Choose column(s) to map</h6>
-        <select class="form-control input-sm" multiple v-model.number="columnsMultiple">
+        <select id="columns" class="form-control input-sm" multiple v-model.number="columnsMultiple">
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
         <h6>Stacking</h6>
         <div class="checkbox">
             <label>
-                <input type="checkbox" v-model="percentage">
+                <input id="stacking" type="checkbox" v-model="percentage">
                 Enable 100% stacking
             </label>
         </div>
@@ -46,12 +50,12 @@
     <div class="form-group">
         <label class="control-label">Data mapping: Circle for one sample</label>
         <h6>Choose a column to map</h6>
-        <select class="form-control input-sm" v-model.number="columnsSingle">
+        <select id="circle-map" class="form-control input-sm" v-model.number="columnsSingle">
             <option value="">None</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
         <h6>Color coding</h6>
-        <select class="form-control input-sm" v-model="colorizeBy">
+        <select id="color-coding" class="form-control input-sm" v-model="colorizeBy">
             <option title="Layer: Gives the same color to nodes of the samle layer (e.g. by Pathway, by Module, ...)" value="layer">Layer</option>
             <option value="column">Column</option>
             <option value="entry">Entry</option>
@@ -61,17 +65,17 @@
         <label class="control-label">Other settings</label>
         <div class="checkbox">
             <label>
-                <input type="checkbox" checked="checked" v-model="normalize">
+                <input id="normalize" type="checkbox" checked="checked" v-model="normalize">
                 Enable normalization
             </label>
         </div>
         <h6>Max depth of tree</h6>
-        <select class="form-control input-sm" v-model="layer">
+        <select id="depth" class="form-control input-sm" v-model="layer">
             <option v-for="(l, i) in layers" v-bind:value="i">{% raw %}{{l}}{% endraw %}</option>
         </select>
     </div>
     <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> Update</button>
+        <button id="update" type="submit" class="btn btn-primary btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> Update</button>
         <button type="reset" class="btn btn-default btn-sm"> Reset</button>
     </div>
 </form>
@@ -226,7 +230,6 @@
                     this.$set(this.options, 1, profile.columns[this.series]);
                 },
                 'submit': function() {
-                    console.log(this);
                     var self = this;
                     var profileDict = {};
                     for (var i in profile.profile) {
@@ -268,6 +271,7 @@
                         })
                         .initTree(zeroize=false)
                         .update();
+                    $("#customization-alert").alert('close')
                 },
                 'reset': function() {
                     funcTree

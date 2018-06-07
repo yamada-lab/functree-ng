@@ -1,26 +1,24 @@
-{% set title = 'Help' %} 
-{% extends 'layout.html' %} 
-
-{% block head %}
+{% set title = 'Help' %} {% extends 'layout.html' %} {% block head %}
 {{super()}}
-<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/help.css') }}">
-{% endblock %}
-
-
-{% block content %}
+<link
+	rel="stylesheet"
+	href="{{ url_for('static', filename='dist/css/help.css') }}">
+{% endblock %} {% block content %}
 <div class="container">
 	<div class="page-header">
 		<h1>FuncTree2 Documentation</h1>
 	</div>
-	<section id="introduction" class="page-header">
+	<section
+		id="introduction"
+		class="page-header">
 		<div class="row">
 			<div class="col-sm-6">
 				<p class="lead justify">
 					FuncTree2 allows you to visualize and explore omics data in the
-					hierarchical context of biological ontologies. Mapping omics
-					data onto a pre-defined interactive treemap, based on the
-					<a href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
-						target="_blank">KEGG Brite functional hierarchy</a>, lets you
+					hierarchical context of biological ontologies. Mapping omics data
+					onto a pre-defined interactive treemap, based on the <a
+						href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
+						target="_blank">KEGG Brite functional hierarchy</a> (or your own), lets you
 					quickly and comprehensively understand the functional potential of
 					your data, which will help you develop further hypothesis and
 					scientific insights. Statistical tests, module pathway
@@ -29,7 +27,8 @@
 				</p>
 			</div>
 			<div class="col-sm-6">
-				<img alt=""
+				<img
+					alt=""
 					src="{{ url_for('static', filename='images/functree-kegg-overview.png') }}"
 					width="300px">
 			</div>
@@ -37,27 +36,32 @@
 		<hr />
 		<div class="row">
 			<div class="col-sm-offset-3 col-sm-6">
-				<p style="text-align: center; font-size: 16px; font-style: italic; color: grey;">
+				<p
+					style="text-align: center; font-size: 16px; font-style: italic; color: grey;">
 					Here you will learn about the different types of analysis available
-					in FuncTree2 and the accepted <a href="#data-format">data formats</a>.
-					We also give you some usage tips and a sneak preview of what your 
-					<a href="#example">output</a> will look like.
+					in FuncTree2 and the accepted <a href="#data-format">data
+						formats</a>. We also give you some usage tips and a sneak preview of
+					what your <a href="#example">output</a> will look like.
 				</p>
 			</div>
 		</div>
 	</section>
-	<section id="data-format" class="page-header">
+	<section
+		id="data-format"
+		class="page-header">
 		<h2>Data format</h2>
 		<h3>Tab separated matrices</h3>
 		<div class="row">
 			<div class="col-sm-6">
-				<table id="omics-matrix" class="table">
+				<table
+					id="omics-matrix"
+					class="table">
 					<caption style="caption-side: bottom; text-align: left;">
-						Snippet of input data matrix.
-						 <span>
-						 	<a href="{{ url_for('static', filename='data/example/profile.tsv') }}"
-							target="_blank"><i class="fa fa-download" aria-hidden="true"></i>
-								Full example</a></span>
+						Snippet of input data matrix. <span> <a
+							href="{{ url_for('static', filename='data/example/profile.tsv') }}"
+							target="_blank"><i
+								class="fa fa-download"
+								aria-hidden="true"></i> Full example</a></span>
 					</caption>
 					<thead>
 						<tr role="row">
@@ -118,18 +122,34 @@
 					one of the following ontology databases is accepted:</p>
 				<ul class="list-group">
 					<li class="list-group-item list-group-item-success">KEGG KO</li>
-					<li class="list-group-item list-group-item-success">KEGG Modules</li>
-				{#	<li class="list-group-item list-group-item-info">NCBI gene ids</li>  #}
+					<li class="list-group-item list-group-item-success">KEGG Modules</li> 
+					<li class="list-group-item list-group-item-success">KEGG Reactions</li>
+					<li class="list-group-item list-group-item-success">KEGG Genes</li>
+					<li class="list-group-item list-group-item-success">STRING proteins</li>
+					<li class="list-group-item list-group-item-success">COGs/eggNOGGs</li>
+					<li class="list-group-item list-group-item-success">EC numbers (EC:1.1.1.1)</li>
+					<li class="list-group-item list-group-item-success">Carbohydrate-Active enZYmes (CAZY:GT35)</li>
+					<li class="list-group-item list-group-item-success">Gene Ontology terms (GO:0004022)</li>
+					<li class="list-group-item list-group-item-success">Uniprot IDs (UNIPROT:C1MSP6)</li>
+					<li class="list-group-item list-group-item-success">NCBI Gene IDs (NCBI-GI:100000006)</li>
 				</ul>
-				<p>In addition an optional Tab separated color list could be uploaded to color associated annotations in circle mode .</p>
-				<span>
-					<a data-toggle="collapse" href="#color-list"><i class="fa fa-eye" aria-hidden="true"></i> Display color list snippet</a>
-				</span>&nbsp;
-				<span>
-					<a href="{{ url_for('static', filename='data/example/color.tsv') }}" target="_blank">
-						<i class="fa fa-download" aria-hidden="true"></i> Full example</a>
+				<p>In addition an optional Tab separated color list could be
+					uploaded to color associated annotations in circle mode .</p>
+				<span> <a
+					data-toggle="collapse"
+					href="#color-list"><i
+						class="fa fa-eye"
+						aria-hidden="true"></i> Display color list snippet</a>
+				</span>&nbsp; <span> <a
+					href="{{ url_for('static', filename='data/example/color.tsv') }}"
+					target="_blank"> <i
+						class="fa fa-download"
+						aria-hidden="true"></i> Full example
+				</a>
 				</span>
-				<table id="color-list" class="table table-hover table-striped dataTable no-footer collapse">
+				<table
+					id="color-list"
+					class="table table-hover table-striped dataTable no-footer collapse">
 					<thead>
 						<tr role="row">
 							<th>Annotation</th>
@@ -161,11 +181,15 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<br />
-				<p class="justify">Processed datasets could be exported in JSON 
-				<span><a href="{{ url_for('static', filename='data/example/profile.json') }}"
-						target="_blank"> <i class="fa fa-download" aria-hidden="true"></i> format
-					</a></span> and <a href="{{ url_for('route_analysis', mode='display') }}">re-uploaded</a> later to FuncTree2.
-					Below is an example of a valid JSON file and its schema definition.   
+				<p class="justify">
+					Processed datasets could be exported in JSON <span><a
+						href="{{ url_for('static', filename='data/example/profile.json') }}"
+						target="_blank"> <i
+							class="fa fa-download"
+							aria-hidden="true"></i> format
+					</a></span> and <a href="{{ url_for('route_analysis', mode='display') }}">re-uploaded</a>
+					later to FuncTree2. Below is an example of a valid JSON file and
+					its schema definition.
 				</p>
 			</div>
 			<div class="col-sm-12">
@@ -193,38 +217,45 @@
 							role="tabpanel"
 							class="tab-pane active"
 							id="json-data-snippet">
-<pre class="pre-scrollable"><code data-language="json">{{ json_example() }}</code></pre>
+							<pre class="pre-scrollable">
+<code data-language="json">{{ json_example() }}</code>
+							</pre>
 						</div>
 						<div
 							role="tabpanel"
 							class="tab-pane"
 							id="json-data-schema">
-<pre class="pre-scrollable"><code data-language="json">{{ json_schema() }}</code>
+							<pre class="pre-scrollable">
+<code data-language="json">{{ json_schema() }}</code>
 							</pre>
 						</div>
 					</div>
 				</div>
-				<span>
-					<a href="{{ url_for('static', filename='data/example/data-example.json') }}" target="_blank">
-					<i class="fa fa-download" aria-hidden="true"></i> Example</a>
-				</span>&nbsp;
-				<span>
-					<a href="{{ url_for('static', filename='data/example/data-schema.json') }}" target="_blank">
-					<i class="fa fa-download" aria-hidden="true"></i> Schema</a>
+				<span> <a
+					href="{{ url_for('static', filename='data/example/data-example.json') }}"
+					target="_blank"> <i
+						class="fa fa-download"
+						aria-hidden="true"></i> Example
+				</a>
+				</span>&nbsp; <span> <a
+					href="{{ url_for('static', filename='data/example/data-schema.json') }}"
+					target="_blank"> <i
+						class="fa fa-download"
+						aria-hidden="true"></i> Schema
+				</a>
 				</span>
 			</div>
 		</div>
 	</section>
-	
 	{#
-	
-	<section id="workflow" class="page-header">
-
+	<section
+		id="workflow"
+		class="page-header">
 		<h2>Workflow</h2>
-
 		<div class="row">
 			<div class="col-sm-12">
-				<img alt=""
+				<img
+					alt=""
 					src="{{ url_for('static', filename='images/workflow.png') }}"
 					width="960px">
 			</div>
@@ -243,31 +274,47 @@
 			<li>FDR?
 		</ul>
 	</section>
-	
 	#}
-	
-	<section id="Viewer" class="page-header">
+	<section
+		id="Viewer"
+		class="page-header">
 		<h2>Viewer</h2>
 		<section id="functree">
 			<div class="row">
 				<div class="col-sm-6">
 					<h3>FuncTree</h3>
 					<p class="lead">
-						<a data-target="#functree-carousel" data-slide-to="0" class="pointer">FuncTree explorer</a> turns an ontology database
-						into an interactive <a href="https://github.com/d3/d3-hierarchy#tree" target="_blank">Radial Tidy Tree</a> where each 
-						layer of nodes is mapped to a level of the ontology. The outermost layer is always the lowest level visualized, while 
-						the innermost layer is the highest level, and nodes represent biological entries (e.g. KO, Modules, pathways, ...).
-						<br /><br />
-						
-						The four highest levels are shown by default, but more or less levels could be shown by modifying the depth of the tree
-						in the option pane.	Clicking on a node collapses or reveals its children nodes, while right-clicking opens a context menu
-						that offers <a data-target="#functree-carousel" data-slide-to="1" class="pointer">re-rooting</a> of the tree by visualizing the selection as a Radial Tidy Tree in a new Viewer window. The menu
-						can display more details about the selection or copy it to clipboard. Mouse gestures enable 
-						<a data-target="#functree-carousel" data-slide-to="2" class="pointer">zooming (middle&nbsp;button) and panning (click&nbsp;+&nbsp;drag)</a>. 
-						<br /><br />
-						A search with auto-complete is available to help quickly 
-						<a data-target="#functree-carousel" data-slide-to="3" class="pointer">locating</a>
-						a biological entry of interest on the tree.
+						<a
+							data-target="#functree-carousel"
+							data-slide-to="0"
+							class="pointer">FuncTree explorer</a> turns an ontology database
+						into an interactive <a
+							href="https://github.com/d3/d3-hierarchy#tree"
+							target="_blank">Radial Tidy Tree</a> where each layer of nodes is
+						mapped to a level of the ontology. The outermost layer is always
+						the lowest level visualized, while the innermost layer is the
+						highest level, and nodes represent biological entries (e.g. KO,
+						Modules, pathways, ...). <br />
+						<br /> The four highest levels are shown by default, but more or
+						less levels could be shown by modifying the depth of the tree in
+						the option pane. Clicking on a node collapses or reveals its
+						children nodes, while right-clicking opens a context menu that
+						offers <a
+							data-target="#functree-carousel"
+							data-slide-to="1"
+							class="pointer">re-rooting</a> of the tree by visualizing the
+						selection as a Radial Tidy Tree in a new Viewer window. The menu
+						can display more details about the selection, copy it to
+						clipboard, or open it in the KEGG database. Mouse gestures enable <a
+							data-target="#functree-carousel"
+							data-slide-to="2"
+							class="pointer">zooming (middle&nbsp;button) and panning
+							(click&nbsp;+&nbsp;drag)</a>. <br />
+						<br /> A search with auto-complete is available to help quickly <a
+							data-target="#functree-carousel"
+							data-slide-to="3"
+							class="pointer">locating</a> a biological entry of interest on
+						the tree.
 					</p>
 				</div>
 				<hr />
@@ -339,18 +386,21 @@
 			<hr />
 			<div class="row">
 				<div class="col-sm-12">
-					<img alt="" class="img-responsive" style="width: 100%;"
+					<img
+						alt=""
+						class="img-responsive"
+						style="width: 100%;"
 						src="{{ url_for('static', filename='images/mapping-overview.png') }}">
 				</div>
 				<div class="col-sm-12">
 					<hr />
-					<p class="lead" style="text-align: center;">
-						FuncTree viewer is highly customizable to reflect user data. For
-						example KEGG KO abundance from one or multiple samples is
-						visualized on the KO layer in the form of stacked bars or colored
-						circles. Values for higher layers are also derived and visualized in
-						the same fashion.
-					</p>
+					<p
+						class="lead"
+						style="text-align: center;">FuncTree viewer is highly
+						customizable to reflect user data. For example KEGG KO abundance
+						from one or multiple samples is visualized on the KO layer in the
+						form of stacked bars or colored circles. Values for higher layers
+						are also derived and visualized in the same fashion.</p>
 				</div>
 			</div>
 			<div class="row">
@@ -375,19 +425,20 @@
 							Defaults to grey.
 					</ul>
 				</div>
-				</div>
-				<div class="row">
+			</div>
+			<div class="row">
 				<div class="col-sm-6">
 					<h4>Data series generation</h4>
-					<p>
-						FuncTree summarizes KO abundances on higher layers by taking the
-						mean or the sum of the KOs mapped to an entity on the layer.
-					</p> 
+					<p>FuncTree summarizes KO abundances on higher layers by taking
+						the mean or the sum of the KOs mapped to an entity on the layer.</p>
 					<div>
 						<ul>
-							<li>Each node abundance is calculated as the mean of its mapped KOs normalized by its KO size.
-							<li>In case sum only a sum is applied 
-							<li>In case of modules the module coverage is visualized, then on parent levels the mean of module coverage is used (without normalization) 
+							<li>Each node abundance is calculated as the mean of its
+								mapped KOs normalized by its KO size.
+							<li>In case sum only a sum is applied
+							<li>In case of modules the module coverage is visualized,
+								then on parent levels the mean of module coverage is used
+								(without normalization)
 						</ul>
 					</div>
 				</div>
@@ -403,26 +454,50 @@
 			<div class="row row-flex">
 				<div class="col-md-4 col-center">
 					<div>
-					<h3>Summary charts</h3>
-					<ol class="lead">
-						<li data-target="#summary-charts-carousel" data-slide-to="0" class="active" style="cursor: pointer;">Stacked barplot</li>
-						<li	data-target="#summary-charts-carousel" data-slide-to="1" style="cursor: pointer;">Normalized Stacked barplot</li>
-						<li	data-target="#summary-charts-carousel" data-slide-to="2" style="cursor: pointer;">Pie chart</li>
-						<li	data-target="#summary-charts-carousel" data-slide-to="3" style="cursor: pointer;">Heatmap</li>
-					</ol>
-					<p class="lead">Charts could be exported into SVG, PDF, PNG, and JPEG</p>
+						<h3>Summary charts</h3>
+						<ol class="lead">
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="0"
+								class="active"
+								style="cursor: pointer;">Stacked barplot</li>
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="1"
+								style="cursor: pointer;">Normalized Stacked barplot</li>
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="2"
+								style="cursor: pointer;">Pie chart</li>
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="3"
+								style="cursor: pointer;">Heatmap</li>
+						</ol>
+						<p class="lead">Charts could be exported into SVG, PDF, PNG,
+							and JPEG</p>
 					</div>
 				</div>
 				<div class="col-sm-8">
-					<div id="summary-charts-carousel"
+					<div
+						id="summary-charts-carousel"
 						class="carousel slide"
 						data-ride="carousel">
 						<!-- Indicators -->
 						<ol class="carousel-indicators">
-							<li data-target="#summary-charts-carousel" data-slide-to="0" class="active"></li>
-							<li	data-target="#summary-charts-carousel" data-slide-to="1"></li>
-							<li	data-target="#summary-charts-carousel" data-slide-to="2"></li>
-							<li	data-target="#summary-charts-carousel" data-slide-to="3"></li>
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="0"
+								class="active"></li>
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="1"></li>
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="2"></li>
+							<li
+								data-target="#summary-charts-carousel"
+								data-slide-to="3"></li>
 						</ol>
 						<!-- Wrapper for slides -->
 						<div
@@ -477,24 +552,35 @@
 		<section>
 			<div class="row row-flex">
 				<div class="col-sm-8">
-					<img class="img-thumbnail img-fluid" alt=""
+					<img
+						class="img-thumbnail img-fluid"
+						alt=""
 						src="{{ url_for('static', filename='images/ipath.png') }}">
 				</div>
 				<div class="col-sm-4 col-center">
-					<p class="lead"><b>iPath integration</b><br />FuncTree can display its data series or raw input KOs on iPath</p>
+					<p class="lead">
+						<b>iPath integration</b><br />FuncTree can display its data
+						series or raw input KOs on iPath
+					</p>
 				</div>
 			</div>
 		</section>
 		<hr />
 		<section>
 			<div class="row row-flex">
-				<div class="col-sm-5 col-center"> 
-					<p class="lead"><b>Summary Table</b><br /> FuncTree nodes of a data series are presented in the Entry column of the table
-					and given a layer value and a numerical value for all samples in the series. Download in TSV format is available for further
-					exploration and manipulation offline.</p>
+				<div class="col-sm-5 col-center">
+					<p class="lead">
+						<b>Summary Table</b><br /> FuncTree nodes of a data series are
+						presented in the Entry column of the table and given a layer value
+						and a numerical value for all samples in the series. Download in
+						TSV format is available for further exploration and manipulation
+						offline.
+					</p>
 				</div>
 				<div class="col-sm-offset-1 col-sm-6">
-					<img class="img-thumbnail img-fluid" alt=""
+					<img
+						class="img-thumbnail img-fluid"
+						alt=""
 						src="{{ url_for('static', filename='images/table.png') }}">
 				</div>
 			</div>
@@ -503,28 +589,110 @@
 		<section id="data-sharing">
 			<div class="row row-flex">
 				<div class="col-sm-6">
-					<img class="img-thumbnail img-fluid" alt=""
+					<img
+						class="img-thumbnail img-fluid"
+						alt=""
 						src="{{ url_for('static', filename='images/summary.png') }}">
 				</div>
 				<div class="col-sm-offset-1 col-sm-5 col-center">
-					<p class="lead"><b>Profile storage, download, and sharing</b><br /> Profiles are optionally stored in FuncTree for a period of 7 days and could be shared by clicking the share icon
-					which copies the share link to the clipboard and displays it on screen. Alternatively, profiles could be downloaded in JSON format for permanent storage or sharing.
-					The <a href="{{ url_for('route_analysis', mode='display') }}">display</a> function allows re-upload and display of the JSON profiles in FuncTree.</p>
+					<p class="lead">
+						<b>Profile storage, download, and sharing</b><br /> Profiles are
+						optionally stored in FuncTree for a period of 7 days and could be
+						shared by clicking the share icon which copies the share link to
+						the clipboard and displays it on screen. Alternatively, profiles
+						could be downloaded in JSON format for permanent storage or
+						sharing. The <a
+							href="{{ url_for('route_analysis', mode='display') }}">display</a>
+						function allows re-upload and display of the JSON profiles in
+						FuncTree.
+					</p>
 				</div>
 			</div>
 		</section>
 	</section>
 	<section class="page-header">
-		<h2 id="example">Batch Access</h2>
-		A REST API is under development...
-		{#<p>A REST API is available for automated interaction with FuncTree2. All available interactions on the web client are also available in the API.</p>
-		<p>For large scale processing it is recommended to use <a href="https://github.com/yyuuta88/functree-cli" target="_blank">functree-cli</a>, a command line 
-		utility to generate FuncTrees locally</p>#}
+		<h2 id="batch">Batch Access</h2>
+		<section id="rest">
+			<div class="row">
+				<div class="col-sm-12">
+					<h3>REST</h3>
+					<p class="lead">A REST API is available for automated
+						interaction with FuncTree2. All available interactions on the web
+						client are also available in the API.</p>
+					<h4>Map, Compare or Display profiles</h4>
+					<p>To map a profile please edit the bold parts in the
+						command below to match your data. In its current form it will
+						upload the file '/tmp/profile.tsv' and map it to the KEGG tree.
+						The resulting profile will be public with a description that reads "Description of maximum
+						50 letters". The private and modulecoverage switches could be omitted to keep the profile private 
+						and to generate a module coverage entry in the data series (default behavior).</p>
+					<pre>
+curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data" \ 
+ 	-F 'target=<b>KEGG</b>' \
+ 	-F 'description="<b>Description of maximum 50 letters</b>"' \
+ 	-F 'modulecoverage=<b>0</b>' \
+ 	-F 'private=<b>0</b>' \
+ 	-F 'input_file=@<b>/tmp/profile.tsv</b>' \
+ 	https://bioviz.tokyo/functree2/api/mapping/
+ </pre>
+ 					<p>
+						After a successful upload an id like <b>668e8427-cdef-49cb-9698-7687f431a495</b>
+						will be returned and should be used for further interaction.
+					</p>
+					<p>
+						The same logic applies for comparison and display, only the URL is different
+					</p>
+					<div>
+					<ul> 
+						<li>https://bioviz.tokyo/functree2/api/<b>display</b>/
+						<li>https://bioviz.tokyo/functree2/api/<b>comparison</b>/
+					</ul>
+					</div>
+					<br />
+					<h4>Download of a profile</h4>
+					<p>To download a profile please edit the bold parts in the
+						command below to match your data. In its current form it will
+						download the tree to '/tmp/functree.svg'</p>
+					<pre>
+curl -X GET -H "Accept: text/svg" \
+"https://bioviz.tokyo/functree2/api/viewer/?profile_id=<b>668e8427-cdef-49cb-9698-7687f431a495</b>&series=<b>Abundance%20(Mean)</b>&columns=<b>sample1,sample2</b>" \
+> <b>/tmp/functree.svg</b>
+</pre>
+					<p>Arguments that could be used in the query string are the
+						following:</p>
+					<ul>
+						<li>profile_id <b>(required)</b>: the profile id to visualize
+						<li>series <b>(required)</b>: the series to visualize. Possible values are mean, sum, or modulecoverage unless a json file was uploaded with different names for data series.
+						<li>columns: a comma separated list of columns to visualize (e.g. sample1,sample2)
+						<li>circle-column: Name of one sample to map as circle on top of the nodes. (e.g. sample3)
+						<li>color-code: Only used if circle-column has a value. [Layer, Column, Entry]. Defaults to Layer.
+						<li>stack: should 100% stacking be enabled? Should be appended without a value (e.g. &stack)
+						<li>disable-normalization: should normalization be disabled? Should be appended without a value (e.g. &disable-normalization)
+						<li>depth: depth of tree. Possible values for KEGG hierarchy are [brite0, brite1, brite2, pathway, module, ko]. Defaults to module. 
+					</ul>
+				</div>
+			</div>
+		</section>
+		<section id="functree-cli">
+			<div class="row">
+				<div class="col-sm-12">
+					<h3>Command-line tool</h3>
+					<p class="lead">
+						For large scale processing the <a
+							href="https://github.com/yyuuta88/functree-cli"
+							target="_blank">functree-cli</a> could be used to generate
+						FuncTrees locally.
+					</p>
+				</div>
+			</div>
+		</section>
 	</section>
+	{#
 	<section class="page-header">
 		<h2 id="example">Examples</h2>
-		Coming soon..
-		{#Add metagenomics, multiomics and pangenomics examples, in a carousel #}
+		Coming soon.. Add metagenomics, multiomics and pangenomics examples,
+		in a carousel
 	</section>
+	 #}
 </div>
 {% endblock %}

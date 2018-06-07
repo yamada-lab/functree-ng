@@ -32,3 +32,7 @@ class Profile(db.Document):
             {'fields': ['expire_at'], 'expireAfterSeconds': 0}
         ]
     }
+
+class AnnotationMapping(db.Document):
+    annotation = db.StringField(required=True, max_length=100)
+    ko_map = db.ListField(default=[])

@@ -23,7 +23,7 @@
 {% block mainpane %}
 <div class="panel panel-default">
     <div class="panel-heading">
-        Data series: <span class="badge">{{profile.series[series]}}</span>
+        Data series: <span class="badge">{{profile.series[series]}}</span> <span class="label label-info">Beta feature</span>
     </div>
     <div class="panel-body">
         <form id="form-option" class="form-inline" v-on:submit.prevent="submit">
@@ -36,8 +36,18 @@
             <button type="submit" class="btn btn-sm btn-primary"><i aria-hidden="true" class="fa fa-refresh"></i> Update</button>
         </form>
         <hr>
-        <div class="thumbnail">
-            <iframe name="ipath" width="100%" height="600" frameborder="0"></iframe>
+        <div id="ipatharea" class="thumbnail">
+			<div id="loading">
+				<div>
+					<p>
+						<i class="fa fa-spinner fa-pulse fa-4x fa-fw"></i>
+					</p>
+					<p>Loading...</p>
+				</div>
+			</div>
+			<iframe name="ipath" width="100%" height="800" frameborder="0">
+            Loading
+            </iframe>
         </div>
     </div>
 </div>
@@ -75,6 +85,7 @@
                 'methods': {
                     'submit': function() {
                         visualize(profile, columns, this.column)
+                        $('#loading').show();
                     }
                 }
             });
@@ -85,5 +96,6 @@
             console.error(error);
             alert('An error occurred');
         });
+    	$('#ipatharea iframe').on("load", function() { $('#loading').hide(); })
 </script>
 {% endblock %}

@@ -1,0 +1,84 @@
+{
+  "entry": "example",
+  "name": "Example reference",
+  "layer": "root",
+  "children": [
+  {"entry": "map00010",
+  "name": "Name of map00010",
+  "layer": "L1",
+  "children": [
+    {
+      "entry": "M00001",
+      "name": "Name of M00001",
+      "layer": "Module",
+      "children": [
+        {
+          "entry": "K00003",
+          "name": "Name of K00003",
+          "layer": "gene"
+        },
+        {
+          "entry": "K12407",
+          "name": "Name of K12407",
+          "layer": "gene"
+        }
+      ]
+    },{
+      "entry": "M00002",
+      "name": "Name of M00002",
+      "layer": "Module",
+      "children": [
+        {
+          "entry": "K00844",
+          "name": "Name of K00844",
+          "layer": "gene"
+        },
+        {
+          "entry": "K12407",
+          "name": "name of K12407",
+          "layer": "gene"
+        }
+      ]
+    }
+  ]
+},{
+  "entry": "map00012",
+  "name": "Name of map00012",
+  "layer": "L1",
+  "children": [
+    {
+      "entry": "M00003",
+      "name": "Name of M00003",
+      "layer": "Module",
+      "children": [
+        {
+          "entry": "K00844",
+          "name": "name of K00844",
+          "layer": "gene"
+        },
+        {
+          "entry": "K12407",
+          "name": "name of K12407",
+          "layer": "gene"
+        }
+      ]
+    },{
+      "entry": "M00004",
+      "name": "name of M00004",
+      "layer": "Module",
+      "children": [
+        {
+          "entry": "K00844",
+          "name": "Name of K00844",
+          "layer": "gene"
+        },
+        {
+          "entry": "K12407",
+          "name": "Name of K12407",
+          "layer": "gene"
+        }
+      ]
+    }
+  ]
+}]
+}

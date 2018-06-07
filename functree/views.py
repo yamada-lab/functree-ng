@@ -1,13 +1,148 @@
 import datetime, json, os, uuid, urllib.request, urllib.error, re
 import flask, werkzeug.exceptions, cairosvg
-from functree import __version__, app, auth, filters, forms, models, tree, analysis, cache
+import mimetypes
+from flask import jsonify, request
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import TimeoutException
+from functree import __version__, app, auth, csrf, filters, forms, models, tree, analysis, cache
 from functree.crckm.src import download as crckm
-
 
 @app.route('/')
 def route_index():
     return flask.render_template('index.html')
 
+@app.route('/api/mapping/', methods=['POST'])
+@csrf.exempt
+def mapping():
+    form = forms.MappingForm(csrf_enabled=False)
+    if 'private' not in request.form:
+        form.private.data = True
+    else:
+        if request.form['private'] == "0":
+            form.private.data = False
+        else:
+            form.private.data = True
+    
+    if 'modulecoverage' not in request.form:
+        form.modulecoverage.data = True
+    else:
+        if request.form['modulecoverage'] == "0":
+            form.modulecoverage.data = False
+        else:
+            form.modulecoverage.data = True
+    
+    if form.validate_on_submit():
+        profile_id = analysis.basic_mapping.from_table(form)
+        return jsonify({'profile_id': profile_id})
+    else:
+        return jsonify({'errors': form.errors})
+
+@app.route('/api/comparison/', methods=['POST'])
+@csrf.exempt
+def comparison():
+    form = forms.MappingForm(csrf_enabled=False)
+    if 'private' not in request.form:
+        form.private.data = True
+    else:
+        if request.form['private'] == "0":
+            form.private.data = False
+        else:
+            form.private.data = True
+    if form.validate_on_submit():
+        profile_id = analysis.basic_mapping.from_table(form)
+        return jsonify({'profile_id': profile_id})
+    else:
+        return jsonify({'errors': form.errors})
+
+@app.route('/api/display/', methods=['POST'])
+@csrf.exempt
+def api_display():
+    form = forms.DisplayForm(csrf_enabled=False)
+    if 'private' not in request.form:
+        form.private.data = True
+    else:
+        if request.form['private'] == "0":
+            form.private.data = False
+        else:
+            form.private.data = True
+    if form.validate_on_submit():
+        profile_id = profile_for_display(form)
+        return jsonify({'profile_id': profile_id})
+    else:
+        return jsonify({'errors': form.errors})
+
+@app.route('/api/viewer/', methods=['GET'])
+def api_viewer():
+    # process args 
+    profile_id = request.args.get('profile_id', type=uuid.UUID)
+    series_value = request.args.get('series')
+    column_values = request.args.get("columns").split(",")
+    circle_column_value = request.args.get("circle-column")
+    is_stack = request.args.get("stack")
+    is_disable_normalization = request.args.get("disable-normalization")
+    color_code=request.args.get("color-code")
+    depth_value=request.args.get("depth")
+    # initialize a headless chrome
+    chrome_options = Options()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--auto-open-devtools-for-tabs')
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument("window-size=1980,1200");
+    svg = None
+    driver = None
+    try:
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        # locate the page
+        page=flask.url_for('route_viewer', _external=True) + '?profile_id={}'.format(profile_id)
+        browser = driver.get(page)
+        wait = WebDriverWait(driver, 60)
+        # Wait for page to load
+        wait.until(EC.invisibility_of_element_located((By.ID, 'loading')))
+        # open the options
+        options = driver.find_element_by_id("options").click()
+        driver.implicitly_wait(0.5)
+        # select a series to visualize
+        series = Select(driver.find_element_by_id("series"))
+        series.select_by_visible_text(series_value)
+        driver.implicitly_wait(0.5)
+        # select samples
+        columns = Select(driver.find_element_by_id("columns"))
+        for column in column_values:
+            columns.select_by_visible_text(column)
+        if circle_column_value:
+            circle_map = Select(driver.find_element_by_id("circle-map"))
+            circle_map.select_by_visible_text(circle_column_value)
+        
+        driver.implicitly_wait(0.5)
+        if is_stack == "":
+            driver.find_element_by_id("stacking").click()
+        if is_disable_normalization == "":
+            driver.find_element_by_id("normalize").click()
+        if color_code:
+            color_coding = Select(driver.find_element_by_id("color-coding"))
+            color_coding.select_by_visible_text(color_code)
+        if depth_value:
+            depth = Select(driver.find_element_by_id("depth"))
+            depth.select_by_visible_text(depth_value)
+        # update
+        driver.find_element_by_id("update").click()
+        # Giuve a couple of seconds to let the SVG update 
+        driver.implicitly_wait(2)
+        # locate the svg element
+        svgEl = driver.find_element_by_tag_name("svg")
+        # copy it
+        svg = svgEl.get_attribute('outerHTML')
+    finally:
+        driver.quit()
+    # return the raw SVG file
+    return str(svg)
 
 @app.route('/analysis/<string:mode>/', methods=['GET', 'POST'])
 def route_analysis(mode):
@@ -26,15 +161,10 @@ def route_analysis(mode):
         else:
             return flask.render_template('comparison.html', form=form, mode=mode)
     elif mode == 'display':
-        import mimetypes
         form = forms.DisplayForm()
         if form.validate_on_submit():
-            file_type = mimetypes.MimeTypes().guess_type(form.input_file.data.filename)[0]
-            if file_type == "application/json":
-                profile_id = analysis.display.from_json(form)
-            elif file_type == 'text/tab-separated-values':
-                profile_id = analysis.display.from_table(form)
-            else:
+            profile_id = profile_for_display(form)
+            if not profile_id:
                 # TODO add error message | or hadnle this at validation with custom validators
                 return flask.render_template('display.html', form=form, mode=mode)
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
@@ -43,13 +173,20 @@ def route_analysis(mode):
     else:
         flask.abort(404)
 
+def profile_for_display(form):
+    profile_id = None
+    file_type = mimetypes.MimeTypes().guess_type(form.input_file.data.filename)[0]
+    if file_type == "application/json":
+        profile_id = analysis.display.from_json(form)
+    elif file_type == 'text/tab-separated-values':
+        profile_id = analysis.display.from_table(form)
+    return profile_id
 
 @app.route('/list/')
 def route_list():
     only = ('profile_id', 'description', 'added_at', 'target', 'locked')
     profiles = models.Profile.objects().filter(private=False).only(*only)
     return flask.render_template('list.html', profiles=profiles)
-
 
 @app.route('/data/')
 def route_data():
@@ -58,6 +195,19 @@ def route_data():
     definitions = models.Definition.objects().all().only(*only)
     return flask.render_template('data.html', trees=trees, definitions=definitions)
 
+@app.route('/data/upload/', methods=['GET', 'POST'])
+def route_data_upload():
+    form = forms.UploadForm()
+    if form.validate_on_submit():
+        models.Tree(
+            tree=tree.from_json(form.input_file.data),
+            source=form.target.data,
+            description=form.description.data,
+            added_at=datetime.datetime.utcnow()).save()
+        cache.clear()
+        return flask.redirect(flask.url_for('route_data'))
+    else:
+        return flask.render_template('upload.html', form=form)    
 
 @app.context_processor
 def utility_processor():
@@ -247,6 +397,35 @@ def route_update_definitions():
     ).save()
     return flask.redirect(flask.url_for('route_admin'))
 
+@app.route('/action/update_annotation_mapping/')
+@auth.login_required
+def route_update_annotation_mapping():
+    f = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/ortholog_mapping/external_annotation.map')
+    orto_mapping = {}
+    with open(f, 'rU') as mapping_file:
+        for line in mapping_file:
+            tokens = line.rstrip().split('\t', 1)
+            if tokens[0] not in orto_mapping:
+                orto_mapping[tokens[0]] = set()
+            orto_mapping[tokens[0]].add(tokens[1])
+    # drop current collection
+    models.AnnotationMapping.drop_collection()
+    # upload in batches
+    batch = []
+    target_size = 5000
+    for x in orto_mapping:
+        batch.append(models.AnnotationMapping(
+            annotation=x,
+            ko_map=orto_mapping[x]
+        ))
+        if len(batch) == target_size:
+            models.AnnotationMapping.objects.insert(batch, load_bulk=False, signal_kwargs={'ordered': False} )
+            batch.clear()
+    # insert the remaning annotations
+    models.AnnotationMapping.objects.insert(batch, load_bulk=False, signal_kwargs={'ordered': False} )
+    models.AnnotationMapping.create_index('annotation')
+
+    return flask.redirect(flask.url_for('route_admin'))
 
 @auth.get_password
 def auth_get_password(username):

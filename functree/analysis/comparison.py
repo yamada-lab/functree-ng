@@ -1,4 +1,4 @@
-import uuid, datetime, multiprocessing
+import uuid, datetime
 import pandas as pd, numpy as np, scipy.stats
 from functree import app, models, tree, analysis
 
@@ -29,6 +29,11 @@ def calc_abundances(f1, f2, target):
     root = models.Tree.objects().get(source=target)['tree']
     nodes = tree.get_nodes(root)
     entry_to_layer = dict(map(lambda x: (x['entry'], x['layer']), nodes))
+
+    # transform external annotations to kegg KOs
+    if target.lower() in ["kegg", "foam", "enteropathway"]:
+        df1 = analysis.map_external_annotations(df1)
+        df2 = analysis.map_external_annotations(df2)
 
     results1 = {}
     analysis.calc_abundances(df1, nodes, 'mean', results1)

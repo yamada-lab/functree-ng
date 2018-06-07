@@ -1,0 +1,81 @@
+{% set title = 'Submit' %}
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h2>Upload reference Tree</h2>
+    </div>
+    <form class="form-horizontal" action="{{ url_for('route_data_upload') }}" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <fieldset>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <p>Upload a reference tree to use for mapping<p>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group{% if form.input_file.errors %} has-error{% endif %}">
+                        {{ form.input_file.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-10">
+                            {{ form.input_file(class_='form-control-file') }}
+                            <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/reference_tree.json') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> Download</a></span>
+                            {% if form.input_file.errors %}
+                            <span class="help-block">
+                                {% for message in form.input_file.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group{% if form.target.errors %} has-error{% endif %}">
+                        {{ form.target.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-10">
+                            {{ form.target(class_='form-control') }}
+                            {% if form.target.errors %}
+                            <span class="help-block">
+                                {% for message in form.target.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group{% if form.description.errors %} has-error{% endif %}">
+                        {{ form.description.label(class='col-sm-2 control-label') }}
+                        <div class="col-sm-10">
+                            {{ form.description(class_='form-control', placeholder='A useful description for the result') }}
+                            {% if form.description.errors %}
+                            <span class="help-block">
+                                {% for message in form.description.errors %}
+                                    {{ message }}
+                                {% endfor %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10 col-sm-offset-2">
+                            <!-- {{ tags.expiry_notice()}} -->
+                            {{ form.submit(class_='btn btn-primary', **{'data-loading-text': 'Submitting...'}) }}
+                            <input type="reset" class="btn btn-default" value="Reset">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+{{super()}}
+<script>
+    $('input[type="submit"]').on('click', function() {
+        $(this).button('loading');
+        setTimeout(function() {
+            $(this).button('reset');
+        }, 600000);
+    });
+</script>
+{% endblock %}
