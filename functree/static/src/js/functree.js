@@ -344,6 +344,16 @@ const FuncTree = class {
                                 $('#modal-entry-detail').modal('show');
             			    }
             		})
+            		
+            		actions.push({
+            			name: 'View in KEGG',
+            			iconClass: 'fa-eye',
+            			onClick: function() {
+            				var url = resolveExternalURL(nodeId, "KEGG")
+            				window.open(url, '_blank');
+            			}
+            		})
+            		
             	}
             	//escape space in the selector
             	const menu = new BootstrapMenu("#"+nodeId.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
@@ -760,6 +770,20 @@ function hasMoreDetails(nodeId, referenceDatabase){
 		}
 	}
 	return hasMoreDetails
+}
+
+function resolveExternalURL(nodeId, referenceDatabase){
+	let url = null;
+	if (referenceDatabase == "KEGG") {
+		if (nodeId.match(/K[0-9]{5}/)) {
+			url = "https://www.genome.jp/dbget-bin/www_bget?ko+" + nodeId
+		} else if (nodeId.match(/M[0-9]{5}/)){
+			url = "https://www.genome.jp/kegg-bin/show_module?" + nodeId
+		} else if (nodeId.match(/map[0-9]{5}/)) {
+			url = "https://www.genome.jp/kegg-bin/show_pathway?" + nodeId
+		}
+	}
+	return url
 }
 
 function mergeRecursive(obj1, obj2) {
