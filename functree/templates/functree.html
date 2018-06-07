@@ -20,7 +20,11 @@
     </div>
 </form>
 <hr>
-<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a id="options" href="#form-options" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
+<div id="customization-alert" class="alert alert-info alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>The initial tree is empty!</strong> Please use the options below to customize it.
+</div>
+<h5><i class="fa fa-cog" aria-hidden="true"></i> Customization options <a id="options" href="#form-options" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
 <form id="form-options" class="collapse" v-on:submit.prevent="submit" v-on:reset="reset">
     <div class="form-group">
         <label class="control-label">Data series</label>
@@ -226,7 +230,6 @@
                     this.$set(this.options, 1, profile.columns[this.series]);
                 },
                 'submit': function() {
-                    //console.log(this);
                     var self = this;
                     var profileDict = {};
                     for (var i in profile.profile) {
@@ -268,6 +271,7 @@
                         })
                         .initTree(zeroize=false)
                         .update();
+                    $("#customization-alert").alert('close')
                 },
                 'reset': function() {
                     funcTree
