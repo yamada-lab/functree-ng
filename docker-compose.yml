@@ -2,6 +2,8 @@ version: "2"
 services:
   app:
     build: .
+    volumes:
+      - /workspace/bioviz.tokyo/functree-ng-data/ortholog_mapping/:/app/functree-ng/functree/static/data/ortholog_mapping/
     links:
       - db
     ports:
