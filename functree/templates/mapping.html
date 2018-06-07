@@ -48,6 +48,8 @@
        %} <span class="help-block"> {% for message in
         form.target.errors %} {{ message }} {% endfor %} </span> {% endif %}
       </div>
+      
+      
      </div>
      <div class="form-group{% if form.description.errors %} has-error{% endif %}">
       {{ form.description.label(class='col-sm-2 control-label') }}
@@ -59,7 +61,7 @@
       </div>
      </div>
      
-     <div class="form-group{% if form.modulecoverage.errors %} has-error{% endif %}">
+     <div id="modulecoverage-section" class="form-group{% if form.modulecoverage.errors %} has-error{% endif %}">
       <div class="col-sm-offset-2 col-sm-10">
        <div class="checkbox">
         <label> {{ form.modulecoverage }} {{ form.modulecoverage.label.text }}
@@ -97,6 +99,14 @@
 </div>
 {% endblock %} {% block script %} {{super()}}
 <script>
+	$('#target').on('change', function(){
+		console.log("changed " + this.value)
+		if(this.value == "KEGG"){
+			$("#modulecoverage-section").fadeIn()
+		} else{
+			$("#modulecoverage-section").fadeOut()
+		}
+	})
 	$('input[type="submit"]').on('click', function() {
 		$(this).button('loading');
 		setTimeout(function() {

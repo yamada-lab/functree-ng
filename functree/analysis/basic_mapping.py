@@ -1,11 +1,11 @@
 import uuid, datetime, multiprocessing
 import pandas as pd
-from functree import app, models, tree, analysis
+from functree import app, models, tree, analysis, services
 
 
 def from_table(form):
     methods=['mean', 'sum']
-    if form.modulecoverage.data:
+    if form.modulecoverage.data and services.DefinitionService.has_definition(form.target.data):
         methods.append('modulecoverage')
     result = calc_abundances(f=form.input_file.data, target=form.target.data, methods=methods)
     colors = []
@@ -51,6 +51,7 @@ def calc_abundances(f, target, methods):
     profile = []
     # load KO based entries
     entries=list(list(results.values())[0].index)
+    
     if "modulecoverage" in methods:
         entries += list(list(results.values())[2].index)
         entries = list(set(entries))
