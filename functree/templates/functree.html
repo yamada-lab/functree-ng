@@ -175,13 +175,13 @@
     });
 
     function visualize(tree, profile) {
-    	var funcTree = new FuncTree(tree.tree, {{ url_for('route_get_entry') }});
+    	var funcTree = new FuncTree(tree.tree, "{{ url_for('route_get_entry') }}");
         if (rootEntry) {
             var roots = funcTree.nodes.filter(function(x) {
                 return x.entry === rootEntry;
             });
             if (roots.length) {
-                funcTree = new FuncTree(roots[0], {{ url_for('route_get_entry') }});
+                funcTree = new FuncTree(roots[0], "{{ url_for('route_get_entry') }}");
             } else {
                 alert('No entry found: ' + rootEntry);
             }
