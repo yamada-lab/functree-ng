@@ -636,7 +636,7 @@ curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data
  	https://bioviz.tokyo/functree2/api/mapping/
  </pre>
  					<p>
-						After a successful upload an id like <b>668e8427-cdef-49cb-9698-7687f431a495</b>
+						After a successful upload an id like <b>807a2d93-3530-4c9a-9aae-ed37d7c93fce</b>
 						will be returned and should be used for further interaction.
 					</p>
 					<p>
@@ -655,7 +655,7 @@ curl -X POST -H "Accept: application/json" -H "content-type: multipart/form-data
 						download the tree to '/tmp/functree.svg'</p>
 					<pre>
 curl -X GET -H "Accept: text/svg" \
-"https://bioviz.tokyo/functree2/api/viewer/?profile_id=<b>668e8427-cdef-49cb-9698-7687f431a495</b>&series=<b>Abundance%20(Mean)</b>&columns=<b>sample1,sample2</b>" \
+"https://bioviz.tokyo/functree2/api/viewer/?profile_id=<b>807a2d93-3530-4c9a-9aae-ed37d7c93fce</b>&series=<b>Abundance%20(Mean)</b>&columns=<b>sample1,sample2</b>" \
 > <b>/tmp/functree.svg</b>
 </pre>
 					<p>Arguments that could be used in the query string are the
@@ -678,10 +678,8 @@ curl -X GET -H "Accept: text/svg" \
 				<div class="col-sm-12">
 					<h3>Command-line tool</h3>
 					<p class="lead">
-						For large scale processing the <a
-							href="https://github.com/yyuuta88/functree-cli"
-							target="_blank">functree-cli</a> could be used to generate
-						FuncTrees locally.
+						The <a href="https://github.com/yyuuta88/functree-cli" target="_blank">functree-cli</a> is an alternative to the REST API
+						for batch access and for generation of FuncTrees locally.
 					</p>
 				</div>
 			</div>
