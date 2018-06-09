@@ -41,7 +41,7 @@
 					Here you will learn about the different types of analysis available
 					in FuncTree2 and the accepted <a href="#data-format">data
 						formats</a>. We also give you some usage tips and a sneak preview of
-					what your <a href="#example">output</a> will look like.
+					what your <a href="#viewer">output</a> will look like.
 				</p>
 			</div>
 		</div>
@@ -247,6 +247,99 @@
 			</div>
 		</div>
 	</section>
+	<section
+		id="reference-tree-format"
+		class="page-header">
+		<h2>Reference tree format</h2>
+		<p>FuncTree2 accepts user defined reference trees to be uploaded and used instead of the predefined
+			<a href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg" target="_blank">KEGG</a>
+			and <a href="http://cbb.pnnl.gov/portal/software/FOAM.html" target="_blank">FOAM</a> reference trees.
+			Below are examples in TSV and JSON format.
+		</p>
+		<h3>Tab separated matrix</h3>
+		<div class="row">
+			<div class="col-sm-12">
+				<br />
+				<p class="justify">
+					A tab separated matrix containing the ontology. Each line should
+					start with the highest level of the ontology followed by the rest
+					of the levels all the way down to the leaves. Missing levels should
+					be replaced by an empty string or a dash ["-", ""]. Please check
+					this <a
+						href="{{ url_for('static', filename='data/example/reference_tree.tsv') }}"
+						target="_blank"> example file</a> for reference.
+				</p>
+			</div>
+		</div>
+		<h3>JSON</h3>
+		<div class="row">
+			<div class="col-sm-12">
+				<br />
+				<p class="justify">
+					Custom reference trees could be uploaded in JSON <span><a
+						href="{{ url_for('static', filename='data/example/reference_tree.json') }}"
+						target="_blank"> <i
+							class="fa fa-download"
+							aria-hidden="true"></i> format
+					</a></span> and used as a target database in FuncTree2. Below is an example of a valid JSON file and
+					its schema definition.
+				</p>
+			</div>
+			<div class="col-sm-12">
+				<div>
+					<!-- Nav tabs -->
+					<ul
+						class="nav nav-tabs"
+						role="tablist">
+						<li
+							role="presentation"
+							class="active"><a
+							href="#json-reference-snippet"
+							aria-controls="json-reference-snippet"
+							role="tab"
+							data-toggle="tab">Example</a></li>
+						<li role="presentation"><a
+							href="#json-reference-schema"
+							aria-controls="json-reference-schema"
+							role="tab"
+							data-toggle="tab">Schema</a></li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div
+							role="tabpanel"
+							class="tab-pane active"
+							id="json-reference-snippet">
+							<pre class="pre-scrollable">
+<code data-language="json">{{ json_reference_example() }}</code>
+							</pre>
+						</div>
+						<div
+							role="tabpanel"
+							class="tab-pane"
+							id="json-reference-schema">
+							<pre class="pre-scrollable">
+<code data-language="json">{{ json_reference_schema() }}</code>
+							</pre>
+						</div>
+					</div>
+				</div>
+				<span> <a
+					href="{{ url_for('static', filename='data/example/reference_tree.json') }}"
+					target="_blank"> <i
+						class="fa fa-download"
+						aria-hidden="true"></i> Example
+				</a>
+				</span>&nbsp; <span> <a
+					href="{{ url_for('static', filename='data/example/reference-tree-schema.json') }}"
+					target="_blank"> <i
+						class="fa fa-download"
+						aria-hidden="true"></i> Schema
+				</a>
+				</span>
+			</div>
+		</div>
+	</section>
 	{#
 	<section
 		id="workflow"
@@ -276,7 +369,7 @@
 	</section>
 	#}
 	<section
-		id="Viewer"
+		id="viewer"
 		class="page-header">
 		<h2>Viewer</h2>
 		<section id="functree">
@@ -678,8 +771,10 @@ curl -X GET -H "Accept: text/svg" \
 				<div class="col-sm-12">
 					<h3>Command-line tool</h3>
 					<p class="lead">
-						The <a href="https://github.com/yyuuta88/functree-cli" target="_blank">functree-cli</a> is an alternative to the REST API
-						for batch access and for generation of FuncTrees locally.
+						The <a href="https://github.com/omixer/functree-cli" target="_blank">functree-cli</a> is an alternative to the REST API
+						for batch access and for generation of FuncTrees locally. However, we highly encourage users to use the REST API instead as 
+						<a href="https://github.com/omixer/functree-cli" target="_blank">functree-cli</a> is less stable and current development 
+						primarily targets the Web version. 
 					</p>
 				</div>
 			</div>

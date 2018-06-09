@@ -135,34 +135,33 @@ def from_tsv(path, name):
     '''
     root = Node(entry=name, name=name, layer='root')
 
-    with open(path, 'rU') as mapping_file:
-        levels = mapping_file.readline().strip().split('\t')
-        levels.insert(0, 'root')
-        nodes_layer = {key: {} for key in levels}
-        nodes_layer['root'] = {'root': root}
+    levels = path.readline().strip().decode().split('\t')
+    levels.insert(0, 'root')
+    nodes_layer = {key: {} for key in levels}
+    nodes_layer['root'] = {'root': root}
 
-        for line in mapping_file:
-            entries = line.strip().split('\t')
-            # prefix empty cells by parent id
-            for index, entry in enumerate(entries):
-                if entry == "":
-                    unique_entry = levels[index + 1]
-                    if index == 0:
-                        unique_entry = "root_" + unique_entry
-                    else:
-                        unique_entry = entries[index - 1] + "_" + unique_entry
-                    entries[index] = unique_entry
+    for line in path:
+        entries = line.strip().decode().split('\t')
+        # prefix empty cells by parent id
+        for index, entry in enumerate(entries):
+            if entry in ["", "-"]:
+                unique_entry = levels[index + 1]
+                if index == 0:
+                    unique_entry = "root_" + unique_entry
+                else:
+                    unique_entry = entries[index - 1] + "_" + unique_entry
+                entries[index] = unique_entry
 
-            for index, entry in enumerate(entries):
-                layer = levels[index + 1]
-                if entry not in nodes_layer[layer]:
-                    parent_layer = levels[index]
-                    node = Node(entry=entry, name=entry, layer=layer)
-                    if index > 0:
-                        nodes_layer[parent_layer][entries[index - 1]].add_child(node)
-                    else:
-                        nodes_layer[parent_layer]['root'].add_child(node)
-                    nodes_layer[layer][entry] = node
+        for index, entry in enumerate(entries):
+            layer = levels[index + 1]
+            if entry not in nodes_layer[layer]:
+                parent_layer = levels[index]
+                node = Node(entry=entry, name=entry, layer=layer)
+                if index > 0:
+                    nodes_layer[parent_layer][entries[index - 1]].add_child(node)
+                else:
+                    nodes_layer[parent_layer]['root'].add_child(node)
+                nodes_layer[layer][entry] = node
     return root
 
 def download_htext(htext, format='htext'):

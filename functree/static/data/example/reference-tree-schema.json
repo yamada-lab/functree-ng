@@ -1,0 +1,33 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "reference tree",
+	"description": "A FuncTree reference tree",
+	"type": "object",
+	"required": [
+		"entry",
+		"name",
+		"layer"
+	],
+	"properties": {
+		"entry": {
+			"description": "Entry id for example K number or Module ids...",
+			"type": "string"
+		},
+		"name": {
+			"description": "The display name of the entry",
+			"type": "string"
+		},
+		"layer": {
+			"description": "Layer of the object e.g. KO, Module or Pathway",
+			"type": "string"
+		},
+		"children": {
+			"description": "Description of the profile",
+			"type": "array",
+			"items": {
+				"$ref": "#"
+			}
+		}
+	}
+}
+		

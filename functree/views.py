@@ -197,13 +197,25 @@ def route_data():
 
 @app.route('/data/upload/', methods=['GET', 'POST'])
 def route_data_upload():
+    '''
+    Handle upload of reference trees
+    '''
     form = forms.UploadForm()
     if form.validate_on_submit():
-        models.Tree(
-            tree=tree.from_json(form.input_file.data),
-            source=form.target.data,
-            description=form.description.data,
-            added_at=datetime.datetime.utcnow()).save()
+        file_type = mimetypes.MimeTypes().guess_type(form.input_file.data.filename)[0]    
+        if file_type == "application/json":
+            models.Tree(
+                tree=tree.from_json(form.input_file.data),
+                source=form.target.data,
+                description=form.description.data,
+                added_at=datetime.datetime.utcnow()).save()
+        elif file_type == 'text/tab-separated-values':
+            models.Tree(
+                tree=tree.from_tsv(form.input_file.data, form.target.data),
+                source=form.target.data,
+                description=form.description.data,
+                added_at=datetime.datetime.utcnow()).save()
+
         cache.clear()
         return flask.redirect(flask.url_for('route_data'))
     else:
@@ -217,7 +229,13 @@ def utility_processor():
     def json_example():
         data = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/data-example.json'), 'r')
         return data.read()
-    return dict(json_schema=json_schema, json_example=json_example)
+    def json_reference_example():
+        data = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/reference_tree.json'), 'r')
+        return data.read()
+    def json_reference_schema():
+        data = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/example/reference-tree-schema.json'), 'r')
+        return data.read()
+    return dict(json_schema=json_schema, json_example=json_example, json_reference_example=json_reference_example, json_reference_schema=json_reference_schema)
 
 @app.route('/docs/', defaults={'filename': 'index.html'})
 @app.route('/docs/<path:filename>')
