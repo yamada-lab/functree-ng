@@ -18,9 +18,11 @@
 					hierarchical context of biological ontologies. Mapping omics data
 					onto a pre-defined interactive treemap, based on the <a
 						href="http://www.genome.jp/kegg-bin/get_htext?br08902.keg"
-						target="_blank">KEGG Brite functional hierarchy</a> (or your own), lets you
-					quickly and comprehensively understand the functional potential of
-					your data, which will help you develop further hypothesis and
+						target="_blank">KEGG Brite</a>, <a
+						href="http://cbb.pnnl.gov/portal/software/FOAM.html"
+						target="_blank">FOAM</a> or your own functional hierarchy, lets
+					you quickly and comprehensively understand the functional potential
+					of your data, which will help you develop further hypothesis and
 					scientific insights. Statistical tests, module pathway
 					reconstruction, and different customization controls are built-in
 					to help you in your quest.
@@ -690,7 +692,7 @@
 				<div class="col-sm-offset-1 col-sm-5 col-center">
 					<p class="lead">
 						<b>Profile storage, download, and sharing</b><br /> Profiles are
-						optionally stored in FuncTree for a period of 7 days and could be
+						optionally stored in FuncTree for a period of {{ config['FUNCTREE_PROFILE_TTL_DAYS'] }} days and could be
 						shared by clicking the share icon which copies the share link to
 						the clipboard and displays it on screen. Alternatively, profiles
 						could be downloaded in JSON format for permanent storage or
@@ -755,7 +757,7 @@ curl -X GET -H "Accept: text/svg" \
 						following:</p>
 					<ul>
 						<li>profile_id <b>(required)</b>: the profile id to visualize
-						<li>series <b>(required)</b>: the series to visualize. Possible values are mean, sum, or modulecoverage unless a json file was uploaded with different names for data series.
+						<li>series <b>(required)</b>: the series to visualize. Possible values are <b>mean, sum, or modulecoverage</b> unless a json file was uploaded with different names for data series.
 						<li>columns: a comma separated list of columns to visualize (e.g. sample1,sample2)
 						<li>circle-column: Name of one sample to map as circle on top of the nodes. (e.g. sample3)
 						<li>color-code: Only used if circle-column has a value. [Layer, Column, Entry]. Defaults to Layer.
@@ -766,6 +768,7 @@ curl -X GET -H "Accept: text/svg" \
 				</div>
 			</div>
 		</section>
+	{#
 		<section id="functree-cli">
 			<div class="row">
 				<div class="col-sm-12">
@@ -780,7 +783,7 @@ curl -X GET -H "Accept: text/svg" \
 			</div>
 		</section>
 	</section>
-	{#
+
 	<section class="page-header">
 		<h2 id="example">Examples</h2>
 		Coming soon.. Add metagenomics, multiomics and pangenomics examples,
