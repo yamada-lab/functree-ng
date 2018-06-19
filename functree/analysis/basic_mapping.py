@@ -42,9 +42,8 @@ def calc_abundances(f, target, methods):
         if not method == "modulecoverage":
             job = multiprocessing.Process(target=analysis.calc_abundances, args=(df, nodes, method, shared_data), daemon=False)
         else:
-            # Point back to the beginning of the file
-            f.seek(0)
-            job = multiprocessing.Process(target=analysis.module_coverage.calc_coverages, args=(f, target, shared_data), daemon=False)
+
+            job = multiprocessing.Process(target=analysis.module_coverage.calc_coverages, args=(df, target, shared_data), daemon=False)
         job.start()
         jobs.append(job)
     for job in jobs:

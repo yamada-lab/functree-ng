@@ -8,28 +8,37 @@ def map_external_annotations(df):
     '''
     Find KO annotation for the entries of df then create and new df with K Numbers and rows divided by the number of matched KNumbers 
     '''
-    df_keggified = pd.DataFrame(columns=df.columns)
+    
+    '''Fetch the annotations in one batch and put in a dict'''
+    annotation_map = {}
+    kegg_mapping = models.AnnotationMapping.objects(annotation__in=df.index.values.tolist())
+    for k_map in kegg_mapping:
+        annotation_map[k_map['annotation']] = k_map['ko_map']
+    
+    '''Prepare a dict for with data annotated based on the mapping'''
+    df_dict =  {}
+    
     for annotation in df.index:
         #if annotation has a kegg mapping
-        try:
-            kegg = models.AnnotationMapping.objects().get(annotation=annotation)
-            kegg_annotations=kegg['ko_map']
-        except models.AnnotationMapping.DoesNotExist:
-            kegg_annotations=None
-        
-        if kegg_annotations:
+        if annotation in annotation_map:
+            kegg_annotations = annotation_map[annotation]
             # divide by the number of matched kegg annotations to show all KO values
             # On one level up the value will be summed and reflect the original, and thus avoids overcounting
-            distributed_abundance = df.loc[annotation] / len(kegg_annotations)
+            distributed_abundance = list((df.loc[annotation] / len(kegg_annotations)).to_dict().values())
             for kegg_annotation in kegg_annotations:
-                if kegg_annotation in df_keggified.index:
-                    df_keggified.loc[kegg_annotation] = distributed_abundance + df_keggified.loc[kegg_annotation]
+                # if KO already in data frame
+                if kegg_annotation in df_dict:
+                    df_dict[kegg_annotation] = [x+y for x, y in zip(distributed_abundance, df_dict[kegg_annotation])]
+                # if first observation of KO
                 else:
-                    df_keggified.loc[kegg_annotation] = distributed_abundance
-        # if no kegg mapping => it is a Knumber or simply unmapped => Append it to the new df
+                    df_dict[kegg_annotation] = distributed_abundance
         else:
-            df_keggified.loc[annotation] = df.loc[annotation]
-            
+            # if no kegg mapping => it is a Knumber or simply unmapped => Append it to the new df
+            df_dict[annotation] = list(df.loc[annotation].to_dict().values())
+    '''Create a dataframe from the df_dict. Appending to the dataframe on the fly will penalize the performance'''
+    df_keggified = pd.DataFrame.from_dict(df_dict, "index")
+    df_keggified.columns = df.columns
+    
     return df_keggified
 
 def calc_abundances(df, nodes, method, results):

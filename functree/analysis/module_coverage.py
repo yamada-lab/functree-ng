@@ -26,27 +26,41 @@ def from_table(form):
     ).save().profile_id
 
 
-def calc_coverages(f, target, result_holder, method='mean'):
+def calc_coverages(df, target, result_holder, method='mean'):
+    """
+    Replace this whole part by a call to the GMMs.jar, to reduce the computation time from 2 minutes to None
+    """
     root = models.Tree.objects().get(source=target)['tree']
+    
     definition = models.Definition.objects().get(source=target)['definition']
-    df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
-    # map annotation to KO first
-    if target.lower() in ["kegg", "foam", "enteropathway"]:
-        df = analysis.map_external_annotations(df)
-
     root = copy.deepcopy(root)
     nodes = tree.get_nodes(root)
     entry_to_layer = dict(map(lambda x: (x['entry'], x['layer']), nodes))
-
     tree.delete_children(root, 'module')
     nodes_no_ko = tree.get_nodes(root)
+
+    ### HACK_START
     graphs = crckm.format_definition(definition)
-
-    f.seek(0)
-    df_crckm = crckm.calculate(ko_file=f, module_graphs=graphs, method=method, threshold=0)
-
+    
+    from tempfile import NamedTemporaryFile
+    f = NamedTemporaryFile(delete=False)
+    f.close()
+    tmp_file = f.name 
+    df.to_csv(tmp_file, sep='\t', encoding='utf-8')
+    df_crckm = crckm.calculate(ko_file=tmp_file, module_graphs=graphs, method=method, threshold=0)
+    os.unlink(tmp_file)
+    #tmp_out = "/tmp/out_dir"
+    # call
+    #kegg_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/ortholog_mapping/module_definition_2017_ipath_version')
+    #call("java -jar /opt/GMMs/gmms.jar -i %s -o %s -a 2 -c 0 -d %s -e 2 -s average > /dev/null" % (tmp_file, tmp_out, kegg_db), shell=True, env=os.environ.copy())
+    # read the coeverage matrix
+    #module_coverage = os.path.join(tmp_out, 'modules-coverage.tsv')
+    #df_crckm = pd.read_csv(module_coverage, delimiter='\t', comment='#', header=0, index_col=0)
+    ### HACK_END 
+    
     results = {}
     analysis.calc_abundances(df_crckm, nodes_no_ko, method, results)
-
-    df_out = df.applymap(lambda x: int(bool(x))).append(results[method])    # Concatenate user's input and results
+ 
+    # Concatenate user's input and results
+    df_out = df.applymap(lambda x: int(bool(x))).append(results[method])
     result_holder["modulecoverage"] = df_out
