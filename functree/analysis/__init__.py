@@ -44,12 +44,18 @@ def map_external_annotations(df):
 def calc_abundances(df, nodes, method, results):
     """
     Generates mean or sum for all levels of functional Tree
+    
+    FIXME: this is algorithmically sub-optimal as it goes over the tree randomly and also visits all the leaves.
+        A better way could be:
+            - map the lowest level first keen an unampped list of elements
+            - summarize upper layers by matching them from children and then replace if something from the list is matched 
+            - repeat till root
     """
-    df_out = pd.DataFrame(columns=df.columns)
+    df_dict =  {}
     for node in nodes:
         entry_profile = None
         # Skip nodes which was already in df_out or have a name with "*" (e.g. *Module undefined*)
-        if node['entry'] in df_out.index or node['entry'].startswith('*'):
+        if node['entry'] in df_dict or node['entry'].startswith('*'):
             continue
 
         if 'children' not in node:
@@ -69,11 +75,14 @@ def calc_abundances(df, nodes, method, results):
                 entry_profile = eval('loc.{}()'.format(method))
             except KeyError:
                 pass
-        df_out.ix[node['entry']] = entry_profile
+        # the entry on the tree is not in the submitted profile
+        if entry_profile is not None:
+            df_dict[node['entry']] = entry_profile.to_dict().values()
 
+    df_out = pd.DataFrame.from_dict(df_dict, "index")
+    df_out.columns = df.columns
     df_out = df_out.dropna(how='all').fillna(0.0)
     results[method] = df_out
-
 
 def get_layer(entry, entry_to_layer):
     try:
