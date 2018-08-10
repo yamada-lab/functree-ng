@@ -2,7 +2,7 @@ import re
 import pandas as pd
 from functree import tree, models
 from functree.analysis import module_coverage, display, basic_mapping, comparison
-
+from functools import reduce
 
 def map_external_annotations(df):
     '''
@@ -47,7 +47,7 @@ def calc_abundances(df, nodes, method, results):
     
     FIXME: this is algorithmically sub-optimal as it goes over the tree randomly and also visits all the leaves.
         A better way could be:
-            - map the lowest level first keen an unampped list of elements
+            - map the lowest level first seen an unampped list of elements
             - summarize upper layers by matching them from children and then replace if something from the list is matched 
             - repeat till root
     """
@@ -83,6 +83,65 @@ def calc_abundances(df, nodes, method, results):
     df_out.columns = df.columns
     df_out = df_out.dropna(how='all').fillna(0.0)
     results[method] = df_out
+
+def calc_distributed_abundances(df, graph, method, results):
+    """
+    Generates mean or sum for all levels of functional Tree  
+    Generate an incidence of KO to parents | layer
+    """
+    layer_incidence = {}
+    result_map = {}
+
+    for entry in list(df.index):
+        if entry in graph:
+            populate_incidence(graph, entry, entry, 0, layer_incidence)
+
+    for entry in list(df.index):
+        if entry in graph:
+            # add KO
+            result_map[entry] = {entry: df.loc[entry]}
+            # nx.DiGraph.reverse(graph)
+            populate_abundance(graph, entry, entry, df.loc[entry], result_map, 1, layer_incidence)
+    # reduce the result_map and create a df
+    df_dict = {}
+    for k, v in result_map.items():
+        abundance = reduce(lambda x, y: x + y, v.values())
+        if method == "mean":
+            abundance = abundance / len(v)
+        df_dict[k] = abundance.to_dict().values()
+    
+    df_out = pd.DataFrame.from_dict(df_dict, "index")
+    df_out.columns = df.columns
+    df_out = df_out.dropna(how='all').fillna(0.0)
+    results[method] = df_out
+    
+def populate_abundance(graph, entry, parent, entry_row, result_map, layerId, layer_incidence):
+    parents = graph.predecessors(parent)
+    for p in parents:
+        # graph-tool is much fater on this 
+        #len(set(map(lambda x: x[len(x)-1], list(nx.all_shortest_paths(revG, entry, p)))))
+        # weight = 1 Multiplying the weight by the row is to slow below
+        abundance = entry_row / layer_incidence[layerId][entry]
+        if p in result_map:
+            if entry in result_map[p]:
+                result_map[p][entry] += abundance 
+            else:
+                result_map[p][entry] = abundance
+        else:
+            result_map[p] = {entry: abundance}
+        populate_abundance(graph, entry, p, entry_row, result_map, layerId + 1, layer_incidence)
+
+def populate_incidence(graph, entry, parent, layerId, layer_incidence):
+    if layerId in layer_incidence:
+        if entry in layer_incidence[layerId]:
+            layer_incidence[layerId][entry] += 1
+        else:
+            layer_incidence[layerId][entry] = 1
+    else:
+        layer_incidence[layerId] = {entry: 1}
+    parents = graph.predecessors(parent)
+    for p in parents:
+        populate_incidence(graph, entry, p, layerId + 1, layer_incidence)
 
 def get_layer(entry, entry_to_layer):
     try:

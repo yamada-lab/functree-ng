@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import re, copy, urllib.request, urllib.parse, argparse, json
+import networkx as nx
 
 KEGG_DOWNLOAD_HTEXT_ENDPOINT = 'http://www.genome.jp/kegg-bin/download_htext?'
 EXCLUDES = ['Global and overview maps', 'Drug Development', 'Chemical structure transformation maps']
@@ -191,6 +192,22 @@ def delete_children(node, layer):
         for i in node['children']:
             delete_children(i, layer)
 
+def to_graph(root):
+    stack = [root]
+    G = nx.DiGraph()
+    while stack:
+        parent = stack.pop()
+        if 'children' in parent:
+            for c in parent['children']:
+                if c['entry'].startswith('*'):
+                    child = parent['entry'] + c['entry']
+                    G.add_edge(parent['entry'], child)
+                    for leaf in c['children']:
+                        G.add_edge(child, leaf['entry'])
+                else:
+                    G.add_edge(parent['entry'], c['entry'])
+                    stack.append(c)
+    return G
 
 def parse_arguments():
     parser = argparse.ArgumentParser(prog=__file__, description='Functional Tree JSON generator')

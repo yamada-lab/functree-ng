@@ -6,7 +6,7 @@ def from_table(form):
     methods=['mean', 'sum']
     if form.modulecoverage.data and services.DefinitionService.has_definition(form.target.data):
         methods.append('modulecoverage')
-    result = calc_abundances(f=form.input_file.data, target=form.target.data, methods=methods)
+    result = calc_abundances(f=form.input_file.data, target=form.target.data, methods=methods, distribute=form.distribute.data)
 
     colors = []
     if form.color_file.data:
@@ -31,7 +31,7 @@ def from_table(form):
     ).save().profile_id
 
 
-def calc_abundances(f, target, methods):
+def calc_abundances(f, target, methods, distribute):
     
     df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
     
@@ -53,7 +53,10 @@ def calc_abundances(f, target, methods):
     # This runs 6 seconds
     for method in methods:
         if not method == "modulecoverage":
-            job = multiprocessing.Process(target=analysis.calc_abundances, args=(df, nodes, method, shared_data), daemon=False)
+            if distribute == True:
+                job = multiprocessing.Process(target=analysis.calc_distributed_abundances, args=(df, tree.to_graph(root), method, shared_data), daemon=False)
+            else:
+                job = multiprocessing.Process(target=analysis.calc_abundances, args=(df, nodes, method, shared_data), daemon=False)
         else:
             job = multiprocessing.Process(target=analysis.module_coverage.calc_coverages, args=(df, target, shared_data), daemon=False)
         job.start()

@@ -15,6 +15,7 @@ Jinja2==2.9.6
 lxml==3.8.0
 MarkupSafe==1.0
 mongoengine==0.13.0
+networkx=2.1
 numpy==1.13.1
 olefile==0.44
 pandas==0.20.3

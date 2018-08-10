@@ -60,6 +60,18 @@
        {% endif %}
       </div>
      </div>
+
+     <div class="form-group{% if form.distribute.errors %} has-error{% endif %}">
+      <div class="col-sm-offset-2 col-sm-10">
+       <div class="checkbox">
+        <label> {{ form.distribute }} <b>[dev-feature]</b> {{ form.distribute.label.text }}
+        </label>
+       </div>
+       {% if form.distribute.errors %} 
+       <span class="help-block"> {% for message in form.distribute.errors %} {{ message }} {% endfor %} </span> 
+       {% endif %}
+      </div>
+     </div>   
      
      <div id="modulecoverage-section" class="form-group{% if form.modulecoverage.errors %} has-error{% endif %}">
       <div class="col-sm-offset-2 col-sm-10">
@@ -71,8 +83,7 @@
        <span class="help-block"> {% for message in form.modulecoverage.errors %} {{ message }} {% endfor %} </span> 
        {% endif %}
       </div>
-     </div>
-     
+     </div>   
      
      <div class="form-group{% if form.private.errors %} has-error{% endif %}">
       <div class="col-sm-offset-2 col-sm-10">

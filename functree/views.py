@@ -35,6 +35,14 @@ def mapping():
             form.modulecoverage.data = False
         else:
             form.modulecoverage.data = True
+
+    if 'distribute' not in request.form:
+        form.distribute.data = True
+    else:
+        if request.form['distribute'] == "0":
+            form.distribute.data = False
+        else:
+            form.distribute.data = True
     
     if form.validate_on_submit():
         profile_id = analysis.basic_mapping.from_table(form)
@@ -54,7 +62,7 @@ def comparison():
         else:
             form.private.data = True
     if form.validate_on_submit():
-        profile_id = analysis.basic_mapping.from_table(form)
+        profile_id = analysis.comparison.from_table(form)
         return jsonify({'profile_id': profile_id})
     else:
         return jsonify({'errors': form.errors})

@@ -19,6 +19,7 @@ class MappingForm(flask_wtf.FlaskForm):
         wtforms.validators.Length(max=50)
     ])
 
+    distribute = wtforms.BooleanField('Divide ortholog abundance by its incidence on each layer', default=False)
     modulecoverage = wtforms.BooleanField('Compute module coverage', default=True)
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
     submit = wtforms.SubmitField('Submit')
