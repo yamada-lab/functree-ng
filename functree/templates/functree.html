@@ -20,6 +20,13 @@
     </div>
 </form>
 <hr>
+<div id="zoom-control">
+    <label class="control-label">Zoom </label>&nbsp;&nbsp;
+		<i id="zoom_out" class="fa fa-minus-circle zoomcontrol" aria-hidden="true" style="font-size: 2em;"></i>&nbsp;&nbsp;
+		<i id="zoom_reset" class="fa fa-refresh zoomcontrol" aria-hidden="true" style="font-size: 2em;"></i>&nbsp;&nbsp;
+		<i id="zoom_in" class="fa fa-plus-circle zoomcontrol" aria-hidden="true" style="font-size: 2em;"></i>
+</div>
+<hr>
 <div id="customization-alert" class="alert alert-info alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <strong>The initial tree is empty!</strong> Please use the options below to customize it.
@@ -169,6 +176,10 @@
             'items': []
         }
     });
+    
+    // bind zoom to click action
+    d3.selectAll(".zoomcontrol").on('click', zoomClick);
+    
 
     $(window).on('beforeunload', function() {
         return null;
@@ -303,5 +314,6 @@
                 })
         });
     }
+    
 </script>
 {% endblock %}

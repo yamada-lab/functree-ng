@@ -28,7 +28,7 @@ def from_table(form):
 
 def calc_coverages(df, target, result_holder, method='mean'):
     """
-    Replace this whole part by a call to the GMMs.jar, to reduce the computation time from 2 minutes to None
+    Replace this whole part by a call to the Omixer-RPM.jar, to reduce the computation time from 2 minutes to None
     """
     root = models.Tree.objects().get(source=target)['tree']
     
@@ -52,7 +52,7 @@ def calc_coverages(df, target, result_holder, method='mean'):
     #tmp_out = "/tmp/out_dir"
     # call
     #kegg_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/ortholog_mapping/module_definition_2017_ipath_version')
-    #call("java -jar /opt/GMMs/gmms.jar -i %s -o %s -a 2 -c 0 -d %s -e 2 -s average > /dev/null" % (tmp_file, tmp_out, kegg_db), shell=True, env=os.environ.copy())
+    #call("java -jar /opt/omixer-rpm/omixer-rpm.jar -i %s -o %s -a 2 -c 0 -d %s -e 2 -s average > /dev/null" % (tmp_file, tmp_out, kegg_db), shell=True, env=os.environ.copy())
     # read the coeverage matrix
     #module_coverage = os.path.join(tmp_out, 'modules-coverage.tsv')
     #df_crckm = pd.read_csv(module_coverage, delimiter='\t', comment='#', header=0, index_col=0)

@@ -35,6 +35,17 @@ $ docker-compose up
 ```
 Then open http://localhost:8080 in your web browser.
 
+To enable automatic transpilation of ECMAScript and SCSS, enter the docker instance 
+```
+docker exec -it functree-ng_app_1 /bin/bash
+```
+
+then issue the following commands
+```
+yarn babel:watch
+yarn sass:watch
+```
+
 ## Configuration
 To configure the behavior of the application, create `instance/config.py` with the same format as `functree/config.py`.
 
