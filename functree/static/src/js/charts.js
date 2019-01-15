@@ -43,6 +43,16 @@ const visualize = (profile, columns, layer, column) => {
                     'stacking': 'percent'
                 }
             },
+            'colors': ['rgb(255, 128, 14)', 
+            	'rgb(171, 171, 171)', 
+            	'rgb(95, 158, 209)',
+            	'rgb(89, 89, 89)',
+            	'rgb(0, 107, 164)',
+            	'rgb(255, 188, 121)',
+            	'rgb(207, 207, 207)',
+            	'rgb(200, 82, 0)',
+            	'rgb(162, 200, 236)',
+            	'rgb(137, 137, 137)'],
             'series': series,
             'credits': {
                 'enabled': false
@@ -92,6 +102,16 @@ const visualize = (profile, columns, layer, column) => {
                     'stacking': 'normal'
                 }
             },
+            'colors': ['rgb(255, 128, 14)', 
+            	'rgb(171, 171, 171)', 
+            	'rgb(95, 158, 209)',
+            	'rgb(89, 89, 89)',
+            	'rgb(0, 107, 164)',
+            	'rgb(255, 188, 121)',
+            	'rgb(207, 207, 207)',
+            	'rgb(200, 82, 0)',
+            	'rgb(162, 200, 236)',
+            	'rgb(137, 137, 137)'],
             'series': series,
             'credits': {
                 'enabled': false
@@ -195,6 +215,16 @@ const visualize = (profile, columns, layer, column) => {
                     }
                 }
             },
+            'colors': ['rgb(255, 128, 14)', 
+            	'rgb(171, 171, 171)', 
+            	'rgb(95, 158, 209)',
+            	'rgb(89, 89, 89)',
+            	'rgb(0, 107, 164)',
+            	'rgb(255, 188, 121)',
+            	'rgb(207, 207, 207)',
+            	'rgb(200, 82, 0)',
+            	'rgb(162, 200, 236)',
+            	'rgb(137, 137, 137)'],
             'series': [{
                 'name': columns[column],
                 'colorByPoint': true,

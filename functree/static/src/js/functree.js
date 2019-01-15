@@ -15,6 +15,32 @@ const DEFAULT_CONFIG = {
     'colorSet': {
         'default': '#5f5f5f'
     },
+    colorPalettes: {
+    	// https://public.tableau.com/profile/chris.gerrard#!/vizhome/TableauColors/ColorPaletteswithRGBValues
+    	'tableauColorBlind10' : [
+        	'rgb(255, 128, 14)', 
+        	'rgb(171, 171, 171)', 
+        	'rgb(95, 158, 209)',
+        	'rgb(89, 89, 89)',
+        	'rgb(0, 107, 164)',
+        	'rgb(255, 188, 121)',
+        	'rgb(207, 207, 207)',
+        	'rgb(200, 82, 0)',
+        	'rgb(162, 200, 236)',
+        	'rgb(137, 137, 137)',
+        	], 
+        // http://jfly.iam.u-tokyo.ac.jp/color/
+        'cud8': [
+        	'rgb(0, 0, 0)',
+        	'rgb(230, 159, 0)',
+        	'rgb(86, 180, 233)',
+        	'rgb(0, 158, 115)',
+        	'rgb(240, 228, 66)',
+        	'rgb(0, 114, 178)',
+        	'rgb(213, 94, 0)',
+        	'rgb(204, 121, 167)'
+        ]
+    },
     'external': {
         'entry': 'vmEntryDetail.entry',
         'breadcrumb': 'vmBreadcrumb.items'
@@ -31,7 +57,9 @@ const FuncTree = class {
         this.config = mergeRecursive(JSON.parse(JSON.stringify(DEFAULT_CONFIG)), config);
         this.tree = d3.layout.tree()
             .size([360, this.config.diameter / 2]);
-        this.colorScale = d3.scale.category20();
+        
+        this.colorScale = d3.scale.ordinal().range( this.config.colorPalettes.tableauColorBlind10 );
+
         let id = 0;
         for (const node of this.nodes) {
             node.id = id++;
@@ -862,4 +890,3 @@ function zoomClick(zoom, config) {
     
     interpolateZoom([view.x, view.y], view.k, zoom);
 }
-
