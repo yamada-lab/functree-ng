@@ -3,11 +3,6 @@
 
 FuncTree is a web application that allows user to map omics data onto a pre-defined radial tree (e.g. based on the [KEGG brite functional hierarchy](http://www.genome.jp/kegg-bin/get_htext?br08902.keg)) to help them to quickly and comprehensively understand the functional potential of their data, and to develop further hypothesis and scientific insights.
 
-## Requirements
-- Python 3
-- Node.js
-- MongoDB
-
 ## Installation
 Clone this repository and change directory to `functree-ng`:
 ```bash
@@ -35,6 +30,11 @@ yarn sass:watch
 ```
 
 #### Manual installation (unsupported, use at your own risk)
+##### Requirements
+- Python 3
+- Node.js
+- MongoDB
+
 Install dependencies and build the application:
 ```bash
 $ pip3 install -r requirements.txt
