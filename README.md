@@ -1,7 +1,7 @@
 # FuncTree 2
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-FuncTree is a web application that allows user to map omics data onto a pre-defined radial tree (e.g. based on the [KEGG brite functional hierarchy](http://www.genome.jp/kegg-bin/get_htext?br08902.keg)) to help them to quickly and comprehensively understand the functional potential of their data, and to develop further hypothesis and scientific insights.
+FuncTree is a web application that allows users to map omics data onto a pre-defined radial tree (e.g. based on the [KEGG brite functional hierarchy](http://www.genome.jp/kegg-bin/get_htext?br08902.keg)) to help them quickly and comprehensively understand the functional potential of their data, and to develop further hypothesis and scientific insights.
 
 ## Installation
 Clone this repository and change directory to `functree-ng`:

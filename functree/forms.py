@@ -5,8 +5,8 @@ def get_targets():
     '''
     Returns the db targets with KEGG at the top 
     '''
-    targets = models.Tree.objects.aggregate({'$group': {'_id': '$source'}})
-    targets_choices = [(target['_id'],) * 2 for target in targets]
+    targets = models.Tree.objects.only('source', 'description')
+    targets_choices = [(target['source'], target['source'] + ": " + target['description'])  for target in targets]
     return list(filter(lambda x: x[0] == "KEGG", targets_choices)) +  list(filter(lambda x: x[0] != "KEGG", targets_choices))
 
 class MappingForm(flask_wtf.FlaskForm):
