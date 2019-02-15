@@ -387,6 +387,29 @@ const FuncTree = class {
             				window.open(url, '_blank');
             			}
             		})
+            		// Toggle/Untoggle labels
+            		actions.push({
+            			name: 'Toggle label',
+            			iconClass: 'fa-toggle-off',
+            			onClick: function() {
+            				const selectedLabel = d3.select('#label-' + nodeId)
+            				if (selectedLabel.empty()) {
+            					const selectedNode = d3.select('#' + nodeId)
+            					d3.select("#labels")
+            					.append('g')
+            					.attr('id', 'label-' + nodeId)
+            					.attr('transform', selectedNode .attr("transform"))
+            					.append('text')
+            					.attr('text-anchor', 'middle')
+            					.attr('font-family', 'arial, sans-serif')
+            					.attr('font-size', 4)
+            					.attr('fill', '#555')
+            					.text(selectedNode.attr("data-original-title").replace(/\[.*\] /, ''))
+            				} else {
+            					selectedLabel.remove()
+            				}
+            			}
+            		})
             		
             	}
             	//escape space in the selector
