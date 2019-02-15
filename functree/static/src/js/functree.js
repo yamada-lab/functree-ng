@@ -395,7 +395,7 @@ const FuncTree = class {
             				const selectedLabel = d3.select('#label-' + nodeId)
             				if (selectedLabel.empty()) {
             					const selectedNode = d3.select('#' + nodeId)
-            					d3.select("#labels")
+            					const text = d3.select("#labels")
             					.append('g')
             					.attr('id', 'label-' + nodeId)
             					.attr('transform', selectedNode .attr("transform"))
@@ -405,6 +405,18 @@ const FuncTree = class {
             					.attr('font-size', 4)
             					.attr('fill', '#555')
             					.text(selectedNode.attr("data-original-title").replace(/\[.*\] /, ''))
+            					// add drag behavior
+            		            text.call(d3.behavior.drag()
+            		                .on('dragstart', () => {
+            		        	    	d3.event.sourceEvent.stopPropagation();
+            		        	    })
+            		                .on('drag', function(d) {
+            		                    d3.select(this)
+            		                        .attr('y', 0)
+            		                        .attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
+            		                })
+            		            );
+
             				} else {
             					selectedLabel.remove()
             				}
