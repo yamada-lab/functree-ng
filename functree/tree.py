@@ -136,12 +136,28 @@ def from_tsv(path, name):
     '''
     root = Node(entry=name, name=name, layer='root')
 
+    # process annoatation if available 
+    entry_label = {}
+    line = path.readline()
+    
+    if line.strip().decode() == 'Annotation-start':
+        #populate annotation table
+        line = path.readline()
+        while line:
+            line = line.strip().decode()
+            while line != 'Annotation-end':
+                entry, label = line.split('\t')
+                entry_label[entry] = label
+                line = path.readline()
+    
     levels = path.readline().strip().decode().split('\t')
     levels.insert(0, 'root')
     nodes_layer = {key: {} for key in levels}
     nodes_layer['root'] = {'root': root}
-
-    for line in path:
+    
+    line = path.readline()
+    
+    while line:
         entries = line.strip().decode().split('\t')
         # prefix empty cells by parent id
         for index, entry in enumerate(entries):
@@ -157,12 +173,17 @@ def from_tsv(path, name):
             layer = levels[index + 1]
             if entry not in nodes_layer[layer]:
                 parent_layer = levels[index]
-                node = Node(entry=entry, name=entry, layer=layer)
+                name_label = entry
+                if entry in entry_label:
+                    name_label = entry_label[entry]
+                node = Node(entry=entry, name=name_label, layer=layer)
                 if index > 0:
                     nodes_layer[parent_layer][entries[index - 1]].add_child(node)
                 else:
                     nodes_layer[parent_layer]['root'].add_child(node)
                 nodes_layer[layer][entry] = node
+        line = path.readline()
+    #path.close()
     return root
 
 def download_htext(htext, format='htext'):

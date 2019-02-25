@@ -20,6 +20,7 @@
                             {{ form.input_file(class_='form-control-file') }}
                             <span class="help-block">Example: <a href="{{ url_for('static', filename='data/example/reference_tree.json') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> JSON</a>
                             	<a href="{{ url_for('static', filename='data/example/reference_tree.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> TSV</a>
+                            	<a href="{{ url_for('static', filename='data/example/reference_tree_annotated.tsv') }}" target="_blank"><i class="fa fa-download" aria-hidden="true"></i> TSV (annotated)</a>
                             </span>
                             {% if form.input_file.errors %}
                             <span class="help-block">
