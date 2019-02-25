@@ -266,10 +266,10 @@
 					A tab separated matrix containing the ontology. Each line should
 					start with the highest level of the ontology followed by the rest
 					of the levels all the way down to the leaves. Missing level entries should
-					be replaced by an empty string or a dash ["-", ""]. Please check
-					this <a
-						href="{{ url_for('static', filename='data/example/reference_tree.tsv') }}"
-						target="_blank"> example file</a> for reference.
+					be replaced by an empty string or a dash ["-", ""]. Optionally, the file could have
+					an annotation section containing labels for the entries. These labels will drawn on top of the visualized entries. 
+					Please check the <a href="{{ url_for('static', filename='data/example/reference_tree.tsv') }}" target="_blank"> matrix file</a>
+					and the <a href="{{ url_for('static', filename='data/example/reference_tree_annotated.tsv') }}" target="_blank"> annotated-matrix file</a> for reference.
 				</p>
 			</div>
 		</div>
