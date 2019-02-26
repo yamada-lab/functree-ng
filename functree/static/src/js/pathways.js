@@ -1,22 +1,22 @@
 'use strict';
 
-const visualize = (profile, columns, column) => {
+const visualize = (profile, columns, column, color, width, map) => {
 
     /** iPath */
     {
-        const data = profile;
-        const seriesData = data.map((x) => {
+        const seriesData = profile.map((x) => {
             x.name = x.entry;
             x.y = x.values[column];
             return x;
         });
+        
         const selection = seriesData.filter((x) => {
             // let layers = ['pathway', 'module', 'ko'];
             let layers = ['ko'];
-            return ~layers.indexOf(x.layer);
+            // Match KO layer and ensure that the value is above > 0 
+            return ~layers.indexOf(x.layer) && x.y > 0;
         }).map((x) => {
-            x = x.name;
-            return x;
+        	return x.name + ' ' + color + ' W' + width
         }).join('\n');
 
         const params = {
@@ -27,9 +27,7 @@ const visualize = (profile, columns, column) => {
             'default_color': '#aaaaaa',
             'background_color':'#ffffff',
             'tax_filter': '',
-            'map': 'metabolic',
-            'export_type': 'svg',
-            'export_dpi': 10
+            'map': map
         };
 
         const form = $('<form/>', {'action': 'https://pathways.embl.de/ipath3.cgi', 'method': 'POST', 'target': 'ipath'}).hide();
@@ -38,5 +36,4 @@ const visualize = (profile, columns, column) => {
         }
         form.appendTo(document.body).submit().remove();
     }
-
 };
