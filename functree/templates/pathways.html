@@ -1,6 +1,16 @@
 {% extends 'viewer.html' %} 
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/pathways.css') }}">
+{% endblock %}
+
 {% block sidebar %} 
 {{super()}}
+<div id="customization-alert" class="alert alert-info alert-dismissible" role="alert" style="margin-top: 15px">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Additional customization</strong> is also available in iPath's <strong>Controls</strong> menu!
+</div>
 <form id="form-option" v-on:submit.prevent="submit">
 	<h5>
 		<i class="fa fa-cog" aria-hidden="true"></i> Data options 
@@ -26,10 +36,10 @@
 	</h5>
 	<div id="ipath-options" class="collpase">
 		<div class="form-group">
-			<label class="control-label">Color <input class="form-control input-sm" v-model="color"></label>
+			<label class="control-label">Color <colorpicker :color="color" v-model="color" /></label>
 		</div>
 		<div class="form-group">
-			<label class="control-label">Width <input class="form-control input-sm" v-model="width"></label>
+			<label class="control-label">Width <input type="number" min="0" step="1" class="form-control input-sm" v-model="width"></label>
 		</div>
 		<div class="form-group">
 			<label class="control-label">Pathway map</label> 
@@ -38,9 +48,11 @@
 			</select>
 		</div>
 	</div>
-	<button type="submit" class="btn btn-sm btn-primary">
-		<i aria-hidden="true" class="fa fa-refresh"></i> Update
-	</button>
+	<div class="form-group text-center">
+		<button type="submit" class="btn btn-sm btn-primary">
+			<i aria-hidden="true" class="fa fa-refresh"></i> Update
+		</button>
+	</div>
 </form>
 {% endblock %} 
 {% block mainpane %}
@@ -56,6 +68,7 @@
 {% block script %}
 
  {{super()}}
+<script src="{{ url_for('static', filename='yarn_components/vue-color/dist/vue-color.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/pathways.js') }}"></script>
 <script>
     axios.get('{{ url_for('route_profile', profile_id=profile.profile_id) }}')
@@ -78,7 +91,7 @@
                 'data': {
                 	'series': 0,
                     'column': 0,
-                    'color': '#ff800e',
+                    'color': {hex: '#FF800E', a: 1},
                     'width': '10',
                     'map': 0,
                     'options': [
@@ -92,7 +105,7 @@
                     	this.$set(this.options, 1, res.data[0].columns[this.series]);
                 	},
                     'submit': function() {
-                    	visualize(profile, this.options[1], this.column, this.color, this.width, this.options[2][this.map])
+                    	visualize(profile, this.options[1], this.column, this.color.hex, this.color.a, this.width, this.options[2][this.map])
                         $('#loading').show();
                     }
                 }
@@ -103,6 +116,17 @@
             console.error(error);
             alert('An error occurred');
         });
-    	$('#ipatharea iframe').on("load", function() { $('#loading').hide(); })
+ 
+    // jQuery part, decoupled from Vue
+    $(document).ready(function () {
+    	$('#ipatharea iframe').on("load", function() { 
+    		$('#loading').hide();
+    		/* 
+    		Fix of cross origines: the iframe must be loaded in a WebComponent first then processed 
+    		const iframe = $('[name="ipath"]')[0];
+  			const elmnt = iframe.contentWindow.document.getElementById("mainNav");
+  			$(elmnt).remove(); */
+    	})
+    })
 </script>
 {% endblock %}

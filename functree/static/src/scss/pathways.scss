@@ -1,0 +1,13 @@
+.vc-chrome {
+	position: absolute;
+	top: 35px;
+	right: 0;
+	z-index: 9;
+}
+.current-color {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-color: #000;
+	cursor: pointer;
+}
