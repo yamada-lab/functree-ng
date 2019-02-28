@@ -1,63 +1,74 @@
-{% extends 'viewer.html' %}
+{% extends 'viewer.html' %} 
 
-{% block sidebar %}
+{% block head %}
 {{super()}}
-<h5><i class="fa fa-cog" aria-hidden="true"></i> Options <a href="#form-charts" data-toggle="collapse"><i class="fa fa-caret-down" aria-hidden="true"></i></a></h5>
-<form id="form-charts" class="collapse in">
-    <input type="hidden" name="profile_id" value="{{profile.profile_id}}">
-    <input type="hidden" name="mode" value="charts">
-    <div class="form-group">
-        <label class="control-label">Data series</label>
-        <select name="series" class="form-control input-sm">
-            {% for series_ in profile.series %}
-            <option value="{{loop.index0}}"{% if loop.index0 == series %} selected{% endif %}>{{series_}}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary btn-sm">Go</button>
-    </div>
-</form>
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/pathways.css') }}">
 {% endblock %}
 
+{% block sidebar %} 
+{{super()}}
+<div id="customization-alert" class="alert alert-info alert-dismissible" role="alert" style="margin-top: 15px">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Additional customization</strong> is also available in iPath's <strong>Controls</strong> menu!
+</div>
+<form id="form-option" v-on:submit.prevent="submit">
+	<h5>
+		<i class="fa fa-cog" aria-hidden="true"></i> Data options 
+		<a href="#data-options" data-toggle="collapse"> <i class="fa fa-caret-down" aria-expanded="true"></i></a>
+	</h5>
+	<div id="data-options" class="collpase in">
+		<div class="form-group">
+			<label class="control-label">Data series</label> 
+			<select id="series" class="form-control input-sm" v-on:change="dataSeriesChange" v-model="series">
+				<option v-for="(option, index) in  options[0]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label class="control-label">Column</label> 
+			<select class="form-control input-sm" v-model="column">
+				<option v-for="(c, index) in options[1]" v-bind:value="index">{% raw %}{{c}}{% endraw %}</option>
+			</select>
+		</div>
+	</div>
+	<h5>
+		<i class="fa fa-cog" aria-hidden="true"></i> iPath options 
+		<a href="#ipath-options" data-toggle="collapse"> <i class="fa fa-caret-down" aria-expanded="false"></i></a>
+	</h5>
+	<div id="ipath-options" class="collpase">
+		<div class="form-group">
+			<label class="control-label">Color <colorpicker :color="color" v-model="color" /></label>
+		</div>
+		<div class="form-group">
+			<label class="control-label">Width <input type="number" min="0" step="1" class="form-control input-sm" v-model="width"></label>
+		</div>
+		<div class="form-group">
+			<label class="control-label">Pathway map</label> 
+				<select id="map" class="form-control input-sm" v-model="map">
+				<option v-for="(option, index) in  options[2]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group text-center">
+		<button type="submit" class="btn btn-sm btn-primary">
+			<i aria-hidden="true" class="fa fa-refresh"></i> Update
+		</button>
+	</div>
+</form>
+{% endblock %} 
 {% block mainpane %}
 <div class="panel panel-default">
-    <div class="panel-heading">
-        Data series: <span class="badge">{{profile.series[series]}}</span> <span class="label label-info">Beta feature</span>
-    </div>
-    <div class="panel-body">
-        <form id="form-option" class="form-inline" v-on:submit.prevent="submit">
-            <div class="form-group">
-                <label class="control-label">Column</label>
-                <select class="form-control input-sm" v-model="column">
-                    <option v-for="(c, index) in columns" v-bind:value="index">{% raw %}{{c}}{% endraw %}</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-sm btn-primary"><i aria-hidden="true" class="fa fa-refresh"></i> Update</button>
-        </form>
-        <hr>
-        <div id="ipatharea" class="thumbnail">
-			<div id="loading">
-				<div>
-					<p>
-						<i class="fa fa-spinner fa-pulse fa-4x fa-fw"></i>
-					</p>
-					<p>Loading...</p>
-				</div>
-			</div>
-			<iframe name="ipath" width="100%" height="800" frameborder="0">
-            Loading
-            </iframe>
-        </div>
-    </div>
+	<div class="panel-body">
+		<div id="ipatharea" class="thumbnail">
+			<iframe name="ipath" width="100%" height="1000" frameborder="0"> Loading </iframe>
+		</div>
+	</div>
 </div>
-{% endblock %}
+{% endblock %} 
 
 {% block script %}
-{{super()}}
-<script src="{{ url_for('static', filename='bower_components/highcharts/highcharts.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/highcharts/modules/exporting.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/highcharts/modules/heatmap.js') }}"></script>
+
+ {{super()}}
+<script src="{{ url_for('static', filename='yarn_components/vue-color/dist/vue-color.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/pathways.js') }}"></script>
 <script>
     axios.get('{{ url_for('route_profile', profile_id=profile.profile_id) }}')
@@ -74,28 +85,48 @@
                     if (a.entry < b.entry) return -1;
                     return 0;
                 });
-            var columns = res.data[0].columns[{{series}}];
-
-            new Vue({
+            
+            const ipathForm = new Vue({
                 'el': '#form-option',
                 'data': {
+                	'series': 0,
                     'column': 0,
-                    'columns': columns
+                    'color': {hex: '#FF800E', a: 1},
+                    'width': '10',
+                    'map': 0,
+                    'options': [
+                    	res.data[0].series,
+                    	res.data[0].columns[0],
+                    	['metabolic', 'secondary', 'microbial', 'antibiotic']
+                    ],
                 },
                 'methods': {
+                	'dataSeriesChange': function() {
+                    	this.$set(this.options, 1, res.data[0].columns[this.series]);
+                	},
                     'submit': function() {
-                        visualize(profile, columns, this.column)
+                    	visualize(profile, this.options[1], this.column, this.color.hex, this.color.a, this.width, this.options[2][this.map])
                         $('#loading').show();
                     }
                 }
             });
-
-            visualize(profile, columns, 0);
+            ipathForm.submit()
         })
         .catch(function(error) {
             console.error(error);
             alert('An error occurred');
         });
-    	$('#ipatharea iframe').on("load", function() { $('#loading').hide(); })
+ 
+    // jQuery part, decoupled from Vue
+    $(document).ready(function () {
+    	$('#ipatharea iframe').on("load", function() { 
+    		$('#loading').hide();
+    		/* 
+    		Fix of cross origines: the iframe must be loaded in a WebComponent first then processed 
+    		const iframe = $('[name="ipath"]')[0];
+  			const elmnt = iframe.contentWindow.document.getElementById("mainNav");
+  			$(elmnt).remove(); */
+    	})
+    })
 </script>
 {% endblock %}

@@ -39,7 +39,8 @@ Install dependencies and build the application:
 ```bash
 $ pip3 install -r requirements.txt
 $ npm install yarn --global
-$ yarn install
+$ yarn run install-depends
+$ yarn run install-devDepends
 $ yarn run bower install
 $ yarn run build
 ```
