@@ -338,7 +338,6 @@ const FuncTree = class {
                     .selectAll('path')
                     .attr('style', null);
             }).on('contextmenu', (d) => {
-            	console.log(d.depth)
             	if (this.config.external.entry) {
             		eval(this.config.external.entry + ' = d.entry');
             	}
@@ -346,6 +345,7 @@ const FuncTree = class {
             	const self = this
             	// get the id of the triggering node
             	const nodeId = d3.event.target.id
+            	
             	// create an array of actions for the context menu
             	const actions = [{
         			name: 'Copy',
@@ -361,42 +361,45 @@ const FuncTree = class {
         				$("#form-entry-detail").submit();
         			}
         		}]
-            	// Toggle/Untoggle labels for unlabeled nodes
-            	if (d.depth >= this.config.labelMinDepth) {
-            		actions.push({
-                		name: 'Toggle label',
-                		iconClass: 'fa-toggle-off',
-                		onClick: function() {
-                			const selectedLabel = d3.select('#label-' + nodeId)
-                			if (selectedLabel.empty()) {
-                				const selectedNode = d3.select('#' + nodeId)
-                				const text = d3.select("#labels")
-                				.append('g')
-                				.attr('id', 'label-' + nodeId)
-                				.attr('transform', selectedNode .attr("transform"))
-                				.append('text')
-                				.attr('text-anchor', 'middle')
-                				.attr('font-family', 'arial, sans-serif')
-                				.attr('font-size', 4)
-                				.attr('fill', '#555')
-                				.text(selectedNode.attr("data-original-title").replace(/\[.*\] /, ''))
-                				// add drag behavior
-                				text.call(d3.behavior.drag()
-                						.on('dragstart', () => {
-                							d3.event.sourceEvent.stopPropagation();
-                						})
-                						.on('drag', function(d) {
-                							d3.select(this)
-                							.attr('y', 0)
-                							.attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
-                						})
-                				);
+            	
+            	if(!isModuleUndefinedNode(nodeId, "KEGG")){
+            		// Toggle/Untoggle labels for unlabeled nodes
+                	if (d.depth >= this.config.labelMinDepth) {
+                		actions.push({
+                    		name: 'Toggle label',
+                    		iconClass: 'fa-toggle-off',
+                    		onClick: function() {
+                    			const selectedLabel = d3.select('#label-' + nodeId)
+                    			if (selectedLabel.empty()) {
+                    				const selectedNode = d3.select('#' + nodeId)
+                    				const text = d3.select("#labels")
+                    				.append('g')
+                    				.attr('id', 'label-' + nodeId)
+                    				.attr('transform', selectedNode .attr("transform"))
+                    				.append('text')
+                    				.attr('text-anchor', 'middle')
+                    				.attr('font-family', 'arial, sans-serif')
+                    				.attr('font-size', 4)
+                    				.attr('fill', '#555')
+                    				.text(selectedNode.attr("data-original-title").replace(/\[.*\] /, ''))
+                    				// add drag behavior
+                    				text.call(d3.behavior.drag()
+                    						.on('dragstart', () => {
+                    							d3.event.sourceEvent.stopPropagation();
+                    						})
+                    						.on('drag', function(d) {
+                    							d3.select(this)
+                    							.attr('y', 0)
+                    							.attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
+                    						})
+                    				);
 
-                			} else {
-                				selectedLabel.remove()
-                			}
-                		}
-            		})
+                    			} else {
+                    				selectedLabel.remove()
+                    			}
+                    		}
+                		})
+                	}	
             	}
             	
             	// check node id eligible for View Details actions
@@ -432,7 +435,7 @@ const FuncTree = class {
             	//escape space in the selector
             	const menu = new BootstrapMenu("#"+nodeId.replace(/([ &,;:\+\*\(\)\[\]])/g, '\\$1'), {
             		actions: actions
-            	});
+            	}); 
             	return false;
             });
         node
@@ -839,11 +842,21 @@ const FuncTree = class {
 function hasMoreDetails(nodeId, referenceDatabase){
 	let hasMoreDetails = false;
 	if (referenceDatabase == "KEGG") {
-		if (nodeId.match(/(K|M|map)[0-9]{5}/)) {
+		if (nodeId.match(/^(K|M|map)[0-9]{5}/)) {
 			hasMoreDetails = true
 		}
 	}
 	return hasMoreDetails
+}
+
+function isModuleUndefinedNode(nodeId, referenceDatabase){
+	let truth = false;
+	if (referenceDatabase == "KEGG") {
+		if (nodeId.match(/^\*map[0-9]{5}/)) {
+			truth = true
+		}
+	}
+	return truth
 }
 
 function resolveExternalURL(nodeId, referenceDatabase){

@@ -54,8 +54,8 @@ def calc_abundances(df, nodes, method, results):
     df_dict =  {}
     for node in nodes:
         entry_profile = None
-        # Skip nodes which was already in df_out or have a name with "*" (e.g. *Module undefined*)
-        if node['entry'] in df_dict or node['entry'].startswith('*'):
+        # Skip nodes which was already in df_out
+        if node['entry'] in df_dict:
             continue
 
         if 'children' not in node:
@@ -65,8 +65,8 @@ def calc_abundances(df, nodes, method, results):
             except KeyError:
                 pass
         else:
-            # filter out module unknown nodes
-            targets = [child_node['entry'] for child_node in tree.get_nodes(node) if 'children' not in child_node and not child_node['entry'].startswith('*')]
+            # get leaf ids of the current node 
+            targets = [child_node['entry'] for child_node in tree.get_nodes(node) if 'children' not in child_node]
             try:
                 # loc is row names of data frame
                 loc = df.loc[targets]
