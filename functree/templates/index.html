@@ -60,7 +60,7 @@
 {% endblock %}
 {% block script %} {{super()}}
 <script
-	src="{{ url_for('static', filename='bower_components/particles.js/particles.min.js') }}"></script>
+	src="{{ url_for('static', filename='yarn_components/particles.js/particles.js') }}"></script>
 <script>
     particlesJS.load('particles-js', '{{ url_for('static', filename='particles.json') }}');
 </script>

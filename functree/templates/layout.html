@@ -13,9 +13,8 @@
         <meta charset="utf-8">
         <meta name="author" content="Yuta Yamate">
         <meta name="description" content="Visualization and analysis tool for omics data based on biological functional tree">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/jquery-ui/themes/base/jquery-ui.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='yarn_components/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='yarn_components/font-awesome/css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/layout.css') }}">
         {% endblock %}
     </head>
@@ -82,11 +81,10 @@
             </div>
         </footer>
         {% block script %}
-        <script src="{{ url_for('static', filename='bower_components/vue/dist/vue.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/axios/dist/axios.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/vue/dist/vue.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/axios/dist/axios.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-44952254-2"></script>
 		<script>

@@ -7,11 +7,13 @@
 
 {% block sidebar %}
 {{super()}}
+
+
 <form id="form-search" class="collapse in" v-on:submit.prevent="submit">
     <div class="form-group">
-        <div class="input-group">
-            <input type="text" class="form-control input-sm" placeholder="Search map elements" v-model.lazy.trim="searchWord">
-            <span class="input-group-btn">
+        <div id="map-element-search" class="input-group">
+            <input type="text" class="form-control input-sm typeahead" placeholder="Search map elements" v-model.lazy.trim="searchWord">
+            <span class="input-group-btn" style="vertical-align: top;">
                 <button class="btn btn-primary btn-sm" type="submit">
                     <i class='fa fa-search fa-fw'></i>
                 </button>
@@ -161,8 +163,9 @@ The actions below are available for exploring the tree:
 
 {% block script %}
 {{super()}}
-<script src="{{ url_for('static', filename='bower_components/d3/d3.min.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/boostrap-menu/dist/BootstrapMenu.min.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/d3/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/bootstrap-menu/dist/BootstrapMenu.min.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/corejs-typeahead/dist/typeahead.jquery.min.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/functree.js') }}"></script>
 <script>var rootEntry = {% if root %}'{{root}}'{% else %}undefined{% endif %};</script>
 <script>
@@ -206,7 +209,7 @@ The actions below are available for exploring the tree:
     function visualize(tree, profile) {
     	var funcTree = new FuncTree(tree.tree, "{{ url_for('route_get_entry') }}");
         if (rootEntry) {
-            var roots = funcTree.nodes.filter(function(x) {
+            const roots = funcTree.nodes.filter(function(x) {
                 return x.entry === rootEntry;
             });
             if (roots.length) {
@@ -311,25 +314,30 @@ The actions below are available for exploring the tree:
             }
         });
 
-        $('#form-search input').autocomplete({
-            'minLength': 2,
-            'source': funcTree.nodes
-                .map(function(x) {
-                    return x.entry;
-                })
-                .filter(function(x, i, self) {
-                    return self.indexOf(x) === i;
-                })
-                .filter(function(x) {
-                    return !x.startsWith('*');
-                })
-                .sort(function(a, b) {
-                    a = a.toString().toLowerCase();
-                    b = b.toString().toLowerCase();
-                    if (a > b) return 1;
-                    if (a < b) return -1;
-                    return 0;
-                })
+        // create an array of nodes to search
+        const nodes = funcTree.nodes.map(function(x) {
+            				return x.entry;
+        				}).filter(function(x, i, self) {
+            				return self.indexOf(x) === i;
+        				}).filter(function(x) {
+            				return !x.startsWith('*');
+        				}).sort(function(a, b) {
+							a = a.toString().toLowerCase();
+				            b = b.toString().toLowerCase();
+				            if (a > b) return 1;
+				            if (a < b) return -1;
+				            return 0;
+        				})
+        // initialize a typeahead for the nodes
+        $('#map-element-search .typeahead').typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 2
+        },
+        {
+          name: 'nodes',
+          source: substringMatcher(nodes),
+          limit: nodes.length
         });
     }
     

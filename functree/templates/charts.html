@@ -59,9 +59,9 @@
 
 {% block script %}
 {{super()}}
-<script src="{{ url_for('static', filename='bower_components/highcharts/highcharts.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/highcharts/modules/exporting.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/highcharts/modules/heatmap.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/highcharts/highcharts.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/highcharts/modules/exporting.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/highcharts/modules/heatmap.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/js/charts.js') }}"></script>
 <script>
     axios.get('{{ url_for('route_profile', profile_id=profile.profile_id) }}')
