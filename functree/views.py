@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.common.exceptions import TimeoutException
-from functree import __version__, app, auth, csrf, filters, forms, models, tree, analysis, cache
+from functree import __version__, app, auth, constants, csrf, filters, forms, models, tree, analysis, cache
 from functree.crckm.src import download as crckm
 
 @app.route('/')
@@ -158,6 +158,8 @@ def route_analysis(mode):
         form = forms.MappingForm()
         if form.validate_on_submit():
             profile_id = analysis.basic_mapping.from_table(form)
+            if profile_id == constants.NO_MATCHED_HIERARCHIES:
+                return flask.redirect(flask.url_for('route_nomapping'))
             return flask.redirect(flask.url_for('route_viewer') + '?profile_id={}'.format(profile_id))
         else:
             return flask.render_template('mapping.html', form=form, mode=mode)
@@ -180,6 +182,10 @@ def route_analysis(mode):
             return flask.render_template('display.html', form=form, mode=mode)
     else:
         flask.abort(404)
+
+@app.route('/nomapping/')
+def route_nomapping():
+    return flask.render_template('nomapping.html')
 
 def profile_for_display(form):
     profile_id = None
@@ -250,16 +256,13 @@ def utility_processor():
 def route_docs(filename):
     return flask.render_template('help.html')
 
-
 @app.route('/about/')
 def route_about():
     return flask.render_template('about.html', version=__version__)
 
-
 @app.route('/contact/')
 def route_contact():
     return flask.render_template('contact.html')
-
 
 @app.route('/viewer/')
 def route_viewer():

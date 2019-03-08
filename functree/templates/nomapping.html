@@ -1,24 +1,21 @@
-{% extends 'layout.html' %} 
+{% set title = 'No Mapping found!' %}
+{% extends 'layout.html' %}
+
 {% block head %} 
 {{super()}}
-<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/css/nomapping.css') }}">
 {% endblock %} 
-{% block content %}
 
+{% block content %}
 <div class="container">
-	<div class="row">
-		<div class="col-xs-12">
-			<img src="{{ url_for('static', filename = 'images/home.png')}}" class="img-responsive center-block" alt="Data Visualization">
-		</div>
+	<div class="page-header">
+		<h2>{{title}}</h2>
+	</div>
+	<div class="alert alert-warning" role="alert">
+		<p><strong>No mapping was found for the uploaded table!</strong> Please use another matrix then chose one of the actions below.</p>
 	</div>
 </div>
-<div class="jumbotron jumbotron-fluid">
-	<div id="particles-js"></div>
-	<div class="container responsive">
-		<h1>FuncTree 2</h1>
-		<p>Biologically relevant visualization of omics profiles</p>
-	</div>
-</div>
+
 <div class="container">
 	<div class="row">
 		<div class="col-xs-3">
@@ -55,11 +52,4 @@
 		</div>
 	</div>
 </div>
-{% endblock %}
-{% block script %} {{super()}}
-<script
-	src="{{ url_for('static', filename='yarn_components/particles.js/particles.js') }}"></script>
-<script>
-    particlesJS.load('particles-js', '{{ url_for('static', filename='particles.json') }}');
-</script>
 {% endblock %}

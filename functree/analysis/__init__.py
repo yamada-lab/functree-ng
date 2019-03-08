@@ -4,6 +4,16 @@ from functree import tree, models
 from functree.analysis import module_coverage, display, basic_mapping, comparison
 from functools import reduce
 
+def load_input(f):
+    '''
+    Read the csv file and remove duplicated rows
+    '''
+    df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
+    # remove duplicated rows if any
+    if not df.index.is_unique:
+        df = df.groupby(level=0).sum()
+    return df
+
 def map_external_annotations(df):
     '''
     Find KO annotation for the entries of df then create and new df with K Numbers and rows divided by the number of matched KNumbers 
