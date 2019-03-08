@@ -80,8 +80,9 @@ def calc_abundances(df, nodes, method, results):
             df_dict[node['entry']] = entry_profile.to_dict().values()
 
     df_out = pd.DataFrame.from_dict(df_dict, "index")
-    df_out.columns = df.columns
-    df_out = df_out.dropna(how='all').fillna(0.0)
+    if not df_out.empty:
+        df_out.columns = df.columns
+        df_out = df_out.dropna(how='all').fillna(0.0)
     results[method] = df_out
 
 def calc_distributed_abundances(df, graph, method, results):

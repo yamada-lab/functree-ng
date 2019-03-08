@@ -34,7 +34,9 @@ def from_table(form):
 def calc_abundances(f, target, methods, distribute):
     
     df = pd.read_csv(f, delimiter='\t', comment='#', header=0, index_col=0)
-    
+    # remove duplicated rows if any
+    if not df.index.is_unique:
+        df = df.groupby(level=0).sum()
     # transform external annotations to kegg KOs
     # runs in 1.66
     if target.lower() in ["kegg", "foam", "enteropathway"]:
@@ -66,21 +68,22 @@ def calc_abundances(f, target, methods, distribute):
     results = dict(shared_data)
     profile = []
     # load KO based entries
-    entries=list(list(results.values())[0].index)
-    if "modulecoverage" in methods:
-        entries += list(list(results.values())[2].index)
-        entries = list(set(entries))
-
-    # This is taking 2 to 4 seconds to run
-    for entry in entries:
-        #values = [results[method].ix[entry].tolist() for method in methods]
-        values = []
-        for method in methods:
-            if entry in results[method].index:
-                values.append(results[method].ix[entry].tolist())
-            else:
-                values.append([0] * df.columns.size)
-        profile.append({'entry': entry, 'layer': analysis.get_layer(entry, entry_to_layer), 'values': values})
+    if len(results) > 0:
+        entries=list(list(results.values())[0].index)
+        if "modulecoverage" in methods:
+            entries += list(list(results.values())[2].index)
+            entries = list(set(entries))
+    
+        # This is taking 2 to 4 seconds to run
+        for entry in entries:
+            #values = [results[method].ix[entry].tolist() for method in methods]
+            values = []
+            for method in methods:
+                if entry in results[method].index:
+                    values.append(results[method].ix[entry].tolist())
+                else:
+                    values.append([0] * df.columns.size)
+            profile.append({'entry': entry, 'layer': analysis.get_layer(entry, entry_to_layer), 'values': values})
     data = {
         'profile': profile,
         'series': methods,

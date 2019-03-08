@@ -36,7 +36,7 @@
                     <ul class="nav navbar-nav">
                         <li{% if request.endpoint == 'route_index' %} class="active"{% endif %}><a href="{{ url_for('route_index') }}"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
                         <li class="dropdown {% if request.endpoint == 'route_analysis' %} active{% endif %}">
-                            <a href="{{ url_for('route_analysis', mode='basic_mapping') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
+                            <a href="{{ url_for('route_analysis', mode='mapping') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Analysis</li>
                                 <li><a href="{{ url_for('route_analysis', mode='mapping') }}">- Mapping</a></li>
