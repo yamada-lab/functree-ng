@@ -251,10 +251,9 @@ def utility_processor():
         return data.read()
     return dict(json_schema=json_schema, json_example=json_example, json_reference_example=json_reference_example, json_reference_schema=json_reference_schema)
 
-@app.route('/docs/', defaults={'filename': 'index.html'})
-@app.route('/docs/<path:filename>')
-def route_docs(filename):
-    return flask.render_template('help.html')
+@app.route('/docs/')
+def route_docs():
+    return flask.render_template('help.html', constants=constants)
 
 @app.route('/about/')
 def route_about():
