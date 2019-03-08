@@ -1,6 +1,6 @@
 'use strict';
 
-const visualize = (profile, columns, column, color, opacity, width, map) => {
+const visualize = (profile, columns, column, cutoff, color, opacity, width, map) => {
 
     /** iPath */
     {
@@ -13,8 +13,8 @@ const visualize = (profile, columns, column, color, opacity, width, map) => {
         const selection = seriesData.filter((x) => {
             // let layers = ['pathway', 'module', 'ko'];
             let layers = ['ko'];
-            // Match KO layer and ensure that the value is above > 0 
-            return ~layers.indexOf(x.layer) && x.y > 0;
+            // Match KO layer and ensure that the value is above > cutoff
+            return ~layers.indexOf(x.layer) && x.y > cutoff;
         }).map((x) => {
         	return x.name + ' ' + color + ' W' + (width) + ' ' + opacity
         }).join('\n');

@@ -3,7 +3,7 @@
 
 {% block head %}
 {{super()}}
-<link rel="stylesheet" href="{{ url_for('static', filename='bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='yarn_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -69,10 +69,10 @@
 
 {% block script %}
 {{super()}}
-<script src="{{ url_for('static', filename='bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
-<script src="{{ url_for('static', filename='bower_components/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+<script src="{{ url_for('static', filename='yarn_components/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
 <script>
     $(function() {
         $('#table-profile').DataTable({

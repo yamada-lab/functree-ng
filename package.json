@@ -8,20 +8,32 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yyuuta88/functree-ng.git"
+    "url": "https://github.com/yamada-lab/functree-ng.git"
   },
   "bugs": {
-    "url": "https://github.com/yyuuta88/functree-ng/issues"
+    "url": "https://github.com/yamada-lab/functree-ng/issues"
   },
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.17.1",
+    "bootstrap": "^3.3.7",
+    "bootstrap-menu": "^1.0.14",
+    "corejs-typeahead": "^1.2.1",
+    "d3": "^3.5.17",
+    "datatables.net": "^1.10.19",
+    "datatables.net-bs": "^1.10.19",
+    "datatables.net-buttons": "^1.3.1",
+    "font-awesome": "^4.7.0",
+    "highcharts": "^6.0.4",
+    "jquery": "^3.2.1",
+    "particles.js": "^2.0.0",
+    "vue": "^2.4.2",
   	"vue-color": "2.7.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-minify": "^0.2.0",
-    "bower": "^1.8.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
     "gulp-plumber": "^1.1.0",
@@ -29,14 +41,13 @@
     "gulp-sourcemaps": "^2.6.1"
   },
   "scripts": {
-    "bower": "bower",
+    "install-depends": "yarn install --production=true --modules-folder functree/static/yarn_components",
+    "install-devDepends": "yarn install --production=false",
     "babel": "gulp babel",
     "babel:watch": "gulp babel:watch",
     "sass": "gulp sass",
     "sass:watch": "gulp sass:watch",
-    "build": "gulp build",
-    "install-depends": "yarn install --production=true --modules-folder functree/static/yarn_components",
-    "install-devDepends": "yarn install --production=false"
+    "build": "gulp build"
   },
   "private": true
 }

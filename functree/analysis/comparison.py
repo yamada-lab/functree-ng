@@ -24,8 +24,8 @@ def from_table(form):
 
 
 def calc_abundances(f1, f2, target):
-    df1 = pd.read_csv(f1, delimiter='\t', comment='#', header=0, index_col=0)
-    df2 = pd.read_csv(f2, delimiter='\t', comment='#', header=0, index_col=0)
+    df1 = analysis.load_input(f1)
+    df2 = analysis.load_input(f2)
     root = models.Tree.objects().get(source=target)['tree']
     nodes = tree.get_nodes(root)
     entry_to_layer = dict(map(lambda x: (x['entry'], x['layer']), nodes))

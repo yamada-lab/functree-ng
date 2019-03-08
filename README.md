@@ -13,6 +13,7 @@ $ cd functree-ng
 #### Using Docker and Docker Compose (preferred and supported way)
 Execute the command below. `docker-compose` will automatically set up Docker containers:
 ```bash
+$ docker-compose build
 $ docker-compose up
 ```
 Then open http://localhost:8080 in your web browser.

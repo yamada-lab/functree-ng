@@ -13,9 +13,8 @@
         <meta charset="utf-8">
         <meta name="author" content="Yuta Yamate">
         <meta name="description" content="Visualization and analysis tool for omics data based on biological functional tree">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/jquery-ui/themes/base/jquery-ui.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='yarn_components/bootstrap/dist/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='yarn_components/font-awesome/css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/layout.css') }}">
         {% endblock %}
     </head>
@@ -37,7 +36,7 @@
                     <ul class="nav navbar-nav">
                         <li{% if request.endpoint == 'route_index' %} class="active"{% endif %}><a href="{{ url_for('route_index') }}"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
                         <li class="dropdown {% if request.endpoint == 'route_analysis' %} active{% endif %}">
-                            <a href="{{ url_for('route_analysis', mode='basic_mapping') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
+                            <a href="{{ url_for('route_analysis', mode='mapping') }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-upload" aria-hidden="true"></i> Submit <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Analysis</li>
                                 <li><a href="{{ url_for('route_analysis', mode='mapping') }}">- Mapping</a></li>
@@ -82,11 +81,10 @@
             </div>
         </footer>
         {% block script %}
-        <script src="{{ url_for('static', filename='bower_components/vue/dist/vue.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/axios/dist/axios.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/vue/dist/vue.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/axios/dist/axios.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='yarn_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-44952254-2"></script>
 		<script>

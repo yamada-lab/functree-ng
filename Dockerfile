@@ -23,10 +23,10 @@ ADD . /app/
 WORKDIR /app/
 
 RUN pip3 install -r requirements.txt
+
 RUN npm install --global yarn && \
   yarn run install-depends && \
   yarn run install-devDepends && \
-  yarn run bower install && \
   yarn run build
 
 EXPOSE 3031 8080
