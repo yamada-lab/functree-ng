@@ -34,7 +34,7 @@
 				<input class="slider" style="margin-top: 10px;" type="range" v-bind:min="options[3][0]" v-bind:max="options[3][1]" v-bind:step="options[3][2]" v-model="cutoff">
 			</label>
 			<div class="input-group" style="margin-top: 10px;">
-				<span class="input-group-addon">{% raw %}{{ options[3][0] }}{% endraw %}</span>
+				<span class="input-group-addon">{% raw %}{{ options[3][0].toExponential() }}{% endraw %}</span>
 					<input class="form-control input-sm" style="text-align: center;" type="text" v-model="cutoff">
 				<span class="input-group-addon">{% raw %}{{ options[3][1].toExponential() }}{% endraw %}</span>
 			</div>
@@ -145,7 +145,7 @@
                     }
                 }
             });
-//            ipathForm.submit()
+            ipathForm.submit()
         })
         .catch(function(error) {
             console.error(error);
@@ -153,10 +153,7 @@
         });
  
     // jQuery part, decoupled from Vue
-    $(document).ready(function () {
-		
-$('#loading').hide();
-		
+    $(document).ready(function () {	
     	$('#ipatharea iframe').on("load", function() { 
     		$('#loading').hide();
     		/* 
