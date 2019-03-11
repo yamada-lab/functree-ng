@@ -9,18 +9,18 @@
 {{super()}}
 
 
-<form id="form-search" class="collapse in" v-on:submit.prevent="submit">
+<div id="form-search" class="collapse in">
     <div class="form-group">
         <div id="map-element-search" class="input-group">
             <input type="text" class="form-control input-sm typeahead" placeholder="Search map elements" v-model.lazy.trim="searchWord">
             <span class="input-group-btn" style="vertical-align: top;">
-                <button class="btn btn-primary btn-sm" type="submit">
+                <button class="btn btn-primary btn-sm" v-on:click="search">
                     <i class='fa fa-search fa-fw'></i>
                 </button>
             </span>
         </div>
     </div>
-</form>
+</div>
 <hr>
 <div id="zoom-control">
     <label class="control-label">Zoom </label>&nbsp;&nbsp;
@@ -235,7 +235,7 @@ The actions below are available for exploring the tree:
                 'searchWord': ''
             },
             'methods': {
-                'submit': function() {
+                'search': function() {
                     funcTree.search(this.searchWord);
                 }
             }

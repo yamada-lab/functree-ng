@@ -664,7 +664,10 @@ const FuncTree = class {
             .attr('r', (d) => {
                 const r_ = 25;
                 if (this.config.normalize) {
-                    return d.value / max[d.depth] * r_ || 0;
+                	/*const maxRadius = Math.sqrt(max[d.depth]/Math.PI);
+                	const nodeRadius = Math.sqrt(d.value/Math.PI);
+                	return nodeRadius/maxRadius * r_ || 0;*/
+                	return d.value / max[d.depth] * r_ || 0;
                 } else {
                     return d.value;
                 }
@@ -777,11 +780,12 @@ const FuncTree = class {
                 return d.entry === word;
             });
         hits.style('fill', '#f00')
+        	.style('stroke', '#f00')
             .style('opacity', 0.5)
             .transition()
             .duration(1000)
             .style('r', 50)
-            .style('stroke-width', 0)
+            .style('stroke-width', 50)
             .style('opacity', 0)
             .each('end', function() {
                 d3.select(this)
