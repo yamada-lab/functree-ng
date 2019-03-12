@@ -177,7 +177,7 @@ The actions below are available for exploring the tree:
         visualize(res0.data[0], res1.data[0]);
     }))
     .then(function() {
-        $('#loading').remove();
+        $('#loading').remove();      
     })
     .catch(function(error) {
         $('#loading > div').html('<p><i class="fa fa-exclamation-circle fa-4x fa-fw"></i></p><p>Ajax error</p>');
@@ -200,7 +200,6 @@ The actions below are available for exploring the tree:
     
     // bind zoom to click action
     d3.selectAll(".zoomcontrol").on('click', zoomClick);
-    
 
     $(window).on('beforeunload', function() {
         return null;
@@ -209,7 +208,7 @@ The actions below are available for exploring the tree:
     function visualize(tree, profile) {
     	var funcTree = new FuncTree(tree.tree, "{{ url_for('route_get_entry') }}");
         if (rootEntry) {
-            const roots = funcTree.nodes.filter(function(x) {
+            var roots = funcTree.nodes.filter(function(x) {
                 return x.entry === rootEntry;
             });
             if (roots.length) {
@@ -218,10 +217,9 @@ The actions below are available for exploring the tree:
                 alert('No entry found: ' + rootEntry);
             }
         }
-        funcTree
-            .create()
-            .update();
 
+        funcTree.create().update();
+        
         var layers = funcTree.nodes.reduce(function(x, y) {
             if (!~x.indexOf(y.layer)) {
                 x.push(y.layer);
@@ -314,20 +312,14 @@ The actions below are available for exploring the tree:
             }
         });
 
+		var MODULE_UNDEFINED_PATTERN = '*'
         // create an array of nodes to search
-        const nodes = funcTree.nodes.map(function(x) {
+        var nodes = funcTree.nodes.map(function(x) {
             				return x.entry;
-        				}).filter(function(x, i, self) {
-            				return self.indexOf(x) === i;
         				}).filter(function(x) {
-            				return !x.startsWith('*');
-        				}).sort(function(a, b) {
-							a = a.toString().toLowerCase();
-				            b = b.toString().toLowerCase();
-				            if (a > b) return 1;
-				            if (a < b) return -1;
-				            return 0;
+            				return !x.startsWith(MODULE_UNDEFINED_PATTERN);
         				})
+
         // initialize a typeahead for the nodes
         $('#map-element-search .typeahead').typeahead({
           hint: true,

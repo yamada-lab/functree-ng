@@ -134,6 +134,7 @@ const FuncTree = class {
     }
 
     update(source=this.root) {
+
         const nodes = this.tree.nodes(this.root);
         const links = this.tree.links(nodes);
         const depth = d3.max(
@@ -141,6 +142,7 @@ const FuncTree = class {
                 return x.depth;
             })
         );
+
 
         const getLayerMax = (nodes, maxFunc) => {
             return Array.from(new Array(depth + 1))
@@ -156,6 +158,7 @@ const FuncTree = class {
         const maxValue = getLayerMax(nodes, (x) => {
             return x.value;
         });
+
         const maxSumOfValues = getLayerMax(nodes, (x) => {
             return d3.sum(x.values);
         });
@@ -170,15 +173,23 @@ const FuncTree = class {
         this._updateRounds(nodes, source, depth, maxValue);
         this._updateLabels(nodes, source, maxValue, maxSumOfValues);
 
-        for (const node of nodes) {
+        for (var node of nodes) {
             node.x0 = node.x;
             node.y0 = node.y;
         }
-
-        // Enable showing tooltip by Bootstrap
-        $('[data-toggle="tooltip"]').tooltip({
-            container: 'body',
-            placement: 'top'
+        // Lazy initialize Bootstrap tooltip 
+        $('[data-toggle="tooltip"]').on({
+        	'mouseenter': (x) => {
+        		$(x.target)
+        		.tooltip({
+        			container: 'body',
+        			placement: 'top',
+        			trigger: 'manual'
+        		}).tooltip('show');
+        	},
+        	'mouseleave': (x) => {
+        		$(x.target).tooltip('hide');
+        	}
         });
     }
 
@@ -323,7 +334,7 @@ const FuncTree = class {
             })
             .on('mouseover', (d) => {
                 d3.select(d3.event.target)
-                    .style('r', 10)
+                    .style('r', 1)
                     .style('fill', '#000')
                     .style('opacity', 0.5);
                 this._highlightLinks(d);
