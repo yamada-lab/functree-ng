@@ -178,10 +178,10 @@ const FuncTree = class {
             node.y0 = node.y;
         }
         // Lazy initialize Bootstrap tooltip 
+        // FIXME for <g> elements this does not work as children trigger the event but they lack the data-original-title attribute
         $('[data-toggle="tooltip"]').on({
         	'mouseenter': (x) => {
-        		$(x.target)
-        		.tooltip({
+        		$(x.target).tooltip({
         			container: 'body',
         			placement: 'top',
         			trigger: 'manual'
@@ -325,9 +325,7 @@ const FuncTree = class {
             .attr('stroke-width', 0.25)
             .attr('cursor', 'pointer')
             .attr('data-toggle', 'tooltip')
-            .attr('data-original-title', (d) => {
-                return '[' + d.entry + '] ' + d.name;
-            })
+            .attr('data-original-title', this._makeNodeTitle)
             .on('click', (d) => {
                 this._collapseChildren(d);
                 this.update(d);
@@ -471,10 +469,6 @@ const FuncTree = class {
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
         const self = this;
         const data = nodes
-            // .filter((d) => {
-            //     const excludes = ['root'];
-            //     return !~excludes.indexOf(d.layer);
-            // })
             .filter((d) => {
                 return d.depth > 0;
             });
@@ -490,9 +484,7 @@ const FuncTree = class {
             .append('g')
             .attr('transform', 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + '),rotate(-90)')
             .attr('data-toggle', 'tooltip')
-            .attr('data-original-title', function(d) {
-                return '[' + d.entry + '] ' + d.name;
-            })
+            .attr('data-original-title', this._makeNodeTitle)
             .on('click', (d) => {
                 this._collapseChildren(d);
                 this.update(d);
@@ -522,7 +514,7 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('transform', 'rotate(' + (source.x - 90) + '),translate(' + source.y + '),rotate(-90)')
             .remove();
-
+        
         const bar = chart
             .selectAll('rect')
             .data((d) => {
@@ -603,10 +595,6 @@ const FuncTree = class {
 
     _updateRounds(nodes, source, depth, max) {
         const data = nodes
-            // .filter((d) => {
-            //     const excludes = ['root'];
-            //     return !~excludes.indexOf(d.layer);
-            // })
             .filter((d) => {
                 return d.depth > 0;
             });
@@ -643,9 +631,7 @@ const FuncTree = class {
             .attr('stroke-width', 0.5)
             .attr('opacity', 0.75)
             .attr('data-toggle', 'tooltip')
-            .attr('data-original-title', (d) => {
-                return '[' + d.entry + '] ' + d.name;
-            })
+            .attr('data-original-title', this._makeNodeTitle)
             .on('click', (d) => {
                 this._collapseChildren(d);
                 this.update(d);
@@ -675,12 +661,18 @@ const FuncTree = class {
             .attr('r', (d) => {
                 const r_ = 25;
                 if (this.config.normalize) {
-                	/*const maxRadius = Math.sqrt(max[d.depth]/Math.PI);
-                	const nodeRadius = Math.sqrt(d.value/Math.PI);
-                	return nodeRadius/maxRadius * r_ || 0;*/
-                	return d.value / max[d.depth] * r_ || 0;
+                	var radius = null;
+                	// map to Area
+                	if(this.config.circleMapToArea){
+                		var scaledArea = d.value / max[d.depth]
+                		radius = Math.sqrt(scaledArea/Math.PI)
+                	// map to radius
+                	} else {
+                		radius = d.value / max[d.depth];
+                	}
+                	return radius * r_ || 0;
                 } else {
-                    return d.value;
+                    return this.config.circleMapToArea? Math.sqrt(d.value/Math.PI) : d.value;
                 }
             })
             .attr('transform', (d) => {
@@ -782,7 +774,17 @@ const FuncTree = class {
             );
     }
 
-
+    /**
+     * Returns a clean title for the tooltip with PATH, BR information stripped from modules names
+     */
+    _makeNodeTitle(d){
+    	var title = d.name.replace(/ \[PATH:.*\]$/, '');
+    	if(d.entry != d.name) {
+    		title = '[' + d.entry + '] ' + title
+    	}
+        return title;
+    }
+    
     search(word) {
         const node = d3.select('#nodes')
             .selectAll('circle');

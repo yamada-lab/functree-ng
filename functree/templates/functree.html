@@ -63,6 +63,12 @@
             <option value="">None</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
+        <div class="checkbox">
+            <label>
+                <input id="circleMapToArea" type="checkbox" v-model="circleMapToArea">
+                	Map values to circle area
+            </label>
+        </div>
         <h6>Color coding</h6>
         <select id="color-coding" class="form-control input-sm" v-model="colorizeBy">
             <option title="Layer: Gives the same color to nodes of the samle layer (e.g. by Pathway, by Module, ...)" value="layer">Layer</option>
@@ -247,6 +253,7 @@ The actions below are available for exploring the tree:
                 'columnsMultiple': '',
                 'normalize': true,
                 'percentage': false,
+                'circleMapToArea': false,
                 'colorizeBy': 'layer',
                 'options': [
                     profile.series,
@@ -285,6 +292,7 @@ The actions below are available for exploring the tree:
                     funcTree
                         .configure({
                             'normalize': self.normalize,
+                            'circleMapToArea': self.circleMapToArea,
                             'colorizeBy': self.colorizeBy,
                             'percentage': self.percentage,
                             'colorSet': profile.colors.reduce(function(a, b) {
