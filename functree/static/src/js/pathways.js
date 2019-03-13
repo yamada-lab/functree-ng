@@ -4,22 +4,30 @@ const visualize = (profile, columns, column, cutoff, color, opacity, width, map)
 
     /** iPath */
     {
-        const seriesData = profile.map((x) => {
-            x.name = x.entry;
-            x.y = x.values[column];
-            return x;
-        });
-        
-        const selection = seriesData.filter((x) => {
+    	// select the 
+        var seriesData = profile.filter((x) => {
             // let layers = ['pathway', 'module', 'ko'];
             let layers = ['ko'];
             // Match KO layer and ensure that the value is above > cutoff
-            return ~layers.indexOf(x.layer) && x.y > cutoff;
-        }).map((x) => {
-        	return x.name + ' ' + color + ' W' + (width) + ' ' + opacity
+            return ~layers.indexOf(x.layer) && x.values[column] > cutoff;
+        })
+        
+        // a function that always return the same color
+        var colorGradient = (x) => {return color}
+        // if color is null then define a colorGradient
+        if(color == null){
+        	var seriesValues = seriesData.map((x) => {return x.values[column]})
+            colorGradient = d3.scale.linear()
+            	.domain(d3.extent(seriesValues))
+        		.range([d3.rgb(255, 128, 14), d3.rgb(171, 171, 171)])
+        		.interpolate(d3.interpolateHcl);
+        }
+        // generate the selection for iPath 
+        var selection = seriesData.map((x) => {
+        	return x.entry + ' ' + colorGradient(x.values[column]) + ' W' + (width) + ' ' + opacity
         }).join('\n');
-
-        const params = {
+        // add default parameters
+        var params = {
             'selection': selection,
             'default_opacity': 1,
             'default_width': 3,
@@ -29,11 +37,13 @@ const visualize = (profile, columns, column, cutoff, color, opacity, width, map)
             'tax_filter': '',
             'map': map
         };
-
-        const form = $('<form/>', {'action': 'https://pathways.embl.de/ipath3.cgi', 'method': 'POST', 'target': 'ipath'}).hide();
-        for (name in params) {
+        // attach a form
+        var form = $('<form/>', {'action': 'https://pathways.embl.de/ipath3.cgi', 'method': 'POST', 'target': 'ipath'}).hide();
+        // append form parameters
+        for (var name in params) {
             form.append($('<input/>', {'type': 'hidden', 'name': name, 'value': params[name]}));
         }
+        // submit the form
         form.appendTo(document.body).submit().remove();
     }
 };

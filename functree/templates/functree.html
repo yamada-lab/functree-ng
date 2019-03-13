@@ -9,18 +9,18 @@
 {{super()}}
 
 
-<form id="form-search" class="collapse in" v-on:submit.prevent="submit">
+<div id="form-search" class="collapse in">
     <div class="form-group">
         <div id="map-element-search" class="input-group">
             <input type="text" class="form-control input-sm typeahead" placeholder="Search map elements" v-model.lazy.trim="searchWord">
             <span class="input-group-btn" style="vertical-align: top;">
-                <button class="btn btn-primary btn-sm" type="submit">
+                <button class="btn btn-primary btn-sm" v-on:click="search">
                     <i class='fa fa-search fa-fw'></i>
                 </button>
             </span>
         </div>
     </div>
-</form>
+</div>
 <hr>
 <div id="zoom-control">
     <label class="control-label">Zoom </label>&nbsp;&nbsp;
@@ -63,6 +63,12 @@
             <option value="">None</option>
             <option v-for="(option, index) in options[1]" v-bind:value="index">{% raw %}{{option}}{% endraw %}</option>
         </select>
+        <div class="checkbox">
+            <label>
+                <input id="circleMapToArea" type="checkbox" v-model="circleMapToArea">
+                	Map values to circle area
+            </label>
+        </div>
         <h6>Color coding</h6>
         <select id="color-coding" class="form-control input-sm" v-model="colorizeBy">
             <option title="Layer: Gives the same color to nodes of the samle layer (e.g. by Pathway, by Module, ...)" value="layer">Layer</option>
@@ -177,7 +183,7 @@ The actions below are available for exploring the tree:
         visualize(res0.data[0], res1.data[0]);
     }))
     .then(function() {
-        $('#loading').remove();
+        $('#loading').remove();      
     })
     .catch(function(error) {
         $('#loading > div').html('<p><i class="fa fa-exclamation-circle fa-4x fa-fw"></i></p><p>Ajax error</p>');
@@ -200,7 +206,6 @@ The actions below are available for exploring the tree:
     
     // bind zoom to click action
     d3.selectAll(".zoomcontrol").on('click', zoomClick);
-    
 
     $(window).on('beforeunload', function() {
         return null;
@@ -209,7 +214,7 @@ The actions below are available for exploring the tree:
     function visualize(tree, profile) {
     	var funcTree = new FuncTree(tree.tree, "{{ url_for('route_get_entry') }}");
         if (rootEntry) {
-            const roots = funcTree.nodes.filter(function(x) {
+            var roots = funcTree.nodes.filter(function(x) {
                 return x.entry === rootEntry;
             });
             if (roots.length) {
@@ -218,10 +223,9 @@ The actions below are available for exploring the tree:
                 alert('No entry found: ' + rootEntry);
             }
         }
-        funcTree
-            .create()
-            .update();
 
+        funcTree.create().update();
+        
         var layers = funcTree.nodes.reduce(function(x, y) {
             if (!~x.indexOf(y.layer)) {
                 x.push(y.layer);
@@ -235,7 +239,7 @@ The actions below are available for exploring the tree:
                 'searchWord': ''
             },
             'methods': {
-                'submit': function() {
+                'search': function() {
                     funcTree.search(this.searchWord);
                 }
             }
@@ -249,6 +253,7 @@ The actions below are available for exploring the tree:
                 'columnsMultiple': '',
                 'normalize': true,
                 'percentage': false,
+                'circleMapToArea': false,
                 'colorizeBy': 'layer',
                 'options': [
                     profile.series,
@@ -287,6 +292,7 @@ The actions below are available for exploring the tree:
                     funcTree
                         .configure({
                             'normalize': self.normalize,
+                            'circleMapToArea': self.circleMapToArea,
                             'colorizeBy': self.colorizeBy,
                             'percentage': self.percentage,
                             'colorSet': profile.colors.reduce(function(a, b) {
@@ -314,20 +320,14 @@ The actions below are available for exploring the tree:
             }
         });
 
+		var MODULE_UNDEFINED_PATTERN = '*'
         // create an array of nodes to search
-        const nodes = funcTree.nodes.map(function(x) {
+        var nodes = funcTree.nodes.map(function(x) {
             				return x.entry;
-        				}).filter(function(x, i, self) {
-            				return self.indexOf(x) === i;
         				}).filter(function(x) {
-            				return !x.startsWith('*');
-        				}).sort(function(a, b) {
-							a = a.toString().toLowerCase();
-				            b = b.toString().toLowerCase();
-				            if (a > b) return 1;
-				            if (a < b) return -1;
-				            return 0;
+            				return !x.startsWith(MODULE_UNDEFINED_PATTERN);
         				})
+
         // initialize a typeahead for the nodes
         $('#map-element-search .typeahead').typeahead({
           hint: true,

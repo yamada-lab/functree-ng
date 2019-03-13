@@ -134,6 +134,7 @@ const FuncTree = class {
     }
 
     update(source=this.root) {
+
         const nodes = this.tree.nodes(this.root);
         const links = this.tree.links(nodes);
         const depth = d3.max(
@@ -141,6 +142,7 @@ const FuncTree = class {
                 return x.depth;
             })
         );
+
 
         const getLayerMax = (nodes, maxFunc) => {
             return Array.from(new Array(depth + 1))
@@ -156,6 +158,7 @@ const FuncTree = class {
         const maxValue = getLayerMax(nodes, (x) => {
             return x.value;
         });
+
         const maxSumOfValues = getLayerMax(nodes, (x) => {
             return d3.sum(x.values);
         });
@@ -170,15 +173,23 @@ const FuncTree = class {
         this._updateRounds(nodes, source, depth, maxValue);
         this._updateLabels(nodes, source, maxValue, maxSumOfValues);
 
-        for (const node of nodes) {
+        for (var node of nodes) {
             node.x0 = node.x;
             node.y0 = node.y;
         }
-
-        // Enable showing tooltip by Bootstrap
-        $('[data-toggle="tooltip"]').tooltip({
-            container: 'body',
-            placement: 'top'
+        // Lazy initialize Bootstrap tooltip 
+        // FIXME for <g> elements this does not work as children trigger the event but they lack the data-original-title attribute
+        $('[data-toggle="tooltip"]').on({
+        	'mouseenter': (x) => {
+        		$(x.target).tooltip({
+        			container: 'body',
+        			placement: 'top',
+        			trigger: 'manual'
+        		}).tooltip('show');
+        	},
+        	'mouseleave': (x) => {
+        		$(x.target).tooltip('hide');
+        	}
         });
     }
 
@@ -314,16 +325,14 @@ const FuncTree = class {
             .attr('stroke-width', 0.25)
             .attr('cursor', 'pointer')
             .attr('data-toggle', 'tooltip')
-            .attr('data-original-title', (d) => {
-                return '[' + d.entry + '] ' + d.name;
-            })
+            .attr('data-original-title', this._makeNodeTitle)
             .on('click', (d) => {
                 this._collapseChildren(d);
                 this.update(d);
             })
             .on('mouseover', (d) => {
                 d3.select(d3.event.target)
-                    .style('r', 10)
+                    .style('r', 1)
                     .style('fill', '#000')
                     .style('opacity', 0.5);
                 this._highlightLinks(d);
@@ -460,10 +469,6 @@ const FuncTree = class {
     _updateBars(nodes, source, depth, maxSumOfValues, maxMaxOfValues) {
         const self = this;
         const data = nodes
-            // .filter((d) => {
-            //     const excludes = ['root'];
-            //     return !~excludes.indexOf(d.layer);
-            // })
             .filter((d) => {
                 return d.depth > 0;
             });
@@ -479,9 +484,7 @@ const FuncTree = class {
             .append('g')
             .attr('transform', 'rotate(' + (source.x0 - 90) + '),translate(' + source.y0 + '),rotate(-90)')
             .attr('data-toggle', 'tooltip')
-            .attr('data-original-title', function(d) {
-                return '[' + d.entry + '] ' + d.name;
-            })
+            .attr('data-original-title', this._makeNodeTitle)
             .on('click', (d) => {
                 this._collapseChildren(d);
                 this.update(d);
@@ -511,7 +514,7 @@ const FuncTree = class {
             .duration(this.config.duration)
             .attr('transform', 'rotate(' + (source.x - 90) + '),translate(' + source.y + '),rotate(-90)')
             .remove();
-
+        
         const bar = chart
             .selectAll('rect')
             .data((d) => {
@@ -592,10 +595,6 @@ const FuncTree = class {
 
     _updateRounds(nodes, source, depth, max) {
         const data = nodes
-            // .filter((d) => {
-            //     const excludes = ['root'];
-            //     return !~excludes.indexOf(d.layer);
-            // })
             .filter((d) => {
                 return d.depth > 0;
             });
@@ -632,9 +631,7 @@ const FuncTree = class {
             .attr('stroke-width', 0.5)
             .attr('opacity', 0.75)
             .attr('data-toggle', 'tooltip')
-            .attr('data-original-title', (d) => {
-                return '[' + d.entry + '] ' + d.name;
-            })
+            .attr('data-original-title', this._makeNodeTitle)
             .on('click', (d) => {
                 this._collapseChildren(d);
                 this.update(d);
@@ -664,9 +661,18 @@ const FuncTree = class {
             .attr('r', (d) => {
                 const r_ = 25;
                 if (this.config.normalize) {
-                    return d.value / max[d.depth] * r_ || 0;
+                	var radius = null;
+                	// map to Area
+                	if(this.config.circleMapToArea){
+                		var scaledArea = d.value / max[d.depth]
+                		radius = Math.sqrt(scaledArea/Math.PI)
+                	// map to radius
+                	} else {
+                		radius = d.value / max[d.depth];
+                	}
+                	return radius * r_ || 0;
                 } else {
-                    return d.value;
+                    return this.config.circleMapToArea? Math.sqrt(d.value/Math.PI) : d.value;
                 }
             })
             .attr('transform', (d) => {
@@ -768,7 +774,17 @@ const FuncTree = class {
             );
     }
 
-
+    /**
+     * Returns a clean title for the tooltip with PATH, BR information stripped from modules names
+     */
+    _makeNodeTitle(d){
+    	var title = d.name.replace(/ \[PATH:.*\]$/, '');
+    	if(d.entry != d.name) {
+    		title = '[' + d.entry + '] ' + title
+    	}
+        return title;
+    }
+    
     search(word) {
         const node = d3.select('#nodes')
             .selectAll('circle');
@@ -777,11 +793,12 @@ const FuncTree = class {
                 return d.entry === word;
             });
         hits.style('fill', '#f00')
+        	.style('stroke', '#f00')
             .style('opacity', 0.5)
             .transition()
             .duration(1000)
             .style('r', 50)
-            .style('stroke-width', 0)
+            .style('stroke-width', 50)
             .style('opacity', 0)
             .each('end', function() {
                 d3.select(this)
