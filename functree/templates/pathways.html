@@ -45,9 +45,31 @@
 		<a href="#ipath-options" data-toggle="collapse"> <i class="fa fa-caret-down" aria-expanded="false"></i></a>
 	</h5>
 	<div id="ipath-options" class="collpase">
-		<div class="form-group">
+		<div class="form-group" v-show="!colorGradient">
 			<label class="control-label">Color <colorpicker :color="color" v-model="color" /></label>
 		</div>
+		<div class="form-group" v-show="colorGradient">
+			    <svg width="100%" height="20px">
+			        <defs>
+			            <linearGradient id="gradient">
+			                <stop offset="0.0%" stop-color="#ff800e"></stop>  
+			                <stop offset="20%" stop-color="#d69a21"></stop>
+			                <stop offset="40%" stop-color="#b4a849"></stop>
+			                <stop offset="60%" stop-color="#9eaf72"></stop>
+			                <stop offset="80%" stop-color="#9ab095"></stop> 
+			                <stop offset="100%" stop-color="#ababab"></stop>
+			            </linearGradient>
+			        </defs>
+	        		<rect x="0" y="0" width="100%" height="100%" fill="url(#gradient)" stroke="none" stroke-width="0" />
+    			</svg>
+		</div>
+		<div class="checkbox">
+            <label>
+                <input id="colorGradient" type="checkbox" v-model="colorGradient">
+                Use a color gradient
+            </label>
+        </div>
+        
 		<div class="form-group">
 			<label class="control-label">Width <input type="number" min="0" step="1" class="form-control input-sm" v-model="width"></label>
 		</div>
@@ -126,6 +148,7 @@
                     'column': 0,
                     'cutoff': 0,
                     'color': {hex: '#FF800E', a: 1},
+                    'colorGradient': false,
                     'width': '10',
                     'map': 0,
                     'options': [
@@ -140,7 +163,11 @@
                     	this.$set(this.options, 1, res.data[0].columns[this.series]);
                 	},
                     'submit': function() {
-                    	visualize(profile, this.options[1], this.column, this.cutoff, this.color.hex, this.color.a, this.width, this.options[2][this.map])
+                    	var color = null
+                    	if(!this.colorGradient){
+                    		color = this.color.hex
+                    	}
+                    	visualize(profile, this.options[1], this.column, this.cutoff, color, this.color.a, this.width, this.options[2][this.map])
                         $('#loading').show();
                     }
                 }
