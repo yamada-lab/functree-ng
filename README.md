@@ -62,7 +62,7 @@ To configure the behavior of the application, create `instance/config.py` with t
 4. Log into the admin console (e.g. http://localhost:8080/admin), then click the 'Update annotation mapping' link.
 
 ## Publications
-- Uchiyama T, Irie M, Mori H, Kurokawa K, Yamada T. FuncTree: Functional Analysis and Visualization for Large-Scale Omics Data. PLoS One. 2015 May 14;10(5):e0126967. doi: 10.1371/journal.pone.0126967. eCollection 2015. PubMed PMID: 25974630; PubMed Central PMCID: PMC4431737.
+- Darzi Y, Yamate Y, Yamada T. FuncTree2: an interactive radial tree for functional hierarchies and omics data visualization. Bioinformatics, btz245. 20 April 2019; DOI: [10.1093/bioinformatics/btz245](https://doi.org/10.1093/bioinformatics/btz245); PubMed PMID: [31004476](https://www.ncbi.nlm.nih.gov/pubmed/31004476).
 
 ## License
 FuncTree 2 is released under the [MIT License](LICENSE).
