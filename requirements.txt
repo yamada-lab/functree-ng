@@ -11,7 +11,7 @@ Flask-HTTPAuth==3.2.3
 flask-mongoengine==0.9.3
 Flask-WTF==0.14.2
 itsdangerous==0.24
-Jinja2==2.9.6
+Jinja2==2.10.1
 lxml==3.8.0
 MarkupSafe==1.0
 mongoengine==0.13.0
