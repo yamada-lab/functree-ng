@@ -136,7 +136,7 @@ def from_tsv(path, name):
     '''
     root = Node(entry=name, name=name, layer='root')
 
-    # process annoatation if available 
+    # process annotation if available 
     entry_label = {}
     line = path.readline()
     
@@ -149,8 +149,14 @@ def from_tsv(path, name):
                 entry, label = line.split('\t')
                 entry_label[entry] = label
                 line = path.readline()
+    # set header to current line
+    header = line
+    # if file has annotation
+    if len(entry_label) > 0 :
+        # read header from next line
+        header = path.readline()
     
-    levels = path.readline().strip().decode().split('\t')
+    levels = header.strip().decode().split('\t')
     levels.insert(0, 'root')
     nodes_layer = {key: {} for key in levels}
     nodes_layer['root'] = {'root': root}
