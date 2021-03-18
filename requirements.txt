@@ -1,6 +1,6 @@
 blinker==1.4
 cairocffi==0.8.0
-CairoSVG==2.0.3
+CairoSVG==2.5.1
 cffi==1.10.0
 click==6.7
 cssselect==1.0.1
@@ -12,14 +12,14 @@ flask-mongoengine==0.9.3
 Flask-WTF==0.14.2
 itsdangerous==0.24
 Jinja2==2.10.1
-lxml==3.8.0
+lxml==4.6.2
 MarkupSafe==1.0
 mongoengine==0.13.0
 networkx==2.1
 numpy==1.13.1
 olefile==0.44
 pandas==0.20.3
-Pillow==4.2.1
+Pillow==7.1.0
 pycparser==2.18
 pymongo==3.4.0
 python-dateutil==2.6.1
@@ -30,5 +30,5 @@ setuptools-scm==1.15.6
 six==1.10.0
 tinycss==0.4
 uWSGI==2.0.15
-Werkzeug==0.12.2
+Werkzeug==0.15.3
 WTForms==2.1

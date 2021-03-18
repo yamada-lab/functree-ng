@@ -6,8 +6,8 @@
     <div class="page-header">
         <h2>{{title}}</h2>
 	    <p>This is FuncTree 2 - version {{version}}</p>
-	    <p>FuncTree 2 is actively developed at the <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology, 
-	    by Youssef Darzi (<a href="https://github.com/omixer" target="_blank">@omixer</a>), Yuta Yamate (<a href="https://github.com/yyuuta88" target="_blank">@yyuuta88</a>),
+	    <p>FuncTree 2 is actively developed at the <a href="http://comp.bio.titech.ac.jp" target="_blank">Yamada Lab</a>, Tokyo Institute of Technology,
+	    by Youssef Darzi (<a href="https://github.com/omixer" target="_blank">@omixer</a>), Yuta Yamate (<a href="https://github.com/yutayamate" target="_blank">@yutayamate</a>),
 	    and Takuji Yamada.
 	    </p>
 	    <p>Source code is available on <a href="https://github.com/yamada-lab/functree-ng" target="_blank">github.com/yamada-lab/functree-ng</a></p>
@@ -18,22 +18,28 @@
     	<i><a href="https://doi.org/10.1093/bioinformatics/btz245" target="_blank">FuncTree2: an interactive radial tree for functional hierarchies and omics data visualization</a></i>
 		<br />
 		Darzi Y, Yamate Y, Yamada T.
-		<br /> 
+		<br />
 		Bioinformatics, btz245. 20 April 2019; <a href="https://doi.org/10.1093/bioinformatics/btz245" target="_blank">https://doi.org/10.1093/bioinformatics/btz245</a>
 		</p>
-		
+
 		<p>
     	<i><a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0126967" target="_blank">FuncTree: Functional Analysis and Visualization for Large-Scale Omics Data</a></i>
 		<br />
 		Uchiyama T, Irie M, Mori H, Kurokawa K, Yamada T.
-		<br /> 
+		<br />
 		PLoS ONE 10(5): e0126967. 2015 May 14; <a href="https://doi.org/10.1371/journal.pone.0126967" target="_blank">https://doi.org/10.1371/journal.pone.0126967</a>
 		</p>
-		
+
     </div>
     <hr />
     <h3>Change log</h3>
     <br />
+    <h5>Version 0.8.4.0 (2021-03-18)</h5>
+    <ul>
+    	<li>Fix layer mapping of custom tree upload.
+    	<li>Fix potential security vulnerabilities.
+    	<li>Update author info.
+    </ul>
     <h5>Version 0.8.3.0 (2019-05-08)</h5>
     <ul>
     	<li>Update citation.
@@ -68,7 +74,7 @@
 				<li>Streamlining of the controls layout and the UI.
 				<li>Bug fix: selection of leaf nodes with value > 0 only.
 			</ul>
-		<li>Addition of bar plots to "Module undefined" nodes to highlight the amount of pathway KO not assigned to a module.  
+		<li>Addition of bar plots to "Module undefined" nodes to highlight the amount of pathway KO not assigned to a module.
 	</ul>
 	<h5>Version 0.7.6.3 (2019-02-25)</h5>
 	<ul>
@@ -79,7 +85,7 @@
 		<li>Addition of a toggle action to show/hide node labels.
 		<li>Addition of a description to the database selection.
 		<li>Upgrade of Flask.
-	</ul>    
+	</ul>
     <h5>Version 0.7.6.1 (2019-01-18)</h5>
 	<ul>
 		<li>Addition of a help section on the Functree explorer page, and improvement of the main documentation.
@@ -87,7 +93,7 @@
     <h5>Version 0.7.6 (2019-01-15)</h5>
 	<ul>
 		<li>Addition of a zoom control widget.
-		<li>Replacement of D3 categorical20 color palette by the color blind friendly palette tableau10. 
+		<li>Replacement of D3 categorical20 color palette by the color blind friendly palette tableau10.
 	</ul>
     <h5>Version 0.7.5 (2018-08-10)</h5>
 	<ul>
@@ -95,11 +101,11 @@
 	</ul>
     <h5>Version 0.7.4 (2018-06-20)</h5>
 	<ul>
-		<li>Performance improvement: mapping time is reduced to around 15 seconds on dev machine using the example profile.tsv. 
+		<li>Performance improvement: mapping time is reduced to around 15 seconds on dev machine using the example profile.tsv.
 	</ul>
 	<h5>Version 0.7.3 (2018-06-19)</h5>
 	<ul>
-		<li>Performance improvement: mapping time is reduced from 3 minutes to 1 minute and 20 seconds. Module coverage computation time is lowered from 80 seconds to 5 seconds. 
+		<li>Performance improvement: mapping time is reduced from 3 minutes to 1 minute and 20 seconds. Module coverage computation time is lowered from 80 seconds to 5 seconds.
 	</ul>
 </div>
 {% endblock %}

@@ -1,10 +1,9 @@
 {
   "name": "functree-ng",
-  "description": "Visualization and analysis tool for omics data based on biological functional tree",
+  "description": "FuncTree2: an interactive radial tree for functional hierarchies and omics data visualization",
   "author": {
     "name": "Yuta Yamate",
-    "email": "yyamate@bio.titech.ac.jp",
-    "url": "https://yyuuta88.github.io"
+    "url": "https://github.com/yutayamate"
   },
   "repository": {
     "type": "git",
@@ -15,7 +14,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "bootstrap": "^3.3.7",
     "bootstrap-menu": "^1.0.14",
     "corejs-typeahead": "^1.2.1",
@@ -24,7 +23,7 @@
     "datatables.net-bs": "^1.10.19",
     "datatables.net-buttons": "^1.3.1",
     "font-awesome": "^4.7.0",
-    "highcharts": "^8.2.0",
+    "highcharts": "^9.0.1"
     "jquery": "^3.2.1",
     "particles.js": "^2.0.0",
     "vue": "^2.4.2",
