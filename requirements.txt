@@ -16,7 +16,7 @@ lxml==4.6.2
 MarkupSafe==1.0
 mongoengine==0.13.0
 networkx==2.1
-numpy==1.13.1
+numpy==1.21.0
 olefile==0.44
 pandas==0.20.3
 Pillow==7.1.0
