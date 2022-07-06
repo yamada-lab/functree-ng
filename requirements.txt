@@ -12,7 +12,7 @@ flask-mongoengine==0.9.3
 Flask-WTF==0.14.2
 itsdangerous==0.24
 Jinja2==2.10.1
-lxml==4.6.2
+lxml==4.9.1
 MarkupSafe==1.0
 mongoengine==0.13.0
 networkx==2.1
