@@ -15,7 +15,7 @@ class MappingForm(flask_wtf.FlaskForm):
     ])
     color_file = flask_wtf.file.FileField('Color file (Optional)')
     target = wtforms.SelectField('Database', choices=[])
-    description = wtforms.TextField('Description', validators=[
+    description = wtforms.StringField('Description', validators=[
         wtforms.validators.Length(max=50)
     ])
 
@@ -37,7 +37,7 @@ class ComparisonForm(flask_wtf.FlaskForm):
     ])
     color_file = flask_wtf.file.FileField('Color file (Optional)')
     target = wtforms.SelectField('Database', choices=[])
-    description = wtforms.TextField('Description', validators=[
+    description = wtforms.StringField('Description', validators=[
         wtforms.validators.Length(max=50)
     ])
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
@@ -57,7 +57,7 @@ class DisplayForm(flask_wtf.FlaskForm):
     ])
     color_file = flask_wtf.file.FileField('Color file (Optional)')
     target = wtforms.SelectField('Database', choices=[])
-    description = wtforms.TextField('Description', validators=[
+    description = wtforms.StringField('Description', validators=[
         wtforms.validators.Length(max=50)
     ])
     private = wtforms.BooleanField('Keep the result private (Hide from "List of Profiles")', default=True)
@@ -71,10 +71,10 @@ class UploadForm(flask_wtf.FlaskForm):
     input_file = flask_wtf.file.FileField('Input file', validators=[
         flask_wtf.file.FileRequired()
     ])
-    target = wtforms.TextField('Database', validators=[
+    target = wtforms.StringField('Database', validators=[
         wtforms.validators.Length(max=50)
     ])
-    description = wtforms.TextField('Description', validators=[
+    description = wtforms.StringField('Description', validators=[
         wtforms.validators.Length(max=50)
     ])
 

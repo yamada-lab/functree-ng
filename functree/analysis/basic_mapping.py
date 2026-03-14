@@ -13,7 +13,7 @@ def from_table(form):
     if len(result['profile']) > 0:
         colors = []
         if form.color_file.data:
-            colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').as_matrix().tolist()
+            colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').to_numpy().tolist()
         utcnow = datetime.datetime.utcnow()
         
         # This inset is 4 seconds
@@ -76,11 +76,11 @@ def calc_abundances(f, target, methods, distribute):
     
         # This is taking 2 to 4 seconds to run
         for entry in entries:
-            #values = [results[method].ix[entry].tolist() for method in methods]
+            #values = [results[method].loc[entry].tolist() for method in methods]
             values = []
             for method in methods:
                 if entry in results[method].index:
-                    values.append(results[method].ix[entry].tolist())
+                    values.append(results[method].loc[entry].tolist())
                 else:
                     values.append([0] * df.columns.size)
             profile.append({'entry': entry, 'layer': analysis.get_layer(entry, entry_to_layer), 'values': values})

@@ -1,20 +1,22 @@
-version: "2"
+version: "3.8"
 services:
   app:
     build: .
     volumes:
       - /workspace/bioviz.tokyo/functree-ng-data/ortholog_mapping/:/app/functree/static/data/ortholog_mapping/
-    links:
+    depends_on:
       - db
     ports:
       - "8080:8080"
     command: uwsgi --ini /app/uwsgi.ini
+    environment:
+      - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true
+
   db:
-    image: mongo:3.4.9
-    volumes_from:
-      - db_data
-    command: mongod --storageEngine wiredTiger
-  db_data:
-    image: busybox:latest
+    image: mongo:7
     volumes:
-      - /data/db
+      - mongo_data:/data/db
+    command: mongod
+
+volumes:
+  mongo_data:

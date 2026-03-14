@@ -1,34 +1,46 @@
-blinker==1.4
-cairocffi==0.8.0
-CairoSVG==2.5.1
-cffi==1.10.0
-click==6.7
-cssselect==1.0.1
-Flask==0.12.4
-Flask-Caching==1.3.3
-Flask-DebugToolbar==0.10.1
-Flask-HTTPAuth==3.2.3
-flask-mongoengine==0.9.3
-Flask-WTF==0.14.2
-itsdangerous==0.24
-Jinja2==2.10.1
-lxml==4.6.2
-MarkupSafe==1.0
-mongoengine==0.13.0
-networkx==2.1
-numpy==1.13.1
-olefile==0.44
-pandas==0.20.3
-Pillow==7.1.0
-pycparser==2.18
-pymongo==3.4.0
-python-dateutil==2.6.1
-pytz==2017.2
-scipy==1.0.0
-selenium==3.12.0
-setuptools-scm==1.15.6
-six==1.10.0
-tinycss==0.4
-uWSGI==2.0.15
-Werkzeug==0.15.3
-WTForms==2.1
+# Web framework
+Flask==2.3.3
+Werkzeug==2.3.7
+Jinja2==3.1.2
+MarkupSafe==2.1.3
+itsdangerous==2.1.2
+click==8.1.7
+
+# Flask extensions
+Flask-Caching==2.1.0
+Flask-DebugToolbar==0.14.1
+Flask-HTTPAuth==4.8.0
+flask-mongoengine==1.0.0
+Flask-WTF==1.2.1
+WTForms==3.1.1
+
+# MongoDB
+mongoengine==0.27.0
+pymongo==4.6.1
+
+# Analysis
+numpy>=1.24,<2.0
+pandas>=2.0,<3.0
+scipy>=1.11
+
+# Networking / tree
+networkx>=3.0
+
+# Image export (server-side SVG conversion)
+CairoSVG>=2.7
+cairocffi>=1.6
+lxml>=5.0
+Pillow>=10.0
+
+# Selenium (only used for /api/viewer/ headless export route)
+selenium>=4.0
+
+# WSGI server
+uWSGI==2.0.23
+
+# Utilities
+setuptools-scm>=8.0
+python-dateutil>=2.9
+pytz>=2024.1
+six>=1.16
+blinker>=1.7
