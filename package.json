@@ -27,26 +27,22 @@
     "jquery": "^3.2.1",
     "particles.js": "^2.0.0",
     "vue": "^2.4.2",
-  	"vue-color": "2.7.0"
+    "vue-color": "2.7.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-minify": "^0.2.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
-    "gulp-plumber": "^1.1.0",
-    "gulp-sass": "^3.1.0",
-    "gulp-sourcemaps": "^2.6.1"
+    "@babel/cli": "^7.24.0",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "sass": "^1.71.0"
   },
   "scripts": {
     "install-depends": "yarn install --production=true --modules-folder functree/static/yarn_components",
     "install-devDepends": "yarn install --production=false",
-    "babel": "gulp babel",
-    "babel:watch": "gulp babel:watch",
-    "sass": "gulp sass",
-    "sass:watch": "gulp sass:watch",
-    "build": "gulp build"
+    "babel": "babel functree/static/src/js --out-dir functree/static/dist/js",
+    "babel:watch": "babel --watch functree/static/src/js --out-dir functree/static/dist/js",
+    "sass": "sass functree/static/src/scss:functree/static/dist/css --style=compressed --no-source-map",
+    "sass:watch": "sass --watch functree/static/src/scss:functree/static/dist/css --style=compressed",
+    "build": "yarn sass && yarn babel"
   },
   "private": true
 }

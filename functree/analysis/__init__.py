@@ -81,7 +81,7 @@ def calc_abundances(df, nodes, method, results):
                     loc = df.loc[targets]
                     # sample abundance for a biological entry
                     # Calculated for children of nodes that are not in the input abundance matrix
-                    entry_profile = eval('loc.{}()'.format(method))
+                    entry_profile = getattr(loc, method)()
                 except KeyError:
                     pass
             # the entry on the tree is not in the submitted profile

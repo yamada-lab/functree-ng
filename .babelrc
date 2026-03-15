@@ -1,13 +1,5 @@
 {
   "presets": [
-    ["es2015"],
-    ["minify", {
-      "mangle": {
-        "blacklist": {
-          "d": true,
-          "node": true
-        }
-      }
-    }]
+    ["@babel/preset-env", {"targets": "> 0.25%, not dead"}]
   ]
 }

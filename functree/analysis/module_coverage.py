@@ -10,7 +10,7 @@ def from_table(form):
     result = calc_coverages(f=form.input_file.data, target=form.target.data)
     colors = []
     if form.color_file.data:
-        colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').as_matrix().tolist()
+        colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').to_numpy().tolist()
     utcnow = datetime.datetime.utcnow()
     return models.Profile(
         profile_id=uuid.uuid4(),
@@ -62,5 +62,5 @@ def calc_coverages(df, target, result_holder, method='mean'):
     analysis.calc_abundances(df_crckm, nodes_no_ko, method, results)
  
     # Concatenate user's input and results
-    df_out = df.applymap(lambda x: int(bool(x))).append(results[method])
+    df_out = pd.concat([df.map(lambda x: int(bool(x))), results[method]])
     result_holder["modulecoverage"] = df_out

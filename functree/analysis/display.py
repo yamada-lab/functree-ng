@@ -11,10 +11,10 @@ def from_table(form):
 
     profile = []
     for entry in raw_table.index:
-        profile.append({'entry': entry, 'layer': analysis.get_layer(entry, entry_to_layer), 'values': [raw_table.ix[entry].tolist()]})
+        profile.append({'entry': entry, 'layer': analysis.get_layer(entry, entry_to_layer), 'values': [raw_table.loc[entry].tolist()]})
     colors = []
     if form.color_file.data:
-        colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').as_matrix().tolist()
+        colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').to_numpy().tolist()
     utcnow = datetime.datetime.utcnow()
     return models.Profile(
         profile_id=uuid.uuid4(),

@@ -3,7 +3,7 @@ from functree import db
 
 class Tree(db.Document):
     tree = db.DictField(required=True)
-    source = db.StringField(required=True)
+    source = db.StringField(required=True, unique=True)
     description = db.StringField(required=True, max_length=50)
     added_at = db.DateTimeField(required=True)
 

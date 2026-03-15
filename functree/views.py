@@ -19,7 +19,7 @@ def route_index():
 @app.route('/api/mapping/', methods=['POST'])
 @csrf.exempt
 def mapping():
-    form = forms.MappingForm(csrf_enabled=False)
+    form = forms.MappingForm(meta={'csrf': False})
     if 'private' not in request.form:
         form.private.data = True
     else:
@@ -53,7 +53,7 @@ def mapping():
 @app.route('/api/comparison/', methods=['POST'])
 @csrf.exempt
 def comparison():
-    form = forms.MappingForm(csrf_enabled=False)
+    form = forms.MappingForm(meta={'csrf': False})
     if 'private' not in request.form:
         form.private.data = True
     else:
@@ -70,7 +70,7 @@ def comparison():
 @app.route('/api/display/', methods=['POST'])
 @csrf.exempt
 def api_display():
-    form = forms.DisplayForm(csrf_enabled=False)
+    form = forms.DisplayForm(meta={'csrf': False})
     if 'private' not in request.form:
         form.private.data = True
     else:
@@ -430,7 +430,7 @@ def route_update_definitions():
 def route_update_annotation_mapping():
     f = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/data/ortholog_mapping/external_annotation.map')
     orto_mapping = {}
-    with open(f, 'rU') as mapping_file:
+    with open(f, 'r', newline=None) as mapping_file:
         for line in mapping_file:
             tokens = line.rstrip().split('\t', 1)
             if tokens[0] not in orto_mapping:

@@ -1,34 +1,41 @@
-FROM python:3.6.2
+FROM python:3.11-slim
 
-LABEL maintainer="Youssef Darzi <darzi.y.aa@m.titech.ac.jp>"
+# System deps for CairoSVG and build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        curl \
+        git \
+        libcairo2-dev \
+        libffi-dev \
+        pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl https://nodejs.org/dist/v6.11.2/node-v6.11.2-linux-x64.tar.xz | tar Jxv -C /opt/
-ENV PATH /opt/node-v6.11.2-linux-x64/bin:$PATH
+# Node.js 20 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list \
-	&& wget https://dl-ssl.google.com/linux/linux_signing_key.pub \
-	&& apt-key add linux_signing_key.pub
+# Enable corepack for yarn
+RUN corepack enable
 
-RUN	apt-get update && apt-get install -y --no-install-recommends \
-		unzip \
-		google-chrome-stable \ 
-	&& rm -rf /var/lib/apt/lists/*
-
-RUN wget https://chromedriver.storage.googleapis.com/2.39/chromedriver_linux64.zip \ 
-	&& unzip chromedriver_linux64.zip \
-	&& mv chromedriver /usr/local/bin/ \
-	&& rm chromedriver_linux64.zip
-
-ADD . /app/
 WORKDIR /app/
 
-RUN pip3 install -r requirements.txt
+# Copy requirements first so this layer is only rebuilt when deps change
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN npm install --global yarn && \
-  yarn run install-depends && \
-  yarn run install-devDepends && \
-  yarn run build
+# Copy package files and install frontend deps + build assets
+COPY package.json yarn.lock* .babelrc ./
+RUN yarn run install-depends \
+    && yarn run install-devDepends \
+    && true  # deps installed; build happens after app code is copied
 
-EXPOSE 3031 8080
+# Copy application code after deps are installed
+COPY . .
+
+# Build frontend assets (CSS + JS) into functree/static/dist/
+RUN yarn run build
+
+EXPOSE 8080
 
 CMD ["uwsgi", "--ini", "/app/uwsgi.ini"]

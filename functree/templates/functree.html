@@ -186,7 +186,9 @@ The actions below are available for exploring the tree:
         $('#loading').remove();      
     })
     .catch(function(error) {
-        $('#loading > div').html('<p><i class="fa fa-exclamation-circle fa-4x fa-fw"></i></p><p>Ajax error</p>');
+        var msg = error && (error.message || (error.response && error.response.status + ' ' + error.response.statusText) || String(error));
+        $('#loading > div').html('<p><i class="fa fa-exclamation-circle fa-4x fa-fw"></i></p><p>Ajax error: ' + msg + '</p>');
+        console.error('Viewer error:', error);
     });
 
     var vmEntryDetail = new Vue({
@@ -250,7 +252,7 @@ The actions below are available for exploring the tree:
             'data': {
                 'series': '',
                 'columnsSingle': '',
-                'columnsMultiple': '',
+                'columnsMultiple': [],
                 'normalize': true,
                 'percentage': false,
                 'circleMapToArea': false,
