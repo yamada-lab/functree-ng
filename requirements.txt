@@ -1,6 +1,8 @@
 # Web framework
-Flask==2.3.3
-Werkzeug==2.3.7
+# Pinned to 2.2.x: flask-mongoengine 1.0.0 uses flask.json.JSONEncoder
+# which was removed in Flask 2.3. Replace both when migrating to FastAPI (Phase 1).
+Flask==2.2.5
+Werkzeug==2.2.3
 Jinja2==3.1.2
 MarkupSafe==2.1.3
 itsdangerous==2.1.2
