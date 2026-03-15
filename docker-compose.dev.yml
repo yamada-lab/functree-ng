@@ -1,20 +1,29 @@
-version: "2"
 services:
   app:
     build: .
     volumes:
       - .:/app
-    links:
+      # Pin built frontend dirs from the image so the bind-mount doesn't hide them
+      - yarn_components:/app/functree/static/yarn_components
+      - dist:/app/functree/static/dist
+      - node_modules:/app/node_modules
+    depends_on:
       - db
     ports:
       - "5000:5000"
     command: python3 /app/run.py
+    environment:
+      - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true&uuidRepresentation=standard
+      - SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0
+
   db:
-    image: mongo:3.4.9
-    volumes_from:
-      - db_data
-    command: mongod --storageEngine wiredTiger
-  db_data:
-    image: busybox:latest
+    image: mongo:7
     volumes:
-      - /data/db
+      - mongo_data:/data/db
+    command: mongod
+
+volumes:
+  mongo_data:
+  yarn_components:
+  dist:
+  node_modules:

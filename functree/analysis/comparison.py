@@ -7,7 +7,7 @@ def from_table(form):
     result = calc_abundances(f1=form.input_file1.data, f2=form.input_file2.data, target=form.target.data)
     colors = []
     if form.color_file.data:
-        colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').as_matrix().tolist()
+        colors = pd.read_csv(form.color_file.data, header=None, delimiter='\t').to_numpy().tolist()
     utcnow = datetime.datetime.utcnow()
     return models.Profile(
         profile_id=uuid.uuid4(),
@@ -57,7 +57,7 @@ def calc_abundances(f1, f2, target):
 
     profile = []
     for entry in df_result.index:
-        values = [df_result.ix[entry].tolist()]
+        values = [df_result.loc[entry].tolist()]
         profile.append({'entry': entry, 'layer': analysis.get_layer(entry, entry_to_layer), 'values': values})
 
     data = {

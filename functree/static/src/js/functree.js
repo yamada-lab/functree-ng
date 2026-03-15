@@ -813,8 +813,8 @@ const FuncTree = class {
     getNodes(node=this.root, nodes=[], depth=0) {
         node.depth = depth;
         nodes.push(node);
-        for (const node of (node.children || node._children || [])) {
-            this.getNodes(node, nodes, depth + 1);
+        for (const child of (node.children || node._children || [])) {
+            this.getNodes(child, nodes, depth + 1);
         }
         return nodes;
     }
