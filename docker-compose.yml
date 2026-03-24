@@ -1,10 +1,10 @@
-version: "3.8"
+version: "2"
 services:
   app:
     build: .
     volumes:
       - /workspace/bioviz.tokyo/functree-ng-data/ortholog_mapping/:/app/functree/static/data/ortholog_mapping/
-    depends_on:
+    links:
       - db
     ports:
       - "8080:8080"
@@ -13,10 +13,12 @@ services:
       - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true&uuidRepresentation=standard
 
   db:
-    image: mongo:7
-    volumes:
-      - mongo_data:/data/db
-    command: mongod
+    image: mongo:3.6
+    volumes_from:
+      - db_data
+    command: mongod --storageEngine wiredTiger
 
-volumes:
-  mongo_data:
+  db_data:
+    image: busybox:latest
+    volumes:
+      - /data/db
