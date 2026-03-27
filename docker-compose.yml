@@ -10,7 +10,7 @@ services:
       - "8080:8080"
     command: uwsgi --ini /app/uwsgi.ini
     environment:
-      - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true&uuidRepresentation=standard
+      - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true&uuidRepresentation=pythonLegacy
 
   db:
     image: mongo:3.6

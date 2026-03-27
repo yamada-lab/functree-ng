@@ -13,7 +13,7 @@ services:
       - "5000:5000"
     command: python3 /app/run.py
     environment:
-      - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true&uuidRepresentation=standard
+      - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true&uuidRepresentation=pythonLegacy
       - SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0
 
   db:
