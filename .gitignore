@@ -13,3 +13,7 @@ bower_components/
 /data.txt
 /.README.md.html
 MODERNIZATION_PLAN.md
+
+# JetBrains IDE
+.idea/
+*.iml
