@@ -1,0 +1,32 @@
+# Local "try it out" stack: production-like uWSGI server, no bioviz host mounts.
+#   docker compose -f docker-compose.local.yml up -d
+# Then open http://localhost:8080/
+services:
+  app:
+    build: .
+    depends_on:
+      db:
+        # The Flask app connects to Mongo at import time and caches a dead
+        # topology forever if mongod is not yet accepting connections, so wait
+        # for the healthcheck rather than just for the container to start.
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    command: uwsgi --ini /app/uwsgi.ini
+    environment:
+      - MONGODB_HOST=mongodb://db:27017/functree?tz_aware=true&uuidRepresentation=pythonLegacy
+
+  db:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    command: mongod
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+volumes:
+  mongo_data:

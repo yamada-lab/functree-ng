@@ -33,6 +33,9 @@ RUN yarn run install-depends \
 # Copy application code after deps are installed
 COPY . .
 
+# Ensure crckm submodule source files are present (handles clones without --recurse-submodules)
+RUN git submodule update --init --recursive || true
+
 # Build frontend assets (CSS + JS) into functree/static/dist/
 RUN yarn run build
 
